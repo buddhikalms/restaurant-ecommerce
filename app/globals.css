@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f1e7;
+  --background-muted: #efe6d5;
+  --surface: #fffdf7;
+  --surface-muted: rgba(255, 255, 255, 0.75);
+  --foreground: #1f2937;
+  --muted-foreground: #526071;
+  --border: rgba(15, 23, 42, 0.08);
+  --brand: #9b5f19;
+  --brand-dark: #55320d;
+  --accent: #d7b26d;
+  --success: #166534;
+  --danger: #be123c;
+  --font-body-family: "Aptos", "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-heading-family: "Trebuchet MS", "Aptos Display", "Segoe UI", sans-serif;
+}
+
+@theme inline {
+  --font-sans: var(--font-body-family);
+  --font-heading: var(--font-heading-family);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(215, 178, 109, 0.28), transparent 35%),
+    radial-gradient(circle at top right, rgba(155, 95, 25, 0.14), transparent 30%),
+    linear-gradient(180deg, #fffaf1 0%, #f6f1e7 40%, #f0e5d0 100%);
+  color: var(--foreground);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.surface-card {
+  background: rgba(255, 253, 247, 0.92);
+  backdrop-filter: blur(12px);
+}
+
+.page-shell {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.gradient-heading {
+  background: linear-gradient(120deg, var(--brand-dark), var(--brand), #d59c3b);
+  -webkit-background-clip: text;
+  color: transparent;
+}
