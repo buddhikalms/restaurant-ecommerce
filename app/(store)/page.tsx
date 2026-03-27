@@ -1,24 +1,23 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { HomeHeroSlider } from "@/components/store/home-hero-slider";
 import { ProductCard } from "@/components/store/product-card";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { getHomepageContent } from "@/lib/data/store";
-import { getPricingModeForRole } from "@/lib/user-roles";
+import {
+  canViewWholesalePricing,
+  getPricingModeForRole,
+} from "@/lib/user-roles";
 
 const heroSlides = [
   {
     id: "home-hero-1",
     eyebrow: "Fresh arrivals",
-    title: "Restaurant essentials arranged in a bold new homepage slider",
+    title: "Fresh stock for busy kitchens",
     description:
-      "Welcome guests with curated seasonal visuals, faster wayfinding, and a strong first impression built around your A1.webp to A4.webp banner set.",
+      "Shop produce, pantry lines, and everyday essentials in one clean storefront.",
     imageUrl: "/A1.webp",
-    highlights: [
-      "Fresh produce",
-      "Daily kitchen prep",
-      "Clean storefront feel",
-    ],
+    highlights: ["Fresh produce", "Pantry staples", "Fast browsing"],
     primaryAction: {
       href: "/products",
       label: "Browse products",
@@ -30,67 +29,53 @@ const heroSlides = [
   },
   {
     id: "home-hero-2",
-    eyebrow: "Bulk-friendly ordering",
-    title:
-      "Designed for homes, cafes, restaurants, and growing hospitality teams",
+    eyebrow: "Retail and wholesale",
+    title: "Simple ordering for homes, cafes, and restaurants",
     description:
-      "The updated hero keeps the message simple and the actions obvious, helping buyers move quickly from browsing to ordering without losing the visual impact of the brand.",
+      "Retail shoppers see standard prices. Approved trade buyers unlock wholesale prices and MOQs.",
     imageUrl: "/A2.webp",
-    highlights: [
-      "Retail and wholesale",
-      "Clear buying paths",
-      "Fast decision making",
-    ],
+    highlights: ["Retail + wholesale", "Clear pricing", "Trade signup"],
     primaryAction: {
       href: "/products",
-      label: "Shop the catalog",
+      label: "Shop catalog",
     },
     secondaryAction: {
-      href: "/checkout",
-      label: "Start checkout",
+      href: "/wholesale/register",
+      label: "Wholesale signup",
     },
   },
   {
     id: "home-hero-3",
-    eyebrow: "Service-ready stock",
-    title:
-      "Sharper call-to-action buttons make the main routes much easier to notice",
+    eyebrow: "Popular picks",
+    title: "Featured products with clearer actions",
     description:
-      "Both homepage hero buttons now use high-contrast colors and stronger surfaces so the text stays readable over detailed photography and warm overlays.",
+      "Product cards now keep pricing, stock, and next steps easy to read at a glance.",
     imageUrl: "/A3.webp",
-    highlights: [
-      "High-contrast CTAs",
-      "Visible labels",
-      "Branded color treatment",
-    ],
+    highlights: ["Stronger buttons", "Cleaner cards", "Quick decisions"],
     primaryAction: {
-      href: "/about",
-      label: "Meet the team",
-    },
-    secondaryAction: {
       href: "/products",
       label: "See featured items",
+    },
+    secondaryAction: {
+      href: "/about",
+      label: "Our service",
     },
   },
   {
     id: "home-hero-4",
     eyebrow: "Built for trust",
-    title: "A cleaner story from homepage banner to About Us page",
+    title: "A warmer storefront with a cleaner first impression",
     description:
-      "The new page flow connects your hero visuals to a dedicated brand page, giving visitors a stronger sense of who you are before they place an order.",
+      "Shorter messaging and tidier spacing help shoppers get where they need faster.",
     imageUrl: "/A4.webp",
-    highlights: [
-      "Brand storytelling",
-      "Stronger navigation",
-      "Modern storefront polish",
-    ],
+    highlights: ["Aligned hero", "Readable CTAs", "Modern finish"],
     primaryAction: {
-      href: "/about",
-      label: "Visit About Us",
-    },
-    secondaryAction: {
       href: "/products",
       label: "Explore products",
+    },
+    secondaryAction: {
+      href: "/about",
+      label: "Learn more",
     },
   },
 ];
@@ -98,7 +83,7 @@ const heroSlides = [
 export default async function HomePage() {
   const user = await getCurrentUser();
   const pricingMode = getPricingModeForRole(user?.role);
-  const showWholesalePrice = Boolean(user);
+  const showWholesalePrice = canViewWholesalePricing(user?.role);
   const { featuredProducts, categories, totalProducts } =
     await getHomepageContent();
 
@@ -116,8 +101,7 @@ export default async function HomePage() {
               {totalProducts}+
             </p>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Products across pantry, frozen, produce, packaging, and beverage
-              categories.
+              Products across pantry, produce, frozen, beverage, and packaging.
             </p>
           </div>
           <div className="rounded-[2rem] border border-white/70 bg-[rgba(255,252,246,0.92)] p-6 shadow-[0_22px_60px_rgba(15,23,42,0.06)]">
@@ -125,11 +109,11 @@ export default async function HomePage() {
               Pricing access
             </p>
             <p className="mt-3 font-heading text-3xl font-semibold text-slate-900">
-              {showWholesalePrice ? "Wholesale unlocked" : "Normal price only"}
+              {showWholesalePrice ? "Wholesale unlocked" : "Retail only"}
             </p>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Wholesale prices and bulk minimum quantities appear after login,
-              while guest users only see normal pricing.
+              Trade accounts can view wholesale prices and MOQs. Guests and
+              retail users see standard pricing.
             </p>
           </div>
           <div className="rounded-[2rem] border border-white/70 bg-[rgba(255,252,246,0.92)] p-6 shadow-[0_22px_60px_rgba(15,23,42,0.06)]">
@@ -142,8 +126,7 @@ export default async function HomePage() {
                 : "Customer active"}
             </p>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Switch between standard ordering and wholesale buying with the
-              right account type.
+              Use the right account type for everyday shopping or bulk buying.
             </p>
           </div>
         </div>
@@ -156,12 +139,16 @@ export default async function HomePage() {
               Featured products
             </p>
             <h2 className="mt-3 font-heading text-3xl font-semibold text-slate-900 sm:text-4xl">
-              Freshly styled product boxes for the most popular items
+              Popular picks for kitchens and households
             </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+              Cleaner cards, stronger buttons, and pricing that is easier to
+              scan.
+            </p>
           </div>
           <Link
             href="/products"
-            className="text-sm font-semibold text-[var(--brand-dark)]"
+            className="inline-flex h-11 items-center justify-center rounded-full border border-[var(--brand)]/25 bg-[rgba(255,248,235,0.95)] px-5 text-sm font-semibold text-[var(--brand-dark)] transition hover:border-[var(--brand)]/40 hover:bg-white"
           >
             View full catalog
           </Link>
@@ -190,8 +177,8 @@ export default async function HomePage() {
               </h2>
             </div>
             <p className="max-w-xl text-sm leading-6 text-slate-600">
-              Organized for both everyday shoppers and procurement teams that
-              need to find the right stock quickly.
+              Organized for everyday shoppers and procurement teams that need to
+              move quickly.
             </p>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">

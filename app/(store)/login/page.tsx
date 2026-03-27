@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { LoginForm } from "@/components/forms/login-form";
@@ -43,4 +43,3 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
     </div>
   );
 }
-

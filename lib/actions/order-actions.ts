@@ -262,35 +262,39 @@ export async function placeOrderAction(
       });
     });
 
-    await sendOrderEmails({
-      pricingMode,
-      orderNumber: order.orderNumber,
-      status: order.status,
-      createdAt: order.createdAt,
-      total: Number(order.total),
-      customer: {
-        name: parsed.data.customerName,
-        email: parsed.data.email,
-        phone: parsed.data.phone,
-        businessName: parsed.data.businessName
-      },
-      shippingAddress: {
-        line1: order.shippingAddress.line1,
-        line2: order.shippingAddress.line2,
-        city: order.shippingAddress.city,
-        state: order.shippingAddress.state,
-        postalCode: order.shippingAddress.postalCode,
-        country: order.shippingAddress.country
-      },
-      items: order.items.map((item) => ({
-        productName: item.productName,
-        productSku: item.productSku,
-        quantity: item.quantity,
-        unitPrice: Number(item.unitPrice),
-        lineTotal: Number(item.lineTotal)
-      })),
-      notes: order.notes
-    });
+    try {
+      await sendOrderEmails({
+        pricingMode,
+        orderNumber: order.orderNumber,
+        status: order.status,
+        createdAt: order.createdAt,
+        total: Number(order.total),
+        customer: {
+          name: parsed.data.customerName,
+          email: parsed.data.email,
+          phone: parsed.data.phone,
+          businessName: parsed.data.businessName
+        },
+        shippingAddress: {
+          line1: order.shippingAddress.line1,
+          line2: order.shippingAddress.line2,
+          city: order.shippingAddress.city,
+          state: order.shippingAddress.state,
+          postalCode: order.shippingAddress.postalCode,
+          country: order.shippingAddress.country
+        },
+        items: order.items.map((item) => ({
+          productName: item.productName,
+          productSku: item.productSku,
+          quantity: item.quantity,
+          unitPrice: Number(item.unitPrice),
+          lineTotal: Number(item.lineTotal)
+        })),
+        notes: order.notes
+      });
+    } catch (error) {
+      console.error("[email] Failed to send order emails", error);
+    }
 
     revalidatePath("/");
     revalidatePath("/products");

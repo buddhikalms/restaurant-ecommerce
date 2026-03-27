@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { RegisterForm } from "@/components/forms/register-form";
@@ -35,4 +35,3 @@ export default async function RegisterPage() {
     </div>
   );
 }
-

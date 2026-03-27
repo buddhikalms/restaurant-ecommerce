@@ -1,10 +1,10 @@
-﻿import { EmptyState } from "@/components/ui/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { ProductCard } from "@/components/store/product-card";
 import { ProductFilters } from "@/components/store/product-filters";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { getProducts, getStoreCategories } from "@/lib/data/store";
-import { getPricingModeForRole } from "@/lib/user-roles";
+import { canViewWholesalePricing, getPricingModeForRole } from "@/lib/user-roles";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -21,7 +21,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
   const page = Number(toValue(params.page) || "1");
   const user = await getCurrentUser();
   const pricingMode = getPricingModeForRole(user?.role);
-  const showWholesalePrice = Boolean(user);
+  const showWholesalePrice = canViewWholesalePricing(user?.role);
 
   const [categories, productResult] = await Promise.all([
     getStoreCategories(),

@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { useCart } from "@/components/providers/cart-provider";
@@ -95,28 +96,19 @@ export function AddToCartControls({
         ? `Selected ${optionLabel}: ${selectedVariant.name}. `
         : "";
 
-      if (pricingMode === "wholesale") {
+      if (showWholesalePrice) {
         return `${selectedLabel}Wholesale pricing updates per ${optionLabel}, with minimum quantities based on the option you choose.`;
       }
 
-      if (!showWholesalePrice) {
-        return `${selectedLabel}Retail pricing is active. Log in to unlock wholesale prices for each ${optionLabel}.`;
-      }
-
-      return `${selectedLabel}Retail pricing is active. Signed-in users can compare wholesale pricing for each ${optionLabel}.`;
+      return `${selectedLabel}Retail pricing is active. Create a wholesale account to unlock wholesale pricing for each ${optionLabel}.`;
     }
 
-    if (pricingMode === "wholesale") {
+    if (showWholesalePrice) {
       return `Wholesale pricing active at ${formatCurrency(unitPrice)} with a minimum order quantity of ${product.minOrderQuantity} units.`;
     }
 
-    if (!showWholesalePrice) {
-      return `Retail pricing is active at ${formatCurrency(unitPrice)}. Log in to unlock wholesale pricing and bulk minimums.`;
-    }
-
-    return `Retail pricing is active at ${formatCurrency(unitPrice)}. Signed-in users can also compare wholesale pricing and bulk minimum quantities.`;
+    return `Retail pricing is active at ${formatCurrency(unitPrice)}. Create a wholesale account to unlock wholesale pricing and bulk minimums.`;
   }, [
-    pricingMode,
     product.minOrderQuantity,
     product.productType,
     product.variantLabel,
@@ -134,13 +126,12 @@ export function AddToCartControls({
               <p className="mb-3 block text-sm font-semibold text-slate-700">
                 {product.variantLabel || "Option"}
               </p>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-3">
                 {product.variants.map((variant) => {
                   const isSelected = variant.id === selectedVariantId;
-                  const visiblePrice =
-                    pricingMode === "wholesale" && showWholesalePrice
-                      ? variant.wholesalePrice
-                      : variant.normalPrice;
+                  const visiblePrice = showWholesalePrice
+                    ? variant.wholesalePrice
+                    : variant.normalPrice;
 
                   return (
                     <button
@@ -149,14 +140,14 @@ export function AddToCartControls({
                       aria-pressed={isSelected}
                       onClick={() => setSelectedVariantId(variant.id)}
                       className={cn(
-                        "rounded-[1.25rem] border p-4 text-left transition",
+                        "w-full rounded-[1.35rem] border p-4 text-left transition",
                         isSelected
                           ? "border-[#4a2a0a] bg-[#4a2a0a] text-[#fff4df] shadow-[0_18px_34px_rgba(74,42,10,0.2)]"
                           : "border-white/80 bg-white text-slate-900 hover:border-[var(--brand)]/35 hover:bg-[#fff8ef]",
                       )}
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
                           <p
                             className={cn(
                               "text-sm font-semibold",
@@ -174,37 +165,46 @@ export function AddToCartControls({
                             SKU {variant.sku}
                           </p>
                         </div>
-                        <span
-                          className={cn(
-                            "rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]",
-                            isSelected
-                              ? "bg-white/12 text-[#fff1d2]"
-                              : "bg-[#f8efe2] text-[var(--brand-dark)]",
-                          )}
-                        >
-                          {isSelected
-                            ? "Selected"
-                            : product.variantLabel || "Option"}
-                        </span>
+                        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                          <span
+                            className={cn(
+                              "rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]",
+                              isSelected
+                                ? "bg-white/12 text-[#fff1d2]"
+                                : "bg-[#f8efe2] text-[var(--brand-dark)]",
+                            )}
+                          >
+                            {isSelected
+                              ? "Selected"
+                              : product.variantLabel || "Option"}
+                          </span>
+                          <p
+                            className={cn(
+                              "font-heading text-xl font-semibold",
+                              isSelected ? "text-white" : "text-slate-900",
+                            )}
+                          >
+                            {formatCurrency(visiblePrice)}
+                          </p>
+                        </div>
                       </div>
-                      <p
+                      <div
                         className={cn(
-                          "mt-4 font-heading text-xl font-semibold",
-                          isSelected ? "text-white" : "text-slate-900",
-                        )}
-                      >
-                        {formatCurrency(visiblePrice)}
-                      </p>
-                      <p
-                        className={cn(
-                          "mt-2 text-sm",
+                          "mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm",
                           isSelected ? "text-[#f0dfc2]" : "text-slate-600",
                         )}
                       >
-                        {variant.stockQuantity > 0
-                          ? `${variant.stockQuantity} units in stock`
-                          : "Out of stock"}
-                      </p>
+                        <p>
+                          {variant.stockQuantity > 0
+                            ? `${variant.stockQuantity} units in stock`
+                            : "Out of stock"}
+                        </p>
+                        <p>
+                          {showWholesalePrice
+                            ? `MOQ ${variant.minOrderQuantity}`
+                            : "Retail pricing active"}
+                        </p>
+                      </div>
                     </button>
                   );
                 })}
@@ -224,7 +224,7 @@ export function AddToCartControls({
 
             {selectedVariant ? (
               <div
-                className={`grid gap-3 ${showWholesalePrice ? "sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3" : "sm:grid-cols-[1fr_1.1fr] lg:grid-cols-1 xl:grid-cols-[1fr_1.1fr]"}`}
+                className={`grid gap-3 ${showWholesalePrice ? "sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3" : "sm:grid-cols-1"}`}
               >
                 <div className="rounded-[1.25rem] border border-white/80 bg-white p-3">
                   <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">
@@ -253,11 +253,7 @@ export function AddToCartControls({
                       </p>
                     </div>
                   </>
-                ) : (
-                  <div className="rounded-[1.25rem] border border-dashed border-[var(--brand)]/20 bg-white/80 p-3 text-sm leading-6 text-slate-600">
-                    Log in to reveal wholesale pricing for this option.
-                  </div>
-                )}
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -322,6 +318,14 @@ export function AddToCartControls({
         </Button>
       </div>
       <p className="text-sm text-slate-500">{helperText}</p>
+      {!showWholesalePrice ? (
+        <Link
+          href="/wholesale/register"
+          className="inline-flex h-10 items-center justify-center rounded-full border border-[var(--brand)]/25 bg-[rgba(255,248,235,0.95)] px-4 text-sm font-semibold text-[var(--brand-dark)] transition hover:bg-white"
+        >
+          Create wholesale account
+        </Link>
+      ) : null}
       {message ? (
         <p className="text-sm font-medium text-emerald-700">{message}</p>
       ) : null}

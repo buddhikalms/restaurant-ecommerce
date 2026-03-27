@@ -2,6 +2,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { Prisma } from "prisma-generated-client-v2";
 
 import { PRODUCT_PAGE_SIZE } from "@/lib/constants";
+import { coerceGalleryImageUrls } from "@/lib/product-gallery";
 import { prisma } from "@/lib/prisma";
 import { type PricingMode } from "@/lib/user-roles";
 
@@ -91,16 +92,16 @@ function getProductWhere(filters: ProductFilterOptions): Prisma.ProductWhereInpu
     ...(filters.query
       ? {
           OR: [
-            { name: { contains: filters.query, mode: "insensitive" } },
-            { sku: { contains: filters.query, mode: "insensitive" } },
-            { description: { contains: filters.query, mode: "insensitive" } },
+            { name: { contains: filters.query } },
+            { sku: { contains: filters.query } },
+            { description: { contains: filters.query } },
             {
               variants: {
                 some: {
                   isActive: true,
                   OR: [
-                    { name: { contains: filters.query, mode: "insensitive" } },
-                    { sku: { contains: filters.query, mode: "insensitive" } }
+                    { name: { contains: filters.query } },
+                    { sku: { contains: filters.query } }
                   ]
                 }
               }
@@ -115,6 +116,7 @@ function getProductWhere(filters: ProductFilterOptions): Prisma.ProductWhereInpu
 function serializeProduct(product: StoreProductRecord) {
   return {
     ...product,
+    galleryImageUrls: coerceGalleryImageUrls(product.galleryImageUrls),
     normalPrice: Number(product.normalPrice),
     wholesalePrice: Number(product.wholesalePrice),
     variants: product.variants.map((variant) => ({

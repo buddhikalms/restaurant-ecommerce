@@ -1,0 +1,2 @@
+-- Wholesale profile is included in the MySQL baseline migration.
+-- This migration is intentionally left empty after switching providers.

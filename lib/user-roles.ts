@@ -1,4 +1,4 @@
-﻿export type AppRole = "ADMIN" | "CUSTOMER" | "WHOLESALE_CUSTOMER";
+export type AppRole = "ADMIN" | "CUSTOMER" | "WHOLESALE_CUSTOMER";
 export type PricingMode = "retail" | "wholesale";
 
 export function isWholesaleRole(role?: string | null): role is "ADMIN" | "WHOLESALE_CUSTOMER" {
@@ -15,6 +15,10 @@ export function isCustomerRole(role?: string | null): role is "CUSTOMER" | "WHOL
 
 export function getPricingModeForRole(role?: string | null): PricingMode {
   return isWholesaleRole(role) ? "wholesale" : "retail";
+}
+
+export function canViewWholesalePricing(role?: string | null) {
+  return isWholesaleRole(role);
 }
 
 export function getDashboardPathForRole(role?: string | null) {
@@ -54,4 +58,3 @@ export function resolveCallbackUrlForRole(callbackUrl: string | undefined, role?
 
   return callbackUrl;
 }
-

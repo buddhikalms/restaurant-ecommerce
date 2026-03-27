@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AddToCartControls } from "@/components/store/add-to-cart-controls";
@@ -8,7 +8,10 @@ import { StockBadge } from "@/components/store/status-badge";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { getProductBySlug } from "@/lib/data/store";
 import { buildProductGalleryImages } from "@/lib/product-gallery";
-import { getPricingModeForRole } from "@/lib/user-roles";
+import {
+  canViewWholesalePricing,
+  getPricingModeForRole,
+} from "@/lib/user-roles";
 import { formatCurrency } from "@/lib/utils";
 
 type Params = Promise<{ slug: string }>;
@@ -22,7 +25,7 @@ export default async function ProductDetailsPage({
   const product = await getProductBySlug(slug);
   const user = await getCurrentUser();
   const pricingMode = getPricingModeForRole(user?.role);
-  const showWholesalePrice = Boolean(user);
+  const showWholesalePrice = canViewWholesalePricing(user?.role);
 
   if (!product) {
     notFound();
@@ -68,10 +71,9 @@ export default async function ProductDetailsPage({
 
           {isVariable ? (
             <div className="mt-6 rounded-[1.7rem] border border-[var(--brand)]/15 bg-[rgba(255,250,242,0.86)] p-4 text-sm leading-6 text-slate-600">
-              Available in {optionCount}{" "}
-              {product.variantLabel?.toLowerCase() || "option"}
-              {optionCount === 1 ? "" : "s"}. Choose a clickable option below to
-              see its exact price, stock, and wholesale minimum.
+              {showWholesalePrice
+                ? `Available in ${optionCount} ${product.variantLabel?.toLowerCase() || "option"}${optionCount === 1 ? "" : "s"}. Choose an option below to see its exact price, stock, and wholesale minimum.`
+                : `Available in ${optionCount} ${product.variantLabel?.toLowerCase() || "option"}${optionCount === 1 ? "" : "s"}. Choose an option below to see its exact price and stock. Wholesale pricing unlocks after you register for a wholesale account.`}
             </div>
           ) : null}
 
@@ -79,7 +81,7 @@ export default async function ProductDetailsPage({
             className={
               showWholesalePrice
                 ? "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-3"
-                : "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-[1fr_1.2fr]"
+                : "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-1"
             }
           >
             <div
@@ -123,42 +125,29 @@ export default async function ProductDetailsPage({
                   </p>
                 </div>
               </>
-            ) : (
-              <div className="rounded-[1.25rem] border border-dashed border-[var(--brand)]/20 bg-white/70 p-4 text-sm leading-6 text-slate-600">
-                Log in to see wholesale pricing and bulk minimum quantities for
-                this product.
-              </div>
-            )}
+            ) : null}
           </div>
 
           <p className="mt-4 text-sm leading-6 text-slate-600">
             {showWholesalePrice
-              ? pricingMode === "wholesale"
-                ? isVariable
-                  ? "Wholesale pricing is active, and the selected option below controls the exact MOQ and price you order."
-                  : "Wholesale pricing and minimum quantities are active for your account."
-                : isVariable
-                  ? "You are signed in, so you can compare retail and wholesale pricing for each option below."
-                  : "You are signed in, so wholesale pricing is visible for comparison."
+              ? isVariable
+                ? "Wholesale pricing is active, and the selected option below controls the exact MOQ and price you order."
+                : "Wholesale pricing and minimum quantities are active for your account."
               : isVariable
-                ? "Guest users only see normal pricing. Log in to reveal wholesale prices for each option."
-                : "Guest users only see normal pricing. Log in to reveal wholesale pricing."}
+                ? "Retail pricing is shown here. Create a wholesale account to unlock wholesale prices and bulk minimums for each option."
+                : "Retail pricing is shown here. Create a wholesale account to unlock wholesale pricing and bulk minimums."}
           </p>
 
           {!showWholesalePrice ? (
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/login"
-                className="inline-flex h-11 items-center justify-center rounded-full bg-[#4a2a0a] px-5 text-sm font-semibold text-[#fff4df] transition hover:bg-[#653713]"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/wholesale/register"
-                className="inline-flex h-11 items-center justify-center rounded-full border border-[#e7d1af] bg-[#fff7ea] px-5 text-sm font-semibold text-[var(--brand-dark)] transition hover:bg-white"
-              >
-                Create wholesale account
-              </Link>
+              {!user ? (
+                <Link
+                  href="/login"
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-[#4a2a0a] px-5 text-sm font-semibold text-[#fff4df] transition hover:bg-[#653713]"
+                >
+                  <span className="text-white">Log in</span>
+                </Link>
+              ) : null}
             </div>
           ) : null}
 

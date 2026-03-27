@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { LogIn, UserRound } from "lucide-react";
 
 import { auth } from "@/auth";
@@ -40,6 +40,12 @@ export async function SiteHeader() {
               className="transition hover:text-[var(--brand-dark)]"
             >
               About
+            </Link>
+            <Link
+              href="/contact"
+              className="transition hover:text-[var(--brand-dark)]"
+            >
+              Contact
             </Link>
             <Link
               href="/products"
@@ -88,10 +94,10 @@ export async function SiteHeader() {
               <>
                 <Link
                   href="/login"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#4a2a0a] px-5 text-sm font-semibold text-[#fff4df] shadow-[0_14px_34px_rgba(74,42,10,0.28)] transition hover:bg-[#653713]"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#4a2a0a] px-5 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(74,42,10,0.28)] transition hover:bg-[#653713]"
                 >
-                  <LogIn className="h-4 w-4" />
-                  <span>Log in</span>
+                  <LogIn className="h-4 w-4" text-white />
+                  <span className="text-white">Log in</span>
                 </Link>
                 <CartIndicator />
               </>

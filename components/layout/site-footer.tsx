@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 export function SiteFooter() {
   return (
@@ -20,6 +20,7 @@ export function SiteFooter() {
           </p>
           <div className="mt-4 flex flex-col gap-3 text-sm text-[#d4c4a6]">
             <Link href="/about">About us</Link>
+            <Link href="/contact">Contact us</Link>
             <Link href="/products">All products</Link>
             <Link href="/cart">Cart</Link>
             <Link href="/checkout">Checkout</Link>

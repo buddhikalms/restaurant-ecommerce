@@ -1,5 +1,6 @@
 import { unstable_noStore as noStore } from "next/cache";
 
+import { coerceGalleryImageUrls } from "@/lib/product-gallery";
 import { prisma } from "@/lib/prisma";
 
 type AdminProductFilters = {
@@ -74,14 +75,14 @@ export async function getAdminProducts(filters: AdminProductFilters) {
     where: filters.query
       ? {
           OR: [
-            { name: { contains: filters.query, mode: "insensitive" } },
-            { sku: { contains: filters.query, mode: "insensitive" } },
+            { name: { contains: filters.query } },
+            { sku: { contains: filters.query } },
             {
               variants: {
                 some: {
                   OR: [
-                    { name: { contains: filters.query, mode: "insensitive" } },
-                    { sku: { contains: filters.query, mode: "insensitive" } }
+                    { name: { contains: filters.query } },
+                    { sku: { contains: filters.query } }
                   ]
                 }
               }
@@ -124,6 +125,7 @@ export async function getAdminProductById(id: string) {
 
   return {
     ...product,
+    galleryImageUrls: coerceGalleryImageUrls(product.galleryImageUrls),
     normalPrice: Number(product.normalPrice),
     wholesalePrice: Number(product.wholesalePrice),
     variants: product.variants.map((variant) => ({
@@ -158,10 +160,10 @@ export async function getAdminOrders(filters: AdminOrderFilters) {
       ...(filters.query
         ? {
             OR: [
-              { orderNumber: { contains: filters.query, mode: "insensitive" } },
-              { user: { email: { contains: filters.query, mode: "insensitive" } } },
-              { user: { businessName: { contains: filters.query, mode: "insensitive" } } },
-              { user: { name: { contains: filters.query, mode: "insensitive" } } }
+              { orderNumber: { contains: filters.query } },
+              { user: { email: { contains: filters.query } } },
+              { user: { businessName: { contains: filters.query } } },
+              { user: { name: { contains: filters.query } } }
             ]
           }
         : {})

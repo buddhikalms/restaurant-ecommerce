@@ -18,6 +18,38 @@ function isValidUrl(value: string) {
   }
 }
 
+function sanitizeGalleryImageUrls(values: string[]) {
+  return Array.from(
+    new Set(
+      values
+        .map((value) => value.trim())
+        .filter(Boolean)
+    )
+  );
+}
+
+export function coerceGalleryImageUrls(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return sanitizeGalleryImageUrls(value.filter((item): item is string => typeof item === "string"));
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim();
+
+    if (!normalized) {
+      return [];
+    }
+
+    try {
+      return coerceGalleryImageUrls(JSON.parse(normalized));
+    } catch {
+      return parseGalleryImageUrlsText(normalized);
+    }
+  }
+
+  return [];
+}
+
 export function getGalleryImageValidationError(text?: string | null) {
   const galleryImageUrls = parseGalleryImageUrlsText(text);
 
@@ -38,10 +70,10 @@ export function normalizeGalleryImageUrls(primaryImageUrl: string, text?: string
   return parseGalleryImageUrlsText(text).filter((url) => url !== normalizedPrimaryImageUrl);
 }
 
-export function buildProductGalleryImages(primaryImageUrl: string, galleryImageUrls: string[] = []) {
+export function buildProductGalleryImages(primaryImageUrl: string, galleryImageUrls: unknown = []) {
   return Array.from(
     new Set(
-      [primaryImageUrl, ...galleryImageUrls]
+      [primaryImageUrl, ...coerceGalleryImageUrls(galleryImageUrls)]
         .map((value) => value.trim())
         .filter(Boolean)
     )
