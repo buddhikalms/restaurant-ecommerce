@@ -396,7 +396,7 @@ async function main() {
     update: {
       name: "Operations Admin",
       role: Role.ADMIN,
-      businessName: "Harvest Wholesale",
+      businessName: "CeylonTaste",
       phone: "+1 555 0100",
       passwordHash: adminPasswordHash
     },
@@ -404,7 +404,7 @@ async function main() {
       name: "Operations Admin",
       email: "admin@harvestwholesale.com",
       role: Role.ADMIN,
-      businessName: "Harvest Wholesale",
+      businessName: "CeylonTaste",
       phone: "+1 555 0100",
       passwordHash: adminPasswordHash
     }

@@ -7,7 +7,7 @@ import { CartProvider } from "@/components/providers/cart-provider";
 import { getPricingModeForRole } from "@/lib/user-roles";
 
 export const metadata: Metadata = {
-  title: "Harvest Wholesale",
+  title: "CeylonTaste",
   description: "Wholesale ordering platform for restaurants, cafes, and food service teams."
 };
 

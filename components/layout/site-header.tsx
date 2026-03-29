@@ -19,7 +19,7 @@ export async function SiteHeader() {
           </div>
           <div>
             <p className="font-heading text-lg font-semibold text-slate-900">
-              Harvest Wholesale
+              CeylonTaste
             </p>
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
               Restaurant Supply

@@ -21,7 +21,7 @@ export default function AboutPage() {
       <section className="relative overflow-hidden">
         <RemoteImage
           src={storyImage}
-          alt="About Harvest Wholesale"
+          alt="About CeylonTaste"
           width={1800}
           height={920}
           sizes="100vw"
@@ -85,7 +85,7 @@ export default function AboutPage() {
           <div className="overflow-hidden rounded-[2.5rem] border border-white/70 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.09)]">
             <RemoteImage
               src={teamImage}
-              alt="Harvest Wholesale team and service values"
+              alt="CeylonTaste team and service values"
               width={1200}
               height={920}
               sizes="(min-width: 1024px) 38vw, 100vw"

@@ -1,10 +1,10 @@
-﻿# Harvest Wholesale
+﻿# CeylonTaste
 
 A full-stack restaurant wholesale e-commerce platform built with Next.js 16.2.0, the App Router, TypeScript, Tailwind CSS, Prisma ORM, PostgreSQL, NextAuth/Auth.js, Zod, React Hook Form, and server actions.
 
 ## 1. Project Architecture Overview
 
-Harvest Wholesale is structured around a clear split between storefront, account, and admin domains:
+CeylonTaste is structured around a clear split between storefront, account, and admin domains:
 
 - Public storefront for catalog browsing, product detail pages, cart management, and checkout
 - Authenticated customer account area for order history and order detail tracking

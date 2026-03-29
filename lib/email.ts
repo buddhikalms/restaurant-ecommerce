@@ -84,7 +84,7 @@ function createOrderEmailHtml(title: string, intro: string, payload: OrderEmailP
   return `
     <div style="font-family: Arial, sans-serif; background: #f8fafc; padding: 32px;">
       <div style="max-width: 720px; margin: 0 auto; background: white; border-radius: 20px; padding: 32px; border: 1px solid #e2e8f0;">
-        <p style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #92400e; margin: 0 0 8px;">Harvest Wholesale</p>
+        <p style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #92400e; margin: 0 0 8px;">CeylonTaste</p>
         <h1 style="margin: 0; font-size: 28px; color: #0f172a;">${escapeHtml(title)}</h1>
         <p style="font-size: 16px; color: #475569; line-height: 1.7; margin-top: 16px;">${escapeHtml(intro)}</p>
 
@@ -130,7 +130,7 @@ function createContactEmailHtml(title: string, intro: string, payload: ContactEm
   return `
     <div style="font-family: Arial, sans-serif; background: #f8fafc; padding: 32px;">
       <div style="max-width: 680px; margin: 0 auto; background: white; border-radius: 20px; padding: 32px; border: 1px solid #e2e8f0;">
-        <p style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #92400e; margin: 0 0 8px;">Harvest Wholesale</p>
+        <p style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #92400e; margin: 0 0 8px;">CeylonTaste</p>
         <h1 style="margin: 0; font-size: 28px; color: #0f172a;">${escapeHtml(title)}</h1>
         <p style="font-size: 16px; color: #475569; line-height: 1.7; margin-top: 16px;">${escapeHtml(intro)}</p>
 
@@ -175,7 +175,7 @@ function createTransporter() {
 }
 
 async function sendMail({ to, subject, html }: { to: string; subject: string; html: string }) {
-  const from = env.EMAIL_FROM || "Harvest Wholesale <no-reply@example.com>";
+  const from = env.EMAIL_FROM || "CeylonTaste <no-reply@example.com>";
 
   if (env.RESEND_API_KEY) {
     const resend = new Resend(env.RESEND_API_KEY);
@@ -207,8 +207,8 @@ export async function sendOrderEmails(payload: OrderEmailPayload) {
   const customerHtml = createOrderEmailHtml(
     payload.pricingMode === "wholesale" ? "Your wholesale order has been received" : "Your order has been received",
     payload.pricingMode === "wholesale"
-      ? "Thanks for placing your wholesale order with Harvest Wholesale. Our team is reviewing your items and will keep you updated as the order moves through fulfillment."
-      : "Thanks for placing your order with Harvest Wholesale. Our team is reviewing your items and will keep you updated as the order moves through fulfillment.",
+      ? "Thanks for placing your wholesale order with CeylonTaste. Our team is reviewing your items and will keep you updated as the order moves through fulfillment."
+      : "Thanks for placing your order with CeylonTaste. Our team is reviewing your items and will keep you updated as the order moves through fulfillment.",
     payload
   );
 
@@ -240,7 +240,7 @@ export async function sendContactEmails(payload: ContactEmailPayload) {
   const adminRecipient = getContactNotificationEmail();
   const customerHtml = createContactEmailHtml(
     "We received your message",
-    "Thanks for contacting Harvest Wholesale. Our team will review your message and get back to you soon.",
+    "Thanks for contacting CeylonTaste. Our team will review your message and get back to you soon.",
     payload
   );
   const adminHtml = createContactEmailHtml(

@@ -6,7 +6,7 @@ export function SiteFooter() {
       <div className="page-shell grid gap-10 py-12 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
         <div>
           <p className="font-heading text-2xl font-semibold">
-            Harvest Wholesale
+            CeylonTaste
           </p>
           <p className="mt-4 max-w-md text-sm leading-6 text-[#d4c4a6]">
             Flexible retail and wholesale ordering for homes, restaurants,
