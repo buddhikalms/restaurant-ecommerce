@@ -38,7 +38,7 @@ export default async function AdminProductsPage({
             href="/admin/products/new"
             className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-white transition hover:bg-[var(--brand-dark)]"
           >
-            Add product
+            <span className="text-white">Add product</span>
           </Link>
         </div>
         <form className="mt-6 flex flex-col gap-3 sm:flex-row" method="get">

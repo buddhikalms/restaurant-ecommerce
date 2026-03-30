@@ -79,7 +79,7 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
           <div className="relative z-10 flex h-full items-end">
             <div className="page-shell flex h-full w-full items-end pb-6 pt-8 sm:pb-8 sm:pt-10 lg:pb-10 lg:pt-12">
               <div className="flex min-h-[300px] w-full max-w-[38rem] flex-col rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(19,15,11,0.76),rgba(19,15,11,0.58))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.22)] backdrop-blur-md sm:min-h-[320px] sm:p-6 lg:min-h-[340px] lg:p-7">
-                <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-[0.18em] sm:text-[11px]">
+                <div className="flex flex-wrap items-center gap-3 text-[9px] uppercase tracking-[0.16em] sm:text-[10px]">
                   <span className="font-semibold text-[#f0c67a]">
                     {activeSlide.eyebrow}
                   </span>
@@ -89,10 +89,10 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
                   </span>
                 </div>
 
-                <h1 className="mt-3 max-w-[30rem] font-heading text-[clamp(1.9rem,4vw,3.25rem)] font-semibold leading-[1.08]">
+                <h1 className="mt-3 max-w-[28rem] font-heading text-[clamp(1.55rem,3.2vw,2.7rem)] font-semibold leading-[1.08]">
                   {activeSlide.title}
                 </h1>
-                <p className="mt-3 max-w-[31rem] text-xs leading-6 text-[#f1e4cf] sm:text-sm sm:leading-7">
+                <p className="mt-3 max-w-[29rem] text-[11px] leading-5 text-[#f1e4cf] sm:text-xs sm:leading-6">
                   {activeSlide.description}
                 </p>
 
@@ -100,7 +100,7 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
                   {activeSlide.highlights.map((highlight) => (
                     <span
                       key={highlight}
-                      className="rounded-full border border-[#f0c67a]/45 bg-white/10 px-3 py-1.5 text-xs font-medium text-[#fff4df] shadow-[0_10px_24px_rgba(15,10,8,0.18)] backdrop-blur-sm"
+                      className="rounded-full border border-[#f0c67a]/45 bg-white/10 px-3 py-1.5 text-[11px] font-medium text-[#fff4df] shadow-[0_10px_24px_rgba(15,10,8,0.18)] backdrop-blur-sm"
                     >
                       {highlight}
                     </span>
@@ -110,7 +110,7 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <Link
                     href={activeSlide.primaryAction.href}
-                    className="inline-flex h-10 items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-[#fff4df] shadow-[0_18px_38px_rgba(74,42,10,0.28)] transition hover:bg-[#653713]"
+                    className="inline-flex h-10 items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-xs font-semibold text-[#fff4df] shadow-[0_18px_38px_rgba(74,42,10,0.28)] transition hover:bg-[#653713] sm:text-sm"
                   >
                     {activeSlide.primaryAction.label}
                   </Link>
@@ -133,7 +133,7 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
                       />
                     ))}
                   </div>
-                  <p className="text-xs leading-5 text-white/72 sm:text-sm sm:leading-6">
+                  <p className="text-[11px] leading-5 text-white/72 sm:text-xs sm:leading-5">
                     Retail and wholesale ordering with clearer product paths.
                   </p>
                 </div>
@@ -145,3 +145,4 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
     </section>
   );
 }
+

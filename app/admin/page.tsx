@@ -62,13 +62,13 @@ export default async function AdminDashboardPage() {
               href="/admin/orders"
               className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-white transition hover:bg-[var(--brand-dark)]"
             >
-              Manage orders
+              <span className="text-white">Manage orders</span>
             </Link>
             <Link
               href="/admin/products/new"
               className="inline-flex h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
             >
-              Add product
+              <span className="text-white">Add product</span>
             </Link>
           </div>
         </div>

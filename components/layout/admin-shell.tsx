@@ -45,7 +45,16 @@ export function AdminShell({
                       : "text-slate-700 hover:bg-white hover:text-slate-900",
                   )}
                 >
-                  {item.label}
+                  <span
+                    className={cn(
+                      "rounded-2xl px-4 py-3 text-sm font-semibold transition",
+                      active
+                        ? "bg-[var(--brand-dark)] text-white"
+                        : "text-slate-700 hover:bg-white hover:text-slate-900",
+                    )}
+                  >
+                    {item.label}
+                  </span>
                 </Link>
               );
             })}
