@@ -1,4 +1,4 @@
-import { PrismaClient, Role, OrderStatus, ProductType } from "prisma-generated-client-v2";
+﻿import { PrismaClient, Role, OrderStatus, ProductType } from "prisma-generated-client-v2";
 import { hash } from "bcryptjs";
 
 import { summarizeActiveProductVariants } from "../lib/product-variants";
@@ -512,6 +512,54 @@ async function main() {
     }
   });
 
+  await prisma.wholesaleProfile.upsert({
+    where: { userId: wholesaleCustomer.id },
+    update: {
+      firstName: "Elena",
+      lastName: "Rivera",
+      mobileNumber: wholesaleCustomer.phone ?? "+1 555 0111",
+      telephoneNumber: wholesaleCustomer.phone ?? "+1 555 0111",
+      tradingName: wholesaleCustomer.businessName,
+      deliveryAddressLine1: shippingAddress.line1,
+      deliveryAddressLine2: shippingAddress.line2,
+      deliveryAddressLine3: null,
+      deliveryTown: shippingAddress.city,
+      deliveryPostcode: shippingAddress.postalCode,
+      differentInvoiceAddress: false,
+      invoiceAddressLine1: null,
+      invoiceAddressLine2: null,
+      invoiceAddressLine3: null,
+      invoiceTown: null,
+      invoicePostcode: null,
+      companyType: "Limited company",
+      companyNumber: "US-9821457",
+      directorName: "Elena Rivera",
+      businessType: "Restaurant"
+    },
+    create: {
+      userId: wholesaleCustomer.id,
+      firstName: "Elena",
+      lastName: "Rivera",
+      mobileNumber: wholesaleCustomer.phone ?? "+1 555 0111",
+      telephoneNumber: wholesaleCustomer.phone ?? "+1 555 0111",
+      tradingName: wholesaleCustomer.businessName,
+      deliveryAddressLine1: shippingAddress.line1,
+      deliveryAddressLine2: shippingAddress.line2,
+      deliveryAddressLine3: null,
+      deliveryTown: shippingAddress.city,
+      deliveryPostcode: shippingAddress.postalCode,
+      differentInvoiceAddress: false,
+      invoiceAddressLine1: null,
+      invoiceAddressLine2: null,
+      invoiceAddressLine3: null,
+      invoiceTown: null,
+      invoicePostcode: null,
+      companyType: "Limited company",
+      companyNumber: "US-9821457",
+      directorName: "Elena Rivera",
+      businessType: "Restaurant"
+    }
+  });
   const sampleOrderNumber = `WS-${new Date().getFullYear()}-0001`;
   const sampleItems = products.slice(0, 3).map(({ record, seed }, index) => {
     const quantity = index === 0 ? 4 : 2;
@@ -586,3 +634,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

@@ -31,6 +31,12 @@ export function CheckoutForm({
     email?: string | null;
     phone?: string | null;
     businessName?: string | null;
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
   };
   pricingMode: PricingMode;
   accountBasePath: string;
@@ -51,12 +57,12 @@ export function CheckoutForm({
       businessName: customerDefaults.businessName ?? "",
       email: customerDefaults.email ?? "",
       phone: customerDefaults.phone ?? "",
-      line1: "",
-      line2: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "USA",
+      line1: customerDefaults.line1 ?? "",
+      line2: customerDefaults.line2 ?? "",
+      city: customerDefaults.city ?? "",
+      state: customerDefaults.state ?? "",
+      postalCode: customerDefaults.postalCode ?? "",
+      country: customerDefaults.country ?? "USA",
       notes: ""
     }
   });

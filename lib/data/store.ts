@@ -1,4 +1,4 @@
-import { unstable_noStore as noStore } from "next/cache";
+﻿import { unstable_noStore as noStore } from "next/cache";
 import { Prisma } from "prisma-generated-client-v2";
 
 import { PRODUCT_PAGE_SIZE } from "@/lib/constants";
@@ -152,7 +152,7 @@ export async function getFeaturedProducts() {
     where: { isActive: true },
     select: productSelect(),
     orderBy: [{ stockQuantity: "desc" }, { createdAt: "desc" }],
-    take: 4
+    take: 3
   });
 
   return products.map(serializeProduct);

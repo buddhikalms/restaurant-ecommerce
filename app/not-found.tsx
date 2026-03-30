@@ -10,11 +10,12 @@ export default function NotFound() {
         This service aisle is empty.
       </h1>
       <p className="mt-4 max-w-xl text-base text-slate-600">
-        The page you requested does not exist or may have moved. Head back to the storefront to continue browsing.
+        The page you requested does not exist or may have moved. Head back to
+        the storefront to continue browsing.
       </p>
       <Link
         href="/"
-        className="mt-8 inline-flex rounded-full bg-[var(--brand)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--brand-dark)]"
+        className="mt-8 inline-flex rounded-full bg-[var(--brand-dark)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--brand-dark)]"
       >
         Return home
       </Link>

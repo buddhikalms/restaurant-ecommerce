@@ -112,20 +112,7 @@ export default function AboutPage() {
               light overlays alone. That keeps the text readable even when the
               background photography is busy.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/products"
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#5b330c] px-6 text-sm font-semibold text-[#fff4df] shadow-[0_18px_34px_rgba(91,51,12,0.24)] transition hover:bg-[#704011]"
-              >
-                View all products
-              </Link>
-              <Link
-                href="/"
-                className="inline-flex h-12 items-center justify-center rounded-full border border-[var(--brand)]/25 bg-[rgba(255,248,230,0.92)] px-6 text-sm font-semibold text-[var(--brand-dark)] transition hover:border-[var(--brand)]/45 hover:bg-white"
-              >
-                Back to homepage
-              </Link>
-            </div>
+            <div className="mt-8 flex flex-wrap gap-3"></div>
           </div>
         </div>
       </section>

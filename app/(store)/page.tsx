@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { HomeHeroSlider } from "@/components/store/home-hero-slider";
 import { ProductCard } from "@/components/store/product-card";
@@ -84,6 +84,7 @@ export default async function HomePage() {
   const user = await getCurrentUser();
   const pricingMode = getPricingModeForRole(user?.role);
   const showWholesalePrice = canViewWholesalePricing(user?.role);
+  const hideNormalPrice = user?.role === "WHOLESALE_CUSTOMER";
   const { featuredProducts, categories, totalProducts } =
     await getHomepageContent();
 
@@ -153,13 +154,14 @@ export default async function HomePage() {
             View full catalog
           </Link>
         </div>
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-8 grid gap-6 md:grid-cols-1 xl:grid-cols-3">
           {featuredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
               pricingMode={pricingMode}
               showWholesalePrice={showWholesalePrice}
+              hideNormalPrice={hideNormalPrice}
             />
           ))}
         </div>

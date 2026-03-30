@@ -1,6 +1,6 @@
 $- pound
 Galery images for products
-Wholesale & Normal Customer Registrations
+Wholesale & Customer Registrations
 Differnt prices-> wholesale/normal
 
 

@@ -50,7 +50,7 @@ function logAuthError(error: Error) {
   }
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt"

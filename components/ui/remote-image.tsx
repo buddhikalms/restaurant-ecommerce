@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
@@ -8,7 +8,9 @@ export function RemoteImage({
   width,
   height,
   className,
-  sizes
+  sizes,
+  priority,
+  loading,
 }: {
   src: string;
   alt: string;
@@ -16,6 +18,8 @@ export function RemoteImage({
   height: number;
   className?: string;
   sizes?: string;
+  priority?: boolean;
+  loading?: "eager" | "lazy";
 }) {
   return (
     <Image
@@ -25,6 +29,8 @@ export function RemoteImage({
       width={width}
       height={height}
       sizes={sizes}
+      priority={priority}
+      loading={loading}
       className={cn(className)}
     />
   );

@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useCart } from "@/components/providers/cart-provider";
 import { Button } from "@/components/ui/button";
@@ -41,21 +41,21 @@ export function AddToCartControls({
   product,
   pricingMode,
   showWholesalePrice,
+  hideNormalPrice = false,
 }: {
   product: ProductCartShape;
   pricingMode: PricingMode;
   showWholesalePrice: boolean;
+  hideNormalPrice?: boolean;
 }) {
   const { addItem } = useCart();
   const [message, setMessage] = useState("");
   const [selectedVariantId, setSelectedVariantId] = useState(
     product.variants[0]?.id ?? "",
   );
-
-  useEffect(() => {
-    setSelectedVariantId(product.variants[0]?.id ?? "");
-    setMessage("");
-  }, [product.id, product.variants]);
+  const [quantity, setQuantity] = useState(
+    pricingMode === "wholesale" ? product.minOrderQuantity : 1,
+  );
 
   const selectedVariant = useMemo(() => {
     if (product.productType !== "VARIABLE") {
@@ -79,16 +79,21 @@ export function AddToCartControls({
       : (selectedVariant?.normalPrice ?? product.normalPrice);
   const stockQuantity = selectedVariant?.stockQuantity ?? product.stockQuantity;
   const activeSku = selectedVariant?.sku ?? product.sku;
-  const [quantity, setQuantity] = useState(minimumQuantity);
-
-  useEffect(() => {
-    setQuantity(minimumQuantity);
-  }, [minimumQuantity, product.id, selectedVariantId]);
+  const resolvedQuantity = Math.min(
+    stockQuantity,
+    Math.max(minimumQuantity, Math.trunc(quantity)),
+  );
 
   const disabled =
     product.productType === "VARIABLE"
       ? !selectedVariant || stockQuantity < minimumQuantity
       : stockQuantity < minimumQuantity;
+  const showNormalPrice = !hideNormalPrice;
+  const summaryGridClass = showWholesalePrice
+    ? showNormalPrice
+      ? "sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3"
+      : "sm:grid-cols-2"
+    : "sm:grid-cols-1";
   const helperText = useMemo(() => {
     if (product.productType === "VARIABLE") {
       const optionLabel = product.variantLabel?.toLowerCase() || "option";
@@ -138,11 +143,14 @@ export function AddToCartControls({
                       key={variant.id}
                       type="button"
                       aria-pressed={isSelected}
-                      onClick={() => setSelectedVariantId(variant.id)}
+                      onClick={() => {
+                        setSelectedVariantId(variant.id);
+                        setMessage("");
+                      }}
                       className={cn(
                         "w-full rounded-[1.35rem] border p-4 text-left transition",
                         isSelected
-                          ? "border-[#4a2a0a] bg-[#4a2a0a] text-[#fff4df] shadow-[0_18px_34px_rgba(74,42,10,0.2)]"
+                          ? "border-[#4a2a0a] bg-[var(--brand-dark)] text-[#fff4df] shadow-[0_18px_34px_rgba(74,42,10,0.2)]"
                           : "border-white/80 bg-white text-slate-900 hover:border-[var(--brand)]/35 hover:bg-[#fff8ef]",
                       )}
                     >
@@ -223,17 +231,17 @@ export function AddToCartControls({
             </div>
 
             {selectedVariant ? (
-              <div
-                className={`grid gap-3 ${showWholesalePrice ? "sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3" : "sm:grid-cols-1"}`}
-              >
-                <div className="rounded-[1.25rem] border border-white/80 bg-white p-3">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">
-                    Normal price
-                  </p>
-                  <p className="mt-2 font-heading text-xl font-semibold text-slate-900">
-                    {formatCurrency(selectedVariant.normalPrice)}
-                  </p>
-                </div>
+              <div className={`grid gap-3 ${summaryGridClass}`}>
+                {showNormalPrice ? (
+                  <div className="rounded-[1.25rem] border border-white/80 bg-white p-3">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                      price
+                    </p>
+                    <p className="mt-2 font-heading text-xl font-semibold text-slate-900">
+                      {formatCurrency(selectedVariant.normalPrice)}
+                    </p>
+                  </div>
+                ) : null}
                 {showWholesalePrice ? (
                   <>
                     <div className="rounded-[1.25rem] border border-white/80 bg-white p-3">
@@ -273,7 +281,7 @@ export function AddToCartControls({
             type="number"
             min={minimumQuantity}
             max={stockQuantity}
-            value={quantity}
+            value={resolvedQuantity}
             onChange={(event) => {
               const nextQuantity = Number(event.target.value);
               setQuantity(
@@ -307,7 +315,7 @@ export function AddToCartControls({
               stockQuantity,
               categoryName: product.category.name,
               pricingMode,
-              quantity,
+              quantity: resolvedQuantity,
             });
             setMessage(
               `${product.name}${selectedVariant ? ` (${selectedVariant.name})` : ""} added to cart.`,

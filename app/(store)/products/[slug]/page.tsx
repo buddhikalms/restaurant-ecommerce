@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AddToCartControls } from "@/components/store/add-to-cart-controls";
@@ -26,6 +26,7 @@ export default async function ProductDetailsPage({
   const user = await getCurrentUser();
   const pricingMode = getPricingModeForRole(user?.role);
   const showWholesalePrice = canViewWholesalePricing(user?.role);
+  const hideNormalPrice = user?.role === "WHOLESALE_CUSTOMER";
 
   if (!product) {
     notFound();
@@ -37,6 +38,12 @@ export default async function ProductDetailsPage({
     product.imageUrl,
     product.galleryImageUrls,
   );
+  const showNormalPrice = !hideNormalPrice;
+  const priceGridClass = showWholesalePrice
+    ? showNormalPrice
+      ? "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-3"
+      : "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-2"
+    : "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-1";
 
   return (
     <div className="page-shell space-y-8 py-12">
@@ -77,27 +84,23 @@ export default async function ProductDetailsPage({
             </div>
           ) : null}
 
-          <div
-            className={
-              showWholesalePrice
-                ? "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-3"
-                : "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-1"
-            }
-          >
-            <div
-              className={
-                pricingMode === "retail"
-                  ? "rounded-[1.25rem] bg-white p-4"
-                  : "p-4"
-              }
-            >
-              <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
-                {isVariable ? "Normal price from" : "Normal price"}
-              </p>
-              <p className="mt-2 font-heading text-2xl font-semibold text-slate-900">
-                {formatCurrency(product.normalPrice)}
-              </p>
-            </div>
+          <div className={priceGridClass}>
+            {showNormalPrice ? (
+              <div
+                className={
+                  pricingMode === "retail"
+                    ? "rounded-[1.25rem] bg-white p-4"
+                    : "p-4"
+                }
+              >
+                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+                  {isVariable ? "price from" : "price"}
+                </p>
+                <p className="mt-2 font-heading text-2xl font-semibold text-slate-900">
+                  {formatCurrency(product.normalPrice)}
+                </p>
+              </div>
+            ) : null}
             {showWholesalePrice ? (
               <>
                 <div
@@ -143,7 +146,7 @@ export default async function ProductDetailsPage({
               {!user ? (
                 <Link
                   href="/login"
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-[#4a2a0a] px-5 text-sm font-semibold text-[#fff4df] transition hover:bg-[#653713]"
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-[#fff4df] transition hover:bg-[#653713]"
                 >
                   <span className="text-white">Log in</span>
                 </Link>
@@ -156,6 +159,7 @@ export default async function ProductDetailsPage({
               product={product}
               pricingMode={pricingMode}
               showWholesalePrice={showWholesalePrice}
+              hideNormalPrice={hideNormalPrice}
             />
           </div>
         </div>

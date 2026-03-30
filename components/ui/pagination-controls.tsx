@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 export function PaginationControls({
   currentPage,
   totalPages,
-  buildHref
+  buildHref,
 }: {
   currentPage: number;
   totalPages: number;
@@ -33,8 +33,8 @@ export function PaginationControls({
             className={cn(
               "inline-flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold transition",
               page === currentPage
-                ? "border-[var(--brand)] bg-[var(--brand)] text-white"
-                : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                ? "border-[var(--brand)] bg-[var(--brand-dark)] text-white"
+                : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50",
             )}
           >
             {page}

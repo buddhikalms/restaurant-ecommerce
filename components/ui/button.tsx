@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const buttonVariants = {
   default:
-    "bg-[var(--brand-dark)] text-[#fff8ec] shadow-[0_12px_26px_rgba(85,50,13,0.22)] hover:bg-[var(--brand)]",
+    "bg-[var(--brand-dark)] text-[#fff8ec] shadow-[0_12px_26px_rgba(85,50,13,0.22)] hover:bg-[var(--brand-dark)]",
   secondary:
     "bg-[#fff7ea] text-[var(--brand-dark)] ring-1 ring-[#e7d1af] hover:bg-white",
   ghost: "bg-transparent text-[var(--brand-dark)] hover:bg-[#f6ead7]",

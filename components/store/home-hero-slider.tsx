@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useEffectEvent, useState } from "react";
@@ -41,7 +41,7 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [advanceSlide, slides.length]);
+  }, [slides.length]);
 
   if (!slides.length) {
     return null;
@@ -52,7 +52,7 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
   return (
     <section className="w-full">
       <div className="overflow-hidden bg-[#140f0b] text-white">
-        <div className="relative h-[520px] md:h-[560px] lg:h-[620px] pt-40">
+        <div className="relative h-[460px] pt-28 sm:h-[500px] sm:pt-32 lg:h-[540px] lg:pt-36">
           {slides.map((slide, index) => (
             <div
               key={slide.id}
@@ -77,9 +77,9 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
           ))}
 
           <div className="relative z-10 flex h-full items-end">
-            <div className="page-shell w-full pb-8 pt-10 sm:pb-10 sm:pt-12 lg:pb-14 lg:pt-16">
-              <div className="max-w-[42rem] rounded-[2.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(19,15,11,0.76),rgba(19,15,11,0.58))] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.22)] backdrop-blur-md sm:p-8 lg:p-10">
-                <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em]">
+            <div className="page-shell flex h-full w-full items-end pb-6 pt-8 sm:pb-8 sm:pt-10 lg:pb-10 lg:pt-12">
+              <div className="flex min-h-[300px] w-full max-w-[38rem] flex-col rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(19,15,11,0.76),rgba(19,15,11,0.58))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.22)] backdrop-blur-md sm:min-h-[320px] sm:p-6 lg:min-h-[340px] lg:p-7">
+                <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-[0.18em] sm:text-[11px]">
                   <span className="font-semibold text-[#f0c67a]">
                     {activeSlide.eyebrow}
                   </span>
@@ -89,34 +89,34 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
                   </span>
                 </div>
 
-                <h1 className="mt-4 max-w-[34rem] font-heading text-4xl font-semibold leading-tight sm:text-5xl lg:text-[3.8rem] lg:leading-[1.04]">
+                <h1 className="mt-3 max-w-[30rem] font-heading text-[clamp(1.9rem,4vw,3.25rem)] font-semibold leading-[1.08]">
                   {activeSlide.title}
                 </h1>
-                <p className="mt-4 max-w-[34rem] text-sm leading-7 text-[#f1e4cf] sm:text-base sm:leading-8">
+                <p className="mt-3 max-w-[31rem] text-xs leading-6 text-[#f1e4cf] sm:text-sm sm:leading-7">
                   {activeSlide.description}
                 </p>
 
-                <div className="mt-6 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-wrap gap-2">
                   {activeSlide.highlights.map((highlight) => (
                     <span
                       key={highlight}
-                      className="rounded-full border border-[#f0c67a]/45 bg-white/10 px-4 py-2 text-sm font-medium text-[#fff4df] shadow-[0_10px_24px_rgba(15,10,8,0.18)] backdrop-blur-sm"
+                      className="rounded-full border border-[#f0c67a]/45 bg-white/10 px-3 py-1.5 text-xs font-medium text-[#fff4df] shadow-[0_10px_24px_rgba(15,10,8,0.18)] backdrop-blur-sm"
                     >
                       {highlight}
                     </span>
                   ))}
                 </div>
 
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <Link
                     href={activeSlide.primaryAction.href}
-                    className="inline-flex h-12 items-center justify-center rounded-full bg-[#4a2a0a] px-6 text-sm font-semibold text-[#fff4df] shadow-[0_18px_38px_rgba(74,42,10,0.28)] transition hover:bg-[#653713]"
+                    className="inline-flex h-10 items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-[#fff4df] shadow-[0_18px_38px_rgba(74,42,10,0.28)] transition hover:bg-[#653713]"
                   >
                     {activeSlide.primaryAction.label}
                   </Link>
                 </div>
 
-                <div className="mt-8 flex flex-col gap-4 border-t border-white/12 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-auto flex flex-col gap-4 border-t border-white/12 pt-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-3">
                     {slides.map((slide, index) => (
                       <button
@@ -133,7 +133,7 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
                       />
                     ))}
                   </div>
-                  <p className="text-sm leading-6 text-white/72">
+                  <p className="text-xs leading-5 text-white/72 sm:text-sm sm:leading-6">
                     Retail and wholesale ordering with clearer product paths.
                   </p>
                 </div>

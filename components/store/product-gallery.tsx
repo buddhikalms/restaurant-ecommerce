@@ -1,24 +1,30 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { RemoteImage } from "@/components/ui/remote-image";
 import { cn } from "@/lib/utils";
 
 export function ProductGallery({
   productName,
-  images
+  images,
 }: {
   productName: string;
   images: string[];
 }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [images]);
+  const activeImage = useMemo(() => {
+    if (!images.length) {
+      return null;
+    }
 
-  const activeImage = images[activeIndex] ?? images[0];
+    if (selectedImage && images.includes(selectedImage)) {
+      return selectedImage;
+    }
+
+    return images[0];
+  }, [images, selectedImage]);
 
   if (!activeImage) {
     return null;
@@ -32,6 +38,7 @@ export function ProductGallery({
           alt={productName}
           width={1600}
           height={1200}
+          priority
           className="aspect-[4/3] h-full w-full object-cover"
         />
       </div>
@@ -42,12 +49,12 @@ export function ProductGallery({
             <button
               key={`${image}-${index}`}
               type="button"
-              onClick={() => setActiveIndex(index)}
+              onClick={() => setSelectedImage(image)}
               className={cn(
                 "group overflow-hidden rounded-[1.3rem] border bg-white shadow-sm transition",
-                index === activeIndex
+                image === activeImage
                   ? "border-[var(--brand)] ring-2 ring-[var(--brand)]/20"
-                  : "border-slate-200 hover:border-slate-300"
+                  : "border-slate-200 hover:border-slate-300",
               )}
               aria-label={`Show gallery image ${index + 1}`}
             >
@@ -56,6 +63,7 @@ export function ProductGallery({
                 alt={`${productName} view ${index + 1}`}
                 width={320}
                 height={320}
+                loading="lazy"
                 className="aspect-square h-full w-full object-cover transition duration-300 group-hover:scale-105"
               />
             </button>

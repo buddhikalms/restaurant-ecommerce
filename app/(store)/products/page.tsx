@@ -1,4 +1,4 @@
-import { EmptyState } from "@/components/ui/empty-state";
+﻿import { EmptyState } from "@/components/ui/empty-state";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { ProductCard } from "@/components/store/product-card";
 import { ProductFilters } from "@/components/store/product-filters";
@@ -22,6 +22,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
   const user = await getCurrentUser();
   const pricingMode = getPricingModeForRole(user?.role);
   const showWholesalePrice = canViewWholesalePricing(user?.role);
+  const hideNormalPrice = user?.role === "WHOLESALE_CUSTOMER";
 
   const [categories, productResult] = await Promise.all([
     getStoreCategories(),
@@ -79,6 +80,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
                 product={product}
                 pricingMode={pricingMode}
                 showWholesalePrice={showWholesalePrice}
+                hideNormalPrice={hideNormalPrice}
               />
             ))}
           </div>
@@ -94,3 +96,5 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
     </div>
   );
 }
+
+

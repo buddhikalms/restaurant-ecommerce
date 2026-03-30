@@ -1,10 +1,12 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AccountNav } from "@/components/layout/account-nav";
+import { ReorderButton } from "@/components/store/reorder-button";
 import { OrderStatusBadge } from "@/components/store/status-badge";
 import { requireRetailUser } from "@/lib/auth-helpers";
 import { getCustomerOrderById } from "@/lib/data/account";
+import { getPricingModeForRole } from "@/lib/user-roles";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 type Params = Promise<{ id: string }>;
@@ -24,7 +26,7 @@ export default async function AccountOrderDetailsPage({
   const user = await requireRetailUser();
   const { id } = await params;
   const query = await searchParams;
-  const order = await getCustomerOrderById(user.id, id);
+  const order = await getCustomerOrderById(user.id, id, getPricingModeForRole(user.role));
 
   if (!order) {
     notFound();
@@ -100,9 +102,18 @@ export default async function AccountOrderDetailsPage({
               {order.shippingAddress.businessName ? <p>{order.shippingAddress.businessName}</p> : null}
               <p>{order.shippingAddress.line1}</p>
               {order.shippingAddress.line2 ? <p>{order.shippingAddress.line2}</p> : null}
-              <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}</p>
+              <p>
+                {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
+              </p>
               <p>{order.shippingAddress.country}</p>
               <p>{order.shippingAddress.phone}</p>
+            </div>
+          </div>
+          <div className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Reorder</p>
+            <h2 className="mt-2 font-heading text-2xl font-semibold text-slate-900">Build this order again</h2>
+            <div className="mt-4">
+              <ReorderButton items={order.reorderItems} unavailableItems={order.unavailableReorderItems} />
             </div>
           </div>
           <Link
@@ -116,4 +127,3 @@ export default async function AccountOrderDetailsPage({
     </div>
   );
 }
-

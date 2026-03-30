@@ -1,20 +1,12 @@
-﻿import { CheckoutForm } from "@/components/forms/checkout-form";
+import { CheckoutForm } from "@/components/forms/checkout-form";
 import { requireCustomerUser } from "@/lib/auth-helpers";
-import { prisma } from "@/lib/prisma";
+import { getCheckoutCustomerDefaults } from "@/lib/data/account";
 import { getAccountBasePathForRole, getPricingModeForRole } from "@/lib/user-roles";
 
 export default async function CheckoutPage() {
   const sessionUser = await requireCustomerUser();
   const pricingMode = getPricingModeForRole(sessionUser.role);
-  const user = await prisma.user.findUnique({
-    where: { id: sessionUser.id },
-    select: {
-      name: true,
-      email: true,
-      phone: true,
-      businessName: true
-    }
-  });
+  const customerDefaults = await getCheckoutCustomerDefaults(sessionUser.id);
 
   return (
     <div className="page-shell py-12">
@@ -31,12 +23,7 @@ export default async function CheckoutPage() {
       </div>
       <div className="mt-8">
         <CheckoutForm
-          customerDefaults={{
-            name: user?.name,
-            email: user?.email,
-            phone: user?.phone,
-            businessName: user?.businessName
-          }}
+          customerDefaults={customerDefaults}
           pricingMode={pricingMode}
           accountBasePath={getAccountBasePathForRole(sessionUser.role)}
         />
@@ -44,4 +31,3 @@ export default async function CheckoutPage() {
     </div>
   );
 }
-
