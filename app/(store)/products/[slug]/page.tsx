@@ -57,15 +57,22 @@ export default async function ProductDetailsPage({
             {product.description}
           </p>
 
-          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+          <div
+            className={[
+              "mt-4 grid gap-2",
+              showWholesalePrice ? "sm:grid-cols-3" : "sm:grid-cols-2",
+            ].join(" ")}
+          >
             <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-3">
               <p className="text-[0.72rem] text-[var(--muted-foreground)]">Retail price</p>
               <p className="mt-1 text-base font-semibold text-[var(--foreground)]">{formatCurrency(product.normalPrice)}</p>
             </div>
-            <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-3">
-              <p className="text-[0.72rem] text-[var(--muted-foreground)]">Wholesale</p>
-              <p className="mt-1 text-base font-semibold text-[var(--foreground)]">{showWholesalePrice ? formatCurrency(product.wholesalePrice) : "Login required"}</p>
-            </div>
+            {showWholesalePrice ? (
+              <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-3">
+                <p className="text-[0.72rem] text-[var(--muted-foreground)]">Wholesale</p>
+                <p className="mt-1 text-base font-semibold text-[var(--foreground)]">{formatCurrency(product.wholesalePrice)}</p>
+              </div>
+            ) : null}
             <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-3">
               <p className="text-[0.72rem] text-[var(--muted-foreground)]">Details</p>
               <p className="mt-1 text-base font-semibold text-[var(--foreground)]">{isVariable ? `${optionCount} ${optionLabel}${optionCount === 1 ? "" : "s"}` : `MOQ ${product.minOrderQuantity}`}</p>
