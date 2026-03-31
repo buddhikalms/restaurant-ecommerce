@@ -1,4 +1,8 @@
-﻿import { AdminProductForm } from "@/components/forms/admin-product-form";
+import Link from "next/link";
+
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminProductForm } from "@/components/forms/admin-product-form";
+import { getButtonClassName } from "@/components/ui/button";
 import { getAdminCategories } from "@/lib/data/admin";
 
 export default async function NewAdminProductPage() {
@@ -6,11 +10,24 @@ export default async function NewAdminProductPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">Products</p>
-        <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900">Create a new product</h1>
-      </div>
-      <AdminProductForm categories={categories.map((category) => ({ id: category.id, name: category.name }))} />
+      <AdminPageHeader
+        eyebrow="Products"
+        title="Create a new catalog item"
+        description="Add product details, pricing, VAT, imagery, and variants using the compact admin form."
+        backHref="/admin/products"
+        backLabel="Back to products"
+        actions={
+          <Link
+            href="/admin/settings"
+            className={getButtonClassName({ variant: "secondary" })}
+          >
+            Manage categories
+          </Link>
+        }
+      />
+      <AdminProductForm
+        categories={categories.map((category) => ({ id: category.id, name: category.name }))}
+      />
     </div>
   );
 }

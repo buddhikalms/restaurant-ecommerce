@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import { getButtonClassName } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
 export function EmptyState({
   title,
   description,
@@ -12,17 +15,23 @@ export function EmptyState({
   actionHref?: string;
 }) {
   return (
-    <div className="surface-card rounded-lg p-8 text-center">
-      <h3 className="text-lg font-semibold text-[var(--foreground)]">{title}</h3>
-      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">{description}</p>
-      {actionLabel && actionHref ? (
-        <Link
-          href={actionHref}
-          className="mt-4 inline-flex h-9 items-center justify-center rounded-lg bg-[var(--brand)] px-3.5 text-[0.84rem] font-medium text-white transition hover:bg-[var(--brand-dark)]"
-        >
-          {actionLabel}
-        </Link>
-      ) : null}
-    </div>
+    <Card className="rounded-xl border-[var(--border)] shadow-none">
+      <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
+        <h3 className="text-base font-semibold text-[var(--foreground)]">{title}</h3>
+        <p className="max-w-xl text-[0.84rem] leading-6 text-[var(--muted-foreground)]">
+          {description}
+        </p>
+        {actionLabel && actionHref ? (
+          <Link
+            href={actionHref}
+            className={getButtonClassName({
+              className: "mt-1",
+            })}
+          >
+            {actionLabel}
+          </Link>
+        ) : null}
+      </CardContent>
+    </Card>
   );
 }

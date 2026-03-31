@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ export function PaginationControls({
         href={buildHref(Math.max(1, currentPage - 1))}
         className="inline-flex h-8 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 text-[0.8rem] text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
       >
+        <ChevronLeft className="mr-1 h-3.5 w-3.5" />
         Previous
       </Link>
       <div className="flex flex-wrap items-center gap-1.5">
@@ -46,6 +48,7 @@ export function PaginationControls({
         className="inline-flex h-8 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 text-[0.8rem] text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
       >
         Next
+        <ChevronRight className="ml-1 h-3.5 w-3.5" />
       </Link>
     </div>
   );

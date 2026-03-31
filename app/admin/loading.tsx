@@ -1,12 +1,16 @@
-﻿export default function AdminLoading() {
+export default function AdminLoading() {
   return (
-    <div className="grid gap-6">
-      <div className="surface-card h-40 animate-pulse rounded-[2rem] border border-white/70 bg-white/70" />
-      <div className="grid gap-6 md:grid-cols-4">
+    <div className="grid gap-4">
+      <div className="h-24 animate-pulse rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)]" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
-          <div key={index} className="surface-card h-32 animate-pulse rounded-[2rem] border border-white/70 bg-white/70" />
+          <div
+            key={index}
+            className="h-28 animate-pulse rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)]"
+          />
         ))}
       </div>
+      <div className="h-[320px] animate-pulse rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)]" />
     </div>
   );
 }

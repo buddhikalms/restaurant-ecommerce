@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -10,7 +10,7 @@ export function DeleteButton({
   label = "Delete",
   itemId,
   action,
-  confirmMessage = "Are you sure you want to delete this item?"
+  confirmMessage = "Are you sure you want to delete this item?",
 }: {
   label?: string;
   itemId: string;
@@ -22,7 +22,7 @@ export function DeleteButton({
   const [message, setMessage] = useState<string | null>(null);
 
   return (
-    <div>
+    <div className="space-y-1 text-left">
       <Button
         type="button"
         variant="destructive"
@@ -42,7 +42,9 @@ export function DeleteButton({
       >
         {isPending ? "Working..." : label}
       </Button>
-      {message ? <p className="mt-2 text-xs text-slate-500">{message}</p> : null}
+      {message ? (
+        <p className="text-[0.68rem] text-[var(--admin-muted-foreground)]">{message}</p>
+      ) : null}
     </div>
   );
 }

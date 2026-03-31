@@ -175,7 +175,7 @@ export function AdminProductForm({
   return (
     <form
       encType="multipart/form-data"
-      className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]"
+      className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-5 shadow-none"
       onSubmit={handleSubmit((values, event) => {
         clearErrors();
         setMessage(null);
@@ -248,28 +248,28 @@ export function AdminProductForm({
         <input type="hidden" {...register("id")} />
         <input type="hidden" {...register("imageUrl")} />
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             Product name
           </label>
           <Input {...register("name")} />
           <FieldError message={errors.name?.message} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             Slug
           </label>
           <Input {...register("slug")} placeholder="Auto-generated if empty" />
           <FieldError message={errors.slug?.message} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             Parent SKU
           </label>
           <Input {...register("sku")} />
           <FieldError message={errors.sku?.message} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             Category
           </label>
           <Select {...register("categoryId")}>
@@ -282,7 +282,7 @@ export function AdminProductForm({
           <FieldError message={errors.categoryId?.message} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             Product type
           </label>
           <Select {...register("productType")}>
@@ -291,7 +291,7 @@ export function AdminProductForm({
           </Select>
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             VAT mode
           </label>
           <Select {...register("vatMode")}>
@@ -301,7 +301,7 @@ export function AdminProductForm({
           <FieldError message={errors.vatMode?.message} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             VAT rate (%)
           </label>
           <Input
@@ -313,11 +313,11 @@ export function AdminProductForm({
           />
           <FieldError message={errors.vatRate?.message} />
         </div>
-        <div className="md:col-span-2 rounded-[1.6rem] border border-slate-200 bg-[rgba(255,251,244,0.88)] p-4 text-sm leading-6 text-slate-600">
+        <div className="md:col-span-2 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-4 text-[0.82rem] leading-6 text-[var(--admin-muted-foreground)]">
           {vatHelperText} Storefront prices, cart totals, checkout totals, and orders will show VAT-inclusive totals.
         </div>
         <div className="md:col-span-2">
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             Cover image upload
           </label>
           <input
@@ -337,7 +337,7 @@ export function AdminProductForm({
 
               setCoverPreviewUrl(URL.createObjectURL(file));
             }}
-            className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 file:mr-4 file:rounded-full file:border-0 file:bg-[var(--brand-dark)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+            className="block w-full rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface)] px-4 py-3 text-[0.82rem] text-[var(--admin-foreground)] file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--brand)] file:px-3.5 file:py-2 file:text-[0.78rem] file:font-medium file:text-white"
           />
           <p className="mt-2 text-sm leading-6 text-slate-500">
             Upload JPG, PNG, WebP, AVIF, or GIF. Max size 5MB. If you do not upload a new cover image while editing, the current cover image will stay in place.
@@ -345,7 +345,7 @@ export function AdminProductForm({
           <FieldError message={errors.imageUrl?.message} />
 
           {coverImageUrl ? (
-            <div className="mt-4 rounded-[1.6rem] border border-slate-200 bg-[#fffaf2] p-4">
+            <div className="mt-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-semibold text-slate-900">
                   {coverPreviewUrl ? "Selected cover preview" : "Current cover image"}
@@ -366,13 +366,13 @@ export function AdminProductForm({
               <img
                 src={coverImageUrl}
                 alt="Product cover preview"
-                className="mt-4 h-44 w-full rounded-[1.4rem] object-cover md:w-72"
+                className="mt-4 h-40 w-full rounded-xl object-cover md:w-72"
               />
             </div>
           ) : null}
         </div>
         <div className="md:col-span-2">
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             Gallery image uploads
           </label>
           <input
@@ -389,7 +389,7 @@ export function AdminProductForm({
               setSelectedGalleryFiles(files);
               setGalleryPreviewUrls(files.map((file) => URL.createObjectURL(file)));
             }}
-            className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+            className="block w-full rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface)] px-4 py-3 text-[0.82rem] text-[var(--admin-foreground)] file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--accent)] file:px-3.5 file:py-2 file:text-[0.78rem] file:font-medium file:text-white"
           />
           <p className="mt-2 text-sm leading-6 text-slate-500">
             Optional. Keep up to 8 extra gallery images. The cover image stays first on the product page gallery.
@@ -397,7 +397,7 @@ export function AdminProductForm({
           <FieldError message={errors.retainedGalleryImageUrls?.message} />
 
           {retainedGalleryImageUrls.length ? (
-            <div className="mt-4 rounded-[1.6rem] border border-slate-200 bg-white p-4">
+            <div className="mt-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-semibold text-slate-900">
                   Current gallery images
@@ -410,14 +410,14 @@ export function AdminProductForm({
                 {retainedGalleryImageUrls.map((imageUrl) => (
                   <div
                     key={imageUrl}
-                    className="rounded-[1.25rem] border border-slate-200 bg-[#fffaf2] p-3"
+                    className="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-3"
                   >
                     {/* Blob previews are rendered with a native image tag. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                       src={imageUrl}
                       alt="Gallery preview"
-                      className="h-28 w-full rounded-[1rem] object-cover"
+                      className="h-28 w-full rounded-lg object-cover"
                     />
                     <Button
                       type="button"
@@ -439,7 +439,7 @@ export function AdminProductForm({
           ) : null}
 
           {galleryPreviewUrls.length ? (
-            <div className="mt-4 rounded-[1.6rem] border border-slate-200 bg-[#fffaf2] p-4">
+            <div className="mt-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-semibold text-slate-900">
                   New gallery uploads
@@ -457,14 +457,14 @@ export function AdminProductForm({
                 {galleryPreviewUrls.map((previewUrl, index) => (
                   <div
                     key={`${previewUrl}-${index}`}
-                    className="rounded-[1.25rem] border border-slate-200 bg-white p-3"
+                    className="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-3"
                   >
                     {/* Blob previews are rendered with a native image tag. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                       src={previewUrl}
                       alt={`Selected gallery preview ${index + 1}`}
-                      className="h-28 w-full rounded-[1rem] object-cover"
+                      className="h-28 w-full rounded-lg object-cover"
                     />
                     <p className="mt-3 text-xs text-slate-500">
                       {selectedGalleryFiles[index]?.name}
@@ -476,7 +476,7 @@ export function AdminProductForm({
           ) : null}
         </div>
         <div className="md:col-span-2">
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="admin-label">
             Description
           </label>
           <Textarea {...register("description")} />
@@ -484,7 +484,7 @@ export function AdminProductForm({
         </div>
       </div>
 
-      <div className="mt-6 rounded-[2rem] border border-slate-200 bg-[rgba(255,251,244,0.88)] p-5">
+      <div className="mt-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-5">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
             Product detail tabs
@@ -497,7 +497,7 @@ export function AdminProductForm({
 
         <div className="mt-5 grid gap-5 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               Information
             </label>
             <Textarea
@@ -508,7 +508,7 @@ export function AdminProductForm({
             <FieldError message={errors.information?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               Ingredients
             </label>
             <Textarea
@@ -519,7 +519,7 @@ export function AdminProductForm({
             <FieldError message={errors.ingredients?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               Nutritional
             </label>
             <Textarea
@@ -530,7 +530,7 @@ export function AdminProductForm({
             <FieldError message={errors.nutritional?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               FAQ
             </label>
             <Textarea
@@ -546,7 +546,7 @@ export function AdminProductForm({
       {productType === "SIMPLE" ? (
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               {priceLabel}
             </label>
             <Input
@@ -558,7 +558,7 @@ export function AdminProductForm({
             <FieldError message={errors.normalPrice?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               {wholesalePriceLabel}
             </label>
             <Input
@@ -570,7 +570,7 @@ export function AdminProductForm({
             <FieldError message={errors.wholesalePrice?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               Stock quantity
             </label>
             <Input
@@ -581,7 +581,7 @@ export function AdminProductForm({
             <FieldError message={errors.stockQuantity?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               Wholesale minimum quantity
             </label>
             <Input
@@ -593,7 +593,7 @@ export function AdminProductForm({
           </div>
         </div>
       ) : (
-        <div className="mt-6 rounded-[2rem] border border-slate-200 bg-[rgba(255,251,244,0.88)] p-5">
+        <div className="mt-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
@@ -616,7 +616,7 @@ export function AdminProductForm({
           </div>
 
           <div className="mt-5 max-w-sm">
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="admin-label">
               Option label
             </label>
             <Input
@@ -632,7 +632,7 @@ export function AdminProductForm({
             {fields.map((field, index) => (
               <div
                 key={field.id}
-                className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm"
+                className="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-4 shadow-none"
               >
                 <input type="hidden" {...register(`variants.${index}.id`)} />
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -657,7 +657,7 @@ export function AdminProductForm({
 
                 <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <label className="admin-label">
                       Option name
                     </label>
                     <Input
@@ -669,7 +669,7 @@ export function AdminProductForm({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <label className="admin-label">
                       Option SKU
                     </label>
                     <Input
@@ -681,7 +681,7 @@ export function AdminProductForm({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <label className="admin-label">
                       {priceLabel}
                     </label>
                     <Input
@@ -697,7 +697,7 @@ export function AdminProductForm({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <label className="admin-label">
                       {wholesalePriceLabel}
                     </label>
                     <Input
@@ -715,7 +715,7 @@ export function AdminProductForm({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <label className="admin-label">
                       Stock quantity
                     </label>
                     <Input
@@ -730,7 +730,7 @@ export function AdminProductForm({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    <label className="admin-label">
                       Wholesale minimum quantity
                     </label>
                     <Input
@@ -748,11 +748,11 @@ export function AdminProductForm({
                   </div>
                 </div>
 
-                <label className="mt-4 flex items-center gap-3 text-sm font-medium text-slate-700">
+                <label className="mt-4 flex items-center gap-3 text-[0.8rem] font-medium text-[var(--admin-foreground)]">
                   <input
                     type="checkbox"
                     {...register(`variants.${index}.isActive`)}
-                    className="h-4 w-4 rounded border-slate-300"
+                    className="h-4 w-4 rounded border-[var(--admin-border)]"
                   />
                   Option is active in the storefront
                 </label>
@@ -762,18 +762,18 @@ export function AdminProductForm({
         </div>
       )}
 
-      <label className="mt-5 flex items-center gap-3 text-sm font-medium text-slate-700">
+      <label className="mt-5 flex items-center gap-3 text-[0.8rem] font-medium text-[var(--admin-foreground)]">
         <input
           type="checkbox"
           checked={isActive}
           onChange={(event) => setValue("isActive", event.target.checked)}
-          className="h-4 w-4 rounded border-slate-300"
+          className="h-4 w-4 rounded border-[var(--admin-border)]"
         />
         Product is active in the storefront
       </label>
 
       {message ? (
-        <p className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <p className="mt-5 rounded-xl bg-[rgba(179,86,72,0.08)] px-4 py-3 text-[0.78rem] text-[var(--danger)]">
           {message}
         </p>
       ) : null}
@@ -797,6 +797,7 @@ export function AdminProductForm({
     </form>
   );
 }
+
 
 
 

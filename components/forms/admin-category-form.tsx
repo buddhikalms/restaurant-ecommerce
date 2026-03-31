@@ -18,7 +18,7 @@ type CategoryFormValues = z.output<typeof categorySchema>;
 
 export function AdminCategoryForm({
   category,
-  submitLabel = "Save category"
+  submitLabel = "Save category",
 }: {
   category?: Partial<CategoryFormInput>;
   submitLabel?: string;
@@ -31,7 +31,7 @@ export function AdminCategoryForm({
     handleSubmit,
     control,
     formState: { errors },
-    setValue
+    setValue,
   } = useForm<CategoryFormInput, unknown, CategoryFormValues>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -39,14 +39,14 @@ export function AdminCategoryForm({
       name: category?.name ?? "",
       slug: category?.slug ?? "",
       description: category?.description ?? "",
-      isActive: category?.isActive ?? true
-    }
+      isActive: category?.isActive ?? true,
+    },
   });
   const isActive = useWatch({ control, name: "isActive" }) ?? true;
 
   return (
     <form
-      className="space-y-4 rounded-[2rem] border border-slate-200 bg-white p-5"
+      className="space-y-4"
       onSubmit={handleSubmit((values) => {
         setMessage(null);
         startTransition(async () => {
@@ -58,30 +58,34 @@ export function AdminCategoryForm({
     >
       <input type="hidden" {...register("id")} />
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-700">Category name</label>
+        <label className="admin-label">Category name</label>
         <Input {...register("name")} />
         <FieldError message={errors.name?.message} />
       </div>
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-700">Slug</label>
+        <label className="admin-label">Slug</label>
         <Input {...register("slug")} placeholder="Auto-generated if empty" />
         <FieldError message={errors.slug?.message} />
       </div>
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-700">Description</label>
-        <Textarea {...register("description")} />
+        <label className="admin-label">Description</label>
+        <Textarea {...register("description")} className="min-h-20" />
         <FieldError message={errors.description?.message} />
       </div>
-      <label className="flex items-center gap-3 text-sm font-medium text-slate-700">
+      <label className="flex items-center gap-3 text-[0.8rem] font-medium text-[var(--admin-foreground)]">
         <input
           type="checkbox"
           checked={isActive}
           onChange={(event) => setValue("isActive", event.target.checked)}
-          className="h-4 w-4 rounded border-slate-300"
+          className="h-4 w-4 rounded border-[var(--admin-border)]"
         />
         Category is active
       </label>
-      {message ? <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">{message}</p> : null}
+      {message ? (
+        <p className="rounded-xl bg-[var(--admin-surface)] px-3 py-2 text-[0.76rem] text-[var(--admin-muted-foreground)]">
+          {message}
+        </p>
+      ) : null}
       <Button type="submit" disabled={isPending}>
         {isPending ? "Saving..." : submitLabel}
       </Button>

@@ -137,3 +137,109 @@ textarea {
 .gradient-heading {
   color: var(--foreground);
 }
+
+.admin-theme {
+  --admin-bg: #f4f1ea;
+  --admin-surface: #fffdf9;
+  --admin-surface-muted: #f7f3ec;
+  --admin-surface-subtle: #f1ece3;
+  --admin-sidebar: #23332b;
+  --admin-sidebar-muted: #31433a;
+  --admin-sidebar-border: rgba(255, 255, 255, 0.08);
+  --admin-foreground: #1f2722;
+  --admin-muted-foreground: #66706a;
+  --admin-border: #e5dfd5;
+  --admin-border-strong: #d4ccc0;
+  --admin-accent: #bf664c;
+  --admin-accent-strong: #a8563f;
+  --admin-accent-soft: rgba(191, 102, 76, 0.12);
+  --admin-success: #2f6a4a;
+  --admin-success-soft: rgba(47, 106, 74, 0.12);
+  --admin-danger: #b35648;
+  --admin-danger-soft: rgba(179, 86, 72, 0.12);
+  min-height: 100vh;
+  background: var(--admin-bg);
+  color: var(--admin-foreground);
+}
+
+.admin-theme * {
+  border-color: var(--admin-border);
+}
+
+.admin-theme ::selection {
+  background: rgba(191, 102, 76, 0.16);
+  color: var(--admin-foreground);
+}
+
+.admin-theme .surface-card,
+.admin-theme .paper-panel {
+  border-color: var(--admin-border);
+  box-shadow: none;
+}
+
+.admin-panel {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.admin-panel-muted {
+  background: var(--admin-surface-muted);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-kicker {
+  color: var(--admin-accent);
+  letter-spacing: 0.18em;
+  @apply text-[0.65rem] font-semibold uppercase;
+}
+
+.admin-title {
+  color: var(--admin-foreground);
+  @apply text-[1.35rem] font-semibold tracking-[-0.02em] sm:text-[1.55rem];
+}
+
+.admin-copy {
+  color: var(--admin-muted-foreground);
+  @apply text-[0.82rem] leading-6;
+}
+
+.admin-label {
+  color: var(--admin-foreground);
+  @apply mb-1.5 block text-[0.74rem] font-medium;
+}
+
+.admin-icon-button {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-muted-foreground);
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-lg transition;
+}
+
+.admin-icon-button:hover {
+  background: var(--admin-surface-muted);
+  color: var(--admin-foreground);
+}
+
+.admin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--admin-border-strong) transparent;
+}
+
+.admin-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--admin-border-strong);
+  border-radius: 999px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-theme input[type="checkbox"] {
+  accent-color: var(--admin-accent);
+}
