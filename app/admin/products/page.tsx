@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { RemoteImage } from "@/components/ui/remote-image";
 import { deleteProductAction } from "@/lib/actions/admin-actions";
 import { getAdminProducts } from "@/lib/data/admin";
+import { getAdminVatSummary } from "@/lib/product-pricing";
 import { formatCurrency } from "@/lib/utils";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -85,21 +86,24 @@ export default async function AdminProductsPage({
                       Stock {product.stockQuantity} |{" "}
                       {product.productType === "VARIABLE"
                         ? `${product.variantLabel || "Option"} selector`
-                        : `Wholesale MOQ ${product.minOrderQuantity}`}{" "}
-                      | {product.isActive ? "Active" : "Inactive"}
+                        : `Wholesale MOQ ${product.minOrderQuantity}`} |{" "}
+                      {getAdminVatSummary(product.vatMode, product.vatRate)} |{" "}
+                      {product.isActive ? "Active" : "Inactive"}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="rounded-[1.4rem] bg-[#f9f4ea] px-4 py-3 text-right text-sm text-slate-600">
                     <p>
-                      {product.productType === "VARIABLE" ? "from" : "Normal"}{" "}
+                      {product.productType === "VARIABLE"
+                        ? "Retail total from"
+                        : "Retail total"}{" "}
                       {formatCurrency(product.normalPrice)}
                     </p>
                     <p className="mt-1 font-semibold text-slate-900">
                       {product.productType === "VARIABLE"
-                        ? "Wholesale from"
-                        : "Wholesale"}{" "}
+                        ? "Wholesale total from"
+                        : "Wholesale total"}{" "}
                       {formatCurrency(product.wholesalePrice)}
                     </p>
                   </div>

@@ -6,25 +6,33 @@ import { revalidatePath } from "next/cache";
 import { ActionResponse } from "@/lib/actions/action-response";
 import { requireCustomerUser } from "@/lib/auth-helpers";
 import { sendOrderEmails } from "@/lib/email";
+import { calculatePriceWithVat } from "@/lib/product-pricing";
 import { summarizeActiveProductVariants } from "@/lib/product-variants";
 import { prisma } from "@/lib/prisma";
 import { getPricingModeForRole } from "@/lib/user-roles";
 import { generateOrderNumber } from "@/lib/utils";
-import { checkoutSchema, wholesaleCheckoutSchema, type CheckoutInput } from "@/lib/validations/checkout";
+import {
+  checkoutSchema,
+  wholesaleCheckoutSchema,
+  type CheckoutInput,
+} from "@/lib/validations/checkout";
 
-async function syncVariableProductSnapshot(tx: Prisma.TransactionClient, productId: string) {
+async function syncVariableProductSnapshot(
+  tx: Prisma.TransactionClient,
+  productId: string,
+) {
   const variants = await tx.productVariant.findMany({
     where: {
       productId,
-      isActive: true
+      isActive: true,
     },
     select: {
       normalPrice: true,
       wholesalePrice: true,
       stockQuantity: true,
       minOrderQuantity: true,
-      isActive: true
-    }
+      isActive: true,
+    },
   });
 
   if (!variants.length) {
@@ -35,22 +43,24 @@ async function syncVariableProductSnapshot(tx: Prisma.TransactionClient, product
 
   await tx.product.update({
     where: { id: productId },
-    data: summary
+    data: summary,
   });
 }
 
 export async function placeOrderAction(
-  input: CheckoutInput
+  input: CheckoutInput,
 ): Promise<ActionResponse<{ orderId: string; orderNumber: string }>> {
   const user = await requireCustomerUser();
   const pricingMode = getPricingModeForRole(user.role);
-  const parsed = (pricingMode === "wholesale" ? wholesaleCheckoutSchema : checkoutSchema).safeParse(input);
+  const parsed = (
+    pricingMode === "wholesale" ? wholesaleCheckoutSchema : checkoutSchema
+  ).safeParse(input);
 
   if (!parsed.success) {
     return {
       success: false,
       error: "Please review the checkout form and try again.",
-      fieldErrors: parsed.error.flatten().fieldErrors
+      fieldErrors: parsed.error.flatten().fieldErrors,
     };
   }
 
@@ -58,24 +68,24 @@ export async function placeOrderAction(
   const products = await prisma.product.findMany({
     where: {
       id: { in: uniqueProductIds },
-      isActive: true
+      isActive: true,
     },
     include: {
       variants: {
         where: {
-          isActive: true
+          isActive: true,
         },
         orderBy: {
-          position: "asc"
-        }
-      }
-    }
+          position: "asc",
+        },
+      },
+    },
   });
 
   if (products.length !== uniqueProductIds.length) {
     return {
       success: false,
-      error: "One or more items in your cart are no longer available."
+      error: "One or more items in your cart are no longer available.",
     };
   }
 
@@ -106,7 +116,7 @@ export async function placeOrderAction(
 
       if (product.productType === "VARIABLE" && !selectedVariant) {
         throw new Error(
-          `${product.name} requires a valid ${product.variantLabel?.toLowerCase() || "option"} selection.`
+          `${product.name} requires a valid ${product.variantLabel?.toLowerCase() || "option"} selection.`,
         );
       }
 
@@ -116,8 +126,10 @@ export async function placeOrderAction(
 
       const pricingSource = selectedVariant ?? product;
       const minimumQuantity = pricingMode === "wholesale" ? pricingSource.minOrderQuantity : 1;
-      const unitPrice = Number(
-        pricingMode === "wholesale" ? pricingSource.wholesalePrice : pricingSource.normalPrice
+      const unitPrice = calculatePriceWithVat(
+        pricingMode === "wholesale" ? pricingSource.wholesalePrice : pricingSource.normalPrice,
+        product.vatRate,
+        product.vatMode,
       );
       const stockQuantity = pricingSource.stockQuantity;
       const productName = selectedVariant ? `${product.name} - ${selectedVariant.name}` : product.name;
@@ -127,7 +139,7 @@ export async function placeOrderAction(
         throw new Error(
           pricingMode === "wholesale"
             ? `${productName} requires a wholesale minimum quantity of ${pricingSource.minOrderQuantity}.`
-            : `${productName} requires a quantity of at least 1.`
+            : `${productName} requires a quantity of at least 1.`,
         );
       }
 
@@ -143,13 +155,16 @@ export async function placeOrderAction(
         quantity: item.quantity,
         unitPrice,
         lineTotal: unitPrice * item.quantity,
-        variantId: selectedVariant?.id ?? null
+        variantId: selectedVariant?.id ?? null,
       };
     });
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unable to validate the cart contents."
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unable to validate the cart contents.",
     };
   }
 
@@ -161,11 +176,11 @@ export async function placeOrderAction(
       await tx.address.updateMany({
         where: {
           userId: user.id,
-          isDefault: true
+          isDefault: true,
         },
         data: {
-          isDefault: false
-        }
+          isDefault: false,
+        },
       });
 
       const shippingAddress = await tx.address.create({
@@ -181,8 +196,8 @@ export async function placeOrderAction(
           postalCode: parsed.data.postalCode,
           country: parsed.data.country,
           phone: parsed.data.phone,
-          isDefault: true
-        }
+          isDefault: true,
+        },
       });
 
       const variableProductIdsToSync = new Set<string>();
@@ -193,14 +208,14 @@ export async function placeOrderAction(
             where: {
               id: item.variantId,
               stockQuantity: {
-                gte: item.quantity
-              }
+                gte: item.quantity,
+              },
             },
             data: {
               stockQuantity: {
-                decrement: item.quantity
-              }
-            }
+                decrement: item.quantity,
+              },
+            },
           });
 
           if (!updatedVariant.count) {
@@ -215,14 +230,14 @@ export async function placeOrderAction(
           where: {
             id: item.productId,
             stockQuantity: {
-              gte: item.quantity
-            }
+              gte: item.quantity,
+            },
           },
           data: {
             stockQuantity: {
-              decrement: item.quantity
-            }
-          }
+              decrement: item.quantity,
+            },
+          },
         });
 
         if (!updatedProduct.count) {
@@ -245,20 +260,22 @@ export async function placeOrderAction(
           total: subtotal,
           itemCount,
           items: {
-            create: normalizedItems.map(({ productId, productName, productSku, quantity, unitPrice, lineTotal }) => ({
-              productId,
-              productName,
-              productSku,
-              quantity,
-              unitPrice,
-              lineTotal
-            }))
-          }
+            create: normalizedItems.map(
+              ({ productId, productName, productSku, quantity, unitPrice, lineTotal }) => ({
+                productId,
+                productName,
+                productSku,
+                quantity,
+                unitPrice,
+                lineTotal,
+              }),
+            ),
+          },
         },
         include: {
           shippingAddress: true,
-          items: true
-        }
+          items: true,
+        },
       });
     });
 
@@ -273,7 +290,7 @@ export async function placeOrderAction(
           name: parsed.data.customerName,
           email: parsed.data.email,
           phone: parsed.data.phone,
-          businessName: parsed.data.businessName
+          businessName: parsed.data.businessName,
         },
         shippingAddress: {
           line1: order.shippingAddress.line1,
@@ -281,16 +298,16 @@ export async function placeOrderAction(
           city: order.shippingAddress.city,
           state: order.shippingAddress.state,
           postalCode: order.shippingAddress.postalCode,
-          country: order.shippingAddress.country
+          country: order.shippingAddress.country,
         },
         items: order.items.map((item) => ({
           productName: item.productName,
           productSku: item.productSku,
           quantity: item.quantity,
           unitPrice: Number(item.unitPrice),
-          lineTotal: Number(item.lineTotal)
+          lineTotal: Number(item.lineTotal),
         })),
-        notes: order.notes
+        notes: order.notes,
       });
     } catch (error) {
       console.error("[email] Failed to send order emails", error);
@@ -314,9 +331,9 @@ export async function placeOrderAction(
       success: true,
       data: {
         orderId: order.id,
-        orderNumber: order.orderNumber
+        orderNumber: order.orderNumber,
       },
-      message: "Order placed successfully."
+      message: "Order placed successfully.",
     };
   } catch (error) {
     return {
@@ -324,7 +341,7 @@ export async function placeOrderAction(
       error:
         error instanceof Error
           ? error.message
-          : "We couldn't place your order right now. Please try again."
+          : "We couldn't place your order right now. Please try again.",
     };
   }
 }

@@ -14,7 +14,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { placeOrderAction } from "@/lib/actions/order-actions";
 import { type PricingMode } from "@/lib/user-roles";
 import { formatCurrency } from "@/lib/utils";
-import { checkoutSchema, wholesaleCheckoutSchema } from "@/lib/validations/checkout";
+import {
+  checkoutSchema,
+  wholesaleCheckoutSchema,
+} from "@/lib/validations/checkout";
 
 const retailCheckoutFormSchema = checkoutSchema.omit({ items: true });
 const wholesaleCheckoutFormSchema = wholesaleCheckoutSchema.omit({ items: true });
@@ -24,7 +27,7 @@ type CheckoutFormValues = z.infer<typeof retailCheckoutFormSchema>;
 export function CheckoutForm({
   customerDefaults,
   pricingMode,
-  accountBasePath
+  accountBasePath,
 }: {
   customerDefaults: {
     name?: string | null;
@@ -45,11 +48,14 @@ export function CheckoutForm({
   const { items, subtotal, clearCart } = useCart();
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const formSchema = pricingMode === "wholesale" ? wholesaleCheckoutFormSchema : retailCheckoutFormSchema;
+  const formSchema =
+    pricingMode === "wholesale"
+      ? wholesaleCheckoutFormSchema
+      : retailCheckoutFormSchema;
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,8 +69,8 @@ export function CheckoutForm({
       state: customerDefaults.state ?? "",
       postalCode: customerDefaults.postalCode ?? "",
       country: customerDefaults.country ?? "USA",
-      notes: ""
-    }
+      notes: "",
+    },
   });
 
   return (
@@ -84,8 +90,8 @@ export function CheckoutForm({
               items: items.map((item) => ({
                 productId: item.productId,
                 variantId: item.variantId,
-                quantity: item.quantity
-              }))
+                quantity: item.quantity,
+              })),
             });
 
             if (!result.success) {
@@ -106,64 +112,93 @@ export function CheckoutForm({
       >
         <div className="grid gap-5 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Customer name</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Customer name
+            </label>
             <Input {...register("customerName")} />
             <FieldError message={errors.customerName?.message} />
           </div>
           {pricingMode === "wholesale" ? (
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Business name</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
+                Business name
+              </label>
               <Input {...register("businessName")} />
               <FieldError message={errors.businessName?.message} />
             </div>
           ) : null}
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Email
+            </label>
             <Input type="email" {...register("email")} />
             <FieldError message={errors.email?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Phone</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Phone
+            </label>
             <Input {...register("phone")} />
             <FieldError message={errors.phone?.message} />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Address line 1</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Address line 1
+            </label>
             <Input {...register("line1")} />
             <FieldError message={errors.line1?.message} />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Address line 2</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Address line 2
+            </label>
             <Input {...register("line2")} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">City</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              City
+            </label>
             <Input {...register("city")} />
             <FieldError message={errors.city?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">State</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              State
+            </label>
             <Input {...register("state")} />
             <FieldError message={errors.state?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Postal code</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Postal code
+            </label>
             <Input {...register("postalCode")} />
             <FieldError message={errors.postalCode?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Country</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Country
+            </label>
             <Input {...register("country")} />
             <FieldError message={errors.country?.message} />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Order notes</label>
-            <Textarea {...register("notes")} placeholder="Delivery window, receiving instructions, or kitchen notes" />
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Order notes
+            </label>
+            <Textarea
+              {...register("notes")}
+              placeholder="Delivery window, receiving instructions, or kitchen notes"
+            />
             <FieldError message={errors.notes?.message} />
           </div>
         </div>
 
-        {message ? <p className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{message}</p> : null}
+        {message ? (
+          <p className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            {message}
+          </p>
+        ) : null}
 
         <Button type="submit" className="mt-6 w-full" disabled={isPending || !items.length}>
           {isPending
@@ -185,17 +220,25 @@ export function CheckoutForm({
             <div key={item.itemId} className="flex items-start justify-between gap-4">
               <div>
                 <p className="font-medium text-slate-900">{item.name}</p>
-                {item.variantName ? <p className="text-xs uppercase tracking-[0.14em] text-slate-500">{item.variantName}</p> : null}
+                {item.variantName ? (
+                  <p className="text-xs uppercase tracking-[0.14em] text-slate-500">
+                    {item.variantName}
+                  </p>
+                ) : null}
                 <p>{item.quantity} units</p>
               </div>
-              <p className="font-semibold text-slate-900">{formatCurrency(item.quantity * item.unitPrice)}</p>
+              <p className="font-semibold text-slate-900">
+                {formatCurrency(item.quantity * item.unitPrice)}
+              </p>
             </div>
           ))}
         </div>
         <div className="mt-6 border-t border-slate-200 pt-6">
           <div className="flex items-center justify-between text-sm text-slate-600">
             <span>Subtotal</span>
-            <span className="font-semibold text-slate-900">{formatCurrency(subtotal)}</span>
+            <span className="font-semibold text-slate-900">
+              {formatCurrency(subtotal)}
+            </span>
           </div>
           <div className="mt-3 flex items-center justify-between text-sm text-slate-600">
             <span>Shipping</span>
@@ -203,8 +246,8 @@ export function CheckoutForm({
           </div>
           <p className="mt-4 text-xs leading-5 text-slate-500">
             {pricingMode === "wholesale"
-              ? "Before final confirmation, inventory and wholesale minimum quantities are revalidated on the server for each selected product option."
-              : "Before final confirmation, inventory and pricing are revalidated on the server for each selected product option."}
+              ? "Before final confirmation, inventory, VAT-inclusive totals, and wholesale minimum quantities are revalidated on the server for each selected product option."
+              : "Before final confirmation, inventory and VAT-inclusive totals are revalidated on the server for each selected product option."}
           </p>
         </div>
       </aside>

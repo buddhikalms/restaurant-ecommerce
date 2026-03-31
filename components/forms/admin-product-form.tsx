@@ -2,11 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { type Path, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { upsertProductAction } from "@/lib/actions/admin-actions";
+import { getEnteredPriceVatDescription } from "@/lib/product-pricing";
 import { productSchema } from "@/lib/validations/admin";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field-error";
@@ -18,7 +19,7 @@ type ProductFormInput = z.input<typeof productSchema>;
 type ProductFormValues = z.output<typeof productSchema>;
 type ProductFormProduct = Omit<
   Partial<ProductFormInput>,
-  "information" | "ingredients" | "nutritional" | "faq"
+  "information" | "ingredients" | "nutritional" | "faq" | "retainedGalleryImageUrls"
 > & {
   galleryImageUrls?: string[];
   information?: string | null;
@@ -49,12 +50,22 @@ export function AdminProductForm({
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [retainedGalleryImageUrls, setRetainedGalleryImageUrls] = useState(
+    product?.galleryImageUrls ?? [],
+  );
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
+  const [galleryPreviewUrls, setGalleryPreviewUrls] = useState<string[]>([]);
+  const [selectedGalleryFiles, setSelectedGalleryFiles] = useState<File[]>([]);
+  const primaryImageInputRef = useRef<HTMLInputElement | null>(null);
+  const galleryImageInputRef = useRef<HTMLInputElement | null>(null);
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
     setValue,
+    setError,
+    clearErrors,
   } = useForm<ProductFormInput, unknown, ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -68,9 +79,11 @@ export function AdminProductForm({
       nutritional: product?.nutritional ?? "",
       faq: product?.faq ?? "",
       imageUrl: product?.imageUrl ?? "",
-      galleryImageUrlsText: product?.galleryImageUrls?.join("\n") ?? "",
+      retainedGalleryImageUrls: product?.galleryImageUrls ?? [],
       productType: product?.productType ?? "SIMPLE",
       variantLabel: product?.variantLabel ?? "Pack size",
+      vatMode: product?.vatMode ?? "INCLUDED",
+      vatRate: product?.vatRate ?? 20,
       normalPrice: product?.normalPrice ?? 0,
       wholesalePrice: product?.wholesalePrice ?? 0,
       stockQuantity: product?.stockQuantity ?? 0,
@@ -96,10 +109,19 @@ export function AdminProductForm({
   });
   const isActive = useWatch({ control, name: "isActive" }) ?? true;
   const productType = useWatch({ control, name: "productType" }) ?? "SIMPLE";
+  const vatMode = useWatch({ control, name: "vatMode" }) ?? "INCLUDED";
+  const vatRate = useWatch({ control, name: "vatRate" }) ?? 20;
   const variantsError =
     typeof errors.variants?.message === "string"
       ? errors.variants.message
       : undefined;
+  const priceLabel = vatMode === "INCLUDED" ? "Price with VAT" : "Price without VAT";
+  const wholesalePriceLabel =
+    vatMode === "INCLUDED"
+      ? "Wholesale price with VAT"
+      : "Wholesale price without VAT";
+  const vatHelperText = getEnteredPriceVatDescription(vatMode, vatRate);
+  const coverImageUrl = coverPreviewUrl ?? product?.imageUrl ?? "";
 
   useEffect(() => {
     if (productType === "VARIABLE" && fields.length === 0) {
@@ -107,14 +129,112 @@ export function AdminProductForm({
     }
   }, [append, fields.length, product, productType]);
 
+  useEffect(() => {
+    setValue("retainedGalleryImageUrls", retainedGalleryImageUrls, {
+      shouldValidate: true,
+    });
+  }, [retainedGalleryImageUrls, setValue]);
+
+  useEffect(() => {
+    return () => {
+      if (coverPreviewUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(coverPreviewUrl);
+      }
+    };
+  }, [coverPreviewUrl]);
+
+  useEffect(() => {
+    return () => {
+      galleryPreviewUrls.forEach((previewUrl) => {
+        if (previewUrl.startsWith("blob:")) {
+          URL.revokeObjectURL(previewUrl);
+        }
+      });
+    };
+  }, [galleryPreviewUrls]);
+
+  const resetPrimaryImageSelection = () => {
+    if (primaryImageInputRef.current) {
+      primaryImageInputRef.current.value = "";
+    }
+
+    setCoverPreviewUrl(null);
+    clearErrors("imageUrl");
+  };
+
+  const resetGalleryImageSelection = () => {
+    if (galleryImageInputRef.current) {
+      galleryImageInputRef.current.value = "";
+    }
+
+    setSelectedGalleryFiles([]);
+    setGalleryPreviewUrls([]);
+    clearErrors("retainedGalleryImageUrls");
+  };
+
   return (
     <form
+      encType="multipart/form-data"
       className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]"
-      onSubmit={handleSubmit((values) => {
+      onSubmit={handleSubmit((values, event) => {
+        clearErrors();
         setMessage(null);
+
+        const existingImageUrl = values.imageUrl?.trim() ?? "";
+        const formElement = event?.currentTarget;
+        if (!(formElement instanceof HTMLFormElement)) {
+          setMessage("Unable to submit the product form right now.");
+          return;
+        }
+
+        const formData = new FormData(formElement);
+        const coverEntry = formData.get("primaryImageFile");
+        const coverFile =
+          coverEntry instanceof File && coverEntry.size > 0 ? coverEntry : null;
+        const selectedGalleryFileCount = formData
+          .getAll("galleryImageFiles")
+          .filter((entry) => entry instanceof File && entry.size > 0).length;
+
+        if (!existingImageUrl && !coverFile) {
+          setError("imageUrl", {
+            type: "manual",
+            message: "Upload a product cover image before saving.",
+          });
+          return;
+        }
+
+        if (retainedGalleryImageUrls.length + selectedGalleryFileCount > 8) {
+          setError("retainedGalleryImageUrls", {
+            type: "manual",
+            message: "You can keep up to 8 gallery images.",
+          });
+          return;
+        }
+        const payload: ProductFormValues = {
+          ...values,
+          imageUrl: existingImageUrl,
+          retainedGalleryImageUrls,
+        };
+
+        formData.set("payload", JSON.stringify(payload));
+
         startTransition(async () => {
-          const result = await upsertProductAction(values);
+          const result = await upsertProductAction(formData);
           if (!result.success) {
+            if (result.fieldErrors) {
+              Object.entries(result.fieldErrors).forEach(([field, messages]) => {
+                const message = messages?.[0];
+                if (!message) {
+                  return;
+                }
+
+                setError(field as Path<ProductFormInput>, {
+                  type: "server",
+                  message,
+                });
+              });
+            }
+
             setMessage(result.error);
             return;
           }
@@ -126,6 +246,7 @@ export function AdminProductForm({
     >
       <div className="grid gap-5 md:grid-cols-2">
         <input type="hidden" {...register("id")} />
+        <input type="hidden" {...register("imageUrl")} />
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-700">
             Product name
@@ -171,27 +292,188 @@ export function AdminProductForm({
         </div>
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-700">
-            Image URL
+            VAT mode
           </label>
-          <Input {...register("imageUrl")} />
-          <FieldError message={errors.imageUrl?.message} />
+          <Select {...register("vatMode")}>
+            <option value="INCLUDED">Entered prices include VAT</option>
+            <option value="EXCLUDED">Entered prices exclude VAT</option>
+          </Select>
+          <FieldError message={errors.vatMode?.message} />
+        </div>
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
+            VAT rate (%)
+          </label>
+          <Input
+            type="number"
+            step="0.01"
+            min="0"
+            max="100"
+            {...register("vatRate", { valueAsNumber: true })}
+          />
+          <FieldError message={errors.vatRate?.message} />
+        </div>
+        <div className="md:col-span-2 rounded-[1.6rem] border border-slate-200 bg-[rgba(255,251,244,0.88)] p-4 text-sm leading-6 text-slate-600">
+          {vatHelperText} Storefront prices, cart totals, checkout totals, and orders will show VAT-inclusive totals.
         </div>
         <div className="md:col-span-2">
           <label className="mb-2 block text-sm font-semibold text-slate-700">
-            Gallery image URLs
+            Cover image upload
           </label>
-          <Textarea
-            rows={5}
-            {...register("galleryImageUrlsText")}
-            placeholder={
-              "One image URL per line\nhttps://images.unsplash.com/...\nhttps://images.unsplash.com/..."
-            }
+          <input
+            ref={primaryImageInputRef}
+            name="primaryImageFile"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+            onChange={(event) => {
+              clearErrors("imageUrl");
+              setMessage(null);
+
+              const file = event.target.files?.[0];
+              if (!file) {
+                setCoverPreviewUrl(null);
+                return;
+              }
+
+              setCoverPreviewUrl(URL.createObjectURL(file));
+            }}
+            className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 file:mr-4 file:rounded-full file:border-0 file:bg-[var(--brand-dark)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
           />
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Optional. Add up to 8 extra gallery images. The main image above
-            stays the product cover image.
+            Upload JPG, PNG, WebP, AVIF, or GIF. Max size 5MB. If you do not upload a new cover image while editing, the current cover image will stay in place.
           </p>
-          <FieldError message={errors.galleryImageUrlsText?.message} />
+          <FieldError message={errors.imageUrl?.message} />
+
+          {coverImageUrl ? (
+            <div className="mt-4 rounded-[1.6rem] border border-slate-200 bg-[#fffaf2] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-slate-900">
+                  {coverPreviewUrl ? "Selected cover preview" : "Current cover image"}
+                </p>
+                {coverPreviewUrl ? (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={resetPrimaryImageSelection}
+                  >
+                    {product?.imageUrl ? "Use current image" : "Clear selected image"}
+                  </Button>
+                ) : null}
+              </div>
+              {/* Blob previews are rendered with a native image tag. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={coverImageUrl}
+                alt="Product cover preview"
+                className="mt-4 h-44 w-full rounded-[1.4rem] object-cover md:w-72"
+              />
+            </div>
+          ) : null}
+        </div>
+        <div className="md:col-span-2">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
+            Gallery image uploads
+          </label>
+          <input
+            ref={galleryImageInputRef}
+            name="galleryImageFiles"
+            type="file"
+            multiple
+            accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+            onChange={(event) => {
+              clearErrors("retainedGalleryImageUrls");
+              setMessage(null);
+
+              const files = Array.from(event.target.files ?? []);
+              setSelectedGalleryFiles(files);
+              setGalleryPreviewUrls(files.map((file) => URL.createObjectURL(file)));
+            }}
+            className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+          />
+          <p className="mt-2 text-sm leading-6 text-slate-500">
+            Optional. Keep up to 8 extra gallery images. The cover image stays first on the product page gallery.
+          </p>
+          <FieldError message={errors.retainedGalleryImageUrls?.message} />
+
+          {retainedGalleryImageUrls.length ? (
+            <div className="mt-4 rounded-[1.6rem] border border-slate-200 bg-white p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-slate-900">
+                  Current gallery images
+                </p>
+                <p className="text-xs uppercase tracking-[0.14em] text-slate-500">
+                  {retainedGalleryImageUrls.length} kept
+                </p>
+              </div>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {retainedGalleryImageUrls.map((imageUrl) => (
+                  <div
+                    key={imageUrl}
+                    className="rounded-[1.25rem] border border-slate-200 bg-[#fffaf2] p-3"
+                  >
+                    {/* Blob previews are rendered with a native image tag. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                      src={imageUrl}
+                      alt="Gallery preview"
+                      className="h-28 w-full rounded-[1rem] object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="mt-3 w-full"
+                      onClick={() => {
+                        setRetainedGalleryImageUrls((current) =>
+                          current.filter((entry) => entry !== imageUrl),
+                        );
+                      }}
+                    >
+                      Remove image
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {galleryPreviewUrls.length ? (
+            <div className="mt-4 rounded-[1.6rem] border border-slate-200 bg-[#fffaf2] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-slate-900">
+                  New gallery uploads
+                </p>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={resetGalleryImageSelection}
+                >
+                  Clear selected uploads
+                </Button>
+              </div>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {galleryPreviewUrls.map((previewUrl, index) => (
+                  <div
+                    key={`${previewUrl}-${index}`}
+                    className="rounded-[1.25rem] border border-slate-200 bg-white p-3"
+                  >
+                    {/* Blob previews are rendered with a native image tag. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                      src={previewUrl}
+                      alt={`Selected gallery preview ${index + 1}`}
+                      className="h-28 w-full rounded-[1rem] object-cover"
+                    />
+                    <p className="mt-3 text-xs text-slate-500">
+                      {selectedGalleryFiles[index]?.name}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
         <div className="md:col-span-2">
           <label className="mb-2 block text-sm font-semibold text-slate-700">
@@ -265,7 +547,7 @@ export function AdminProductForm({
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-700">
-              price
+              {priceLabel}
             </label>
             <Input
               type="number"
@@ -277,7 +559,7 @@ export function AdminProductForm({
           </div>
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Wholesale price
+              {wholesalePriceLabel}
             </label>
             <Input
               type="number"
@@ -319,7 +601,7 @@ export function AdminProductForm({
               </p>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
                 Add the purchasable options for this product. Catalog cards and
-                filters will use the lowest active option price and combined
+                filters will use the lowest active option total price and combined
                 active stock.
               </p>
             </div>
@@ -400,7 +682,7 @@ export function AdminProductForm({
                   </div>
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-slate-700">
-                      price
+                      {priceLabel}
                     </label>
                     <Input
                       type="number"
@@ -416,7 +698,7 @@ export function AdminProductForm({
                   </div>
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-slate-700">
-                      Wholesale price
+                      {wholesalePriceLabel}
                     </label>
                     <Input
                       type="number"
@@ -515,3 +797,7 @@ export function AdminProductForm({
     </form>
   );
 }
+
+
+
+

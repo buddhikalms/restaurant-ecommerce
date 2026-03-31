@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useEffectEvent, useState } from "react";
@@ -51,7 +51,7 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <section className="w-full">
-      <div className="overflow-hidden bg-[#140f0b] text-white">
+      <div className="overflow-hidden bg-[#120d09] text-white">
         <div className="relative h-[460px] pt-28 sm:h-[500px] sm:pt-32 lg:h-[540px] lg:pt-36">
           {slides.map((slide, index) => (
             <div
@@ -69,16 +69,16 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
                 width={1800}
                 height={1000}
                 sizes="100vw"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-[38%_center] sm:object-[40%_center] lg:object-[44%_center]"
               />
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,10,8,0.94)_0%,rgba(13,10,8,0.84)_28%,rgba(13,10,8,0.56)_52%,rgba(13,10,8,0.3)_72%,rgba(13,10,8,0.42)_100%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(240,198,122,0.18),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(155,95,25,0.22),transparent_28%)]" />
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,6,5,0.98)_0%,rgba(8,6,5,0.96)_16%,rgba(8,6,5,0.88)_32%,rgba(8,6,5,0.64)_50%,rgba(8,6,5,0.36)_68%,rgba(8,6,5,0.2)_82%,rgba(8,6,5,0.32)_100%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(240,198,122,0.15),transparent_22%),radial-gradient(circle_at_72%_18%,rgba(122,67,18,0.20),transparent_30%)]" />
             </div>
           ))}
 
           <div className="relative z-10 flex h-full items-end">
             <div className="page-shell flex h-full w-full items-end pb-6 pt-8 sm:pb-8 sm:pt-10 lg:pb-10 lg:pt-12">
-              <div className="flex min-h-[300px] w-full max-w-[38rem] flex-col rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(19,15,11,0.76),rgba(19,15,11,0.58))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.22)] backdrop-blur-md sm:min-h-[320px] sm:p-6 lg:min-h-[340px] lg:p-7">
+              <div className="flex min-h-[300px] w-full max-w-[38rem] flex-col rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(10,7,5,0.9),rgba(10,7,5,0.72))] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34)] backdrop-blur-md sm:min-h-[320px] sm:p-6 lg:min-h-[340px] lg:p-7">
                 <div className="flex flex-wrap items-center gap-3 text-[9px] uppercase tracking-[0.16em] sm:text-[10px]">
                   <span className="font-semibold text-[#f0c67a]">
                     {activeSlide.eyebrow}
@@ -145,4 +145,3 @@ export function HomeHeroSlider({ slides }: { slides: HeroSlide[] }) {
     </section>
   );
 }
-

@@ -1,5 +1,6 @@
 import { unstable_noStore as noStore } from "next/cache";
 
+import { calculatePriceWithVat } from "@/lib/product-pricing";
 import { prisma } from "@/lib/prisma";
 import { type PricingMode } from "@/lib/user-roles";
 
@@ -19,14 +20,16 @@ export type ReorderCartItem = {
   quantity: number;
 };
 
-function mapDefaultAddress(address?: {
-  line1: string;
-  line2: string | null;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-} | null) {
+function mapDefaultAddress(
+  address?: {
+    line1: string;
+    line2: string | null;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  } | null,
+) {
   if (!address) {
     return null;
   }
@@ -37,7 +40,7 @@ function mapDefaultAddress(address?: {
     city: address.city,
     state: address.state,
     postalCode: address.postalCode,
-    country: address.country
+    country: address.country,
   };
 }
 
@@ -55,6 +58,8 @@ function buildReorderCartItem(
       imageUrl: string;
       isActive: boolean;
       productType: "SIMPLE" | "VARIABLE";
+      vatMode: "INCLUDED" | "EXCLUDED";
+      vatRate: { toString(): string };
       normalPrice: { toString(): string };
       wholesalePrice: { toString(): string };
       minOrderQuantity: number;
@@ -73,9 +78,10 @@ function buildReorderCartItem(
       }>;
     };
   },
-  pricingMode: PricingMode
+  pricingMode: PricingMode,
 ): ReorderCartItem | null {
   const product = item.product;
+  const vatRate = Number(product.vatRate);
 
   if (!product.isActive) {
     return null;
@@ -102,12 +108,16 @@ function buildReorderCartItem(
       variantName: variant.name,
       sku: variant.sku,
       imageUrl: product.imageUrl,
-      unitPrice: Number(pricingMode === "wholesale" ? variant.wholesalePrice : variant.normalPrice),
+      unitPrice: calculatePriceWithVat(
+        pricingMode === "wholesale" ? variant.wholesalePrice : variant.normalPrice,
+        vatRate,
+        product.vatMode,
+      ),
       minimumQuantity,
       stockQuantity: variant.stockQuantity,
       categoryName: product.category.name,
       pricingMode,
-      quantity: Math.min(variant.stockQuantity, Math.max(minimumQuantity, item.quantity))
+      quantity: Math.min(variant.stockQuantity, Math.max(minimumQuantity, item.quantity)),
     };
   }
 
@@ -125,12 +135,16 @@ function buildReorderCartItem(
     variantName: null,
     sku: product.sku,
     imageUrl: product.imageUrl,
-    unitPrice: Number(pricingMode === "wholesale" ? product.wholesalePrice : product.normalPrice),
+    unitPrice: calculatePriceWithVat(
+      pricingMode === "wholesale" ? product.wholesalePrice : product.normalPrice,
+      vatRate,
+      product.vatMode,
+    ),
     minimumQuantity,
     stockQuantity: product.stockQuantity,
     categoryName: product.category.name,
     pricingMode,
-    quantity: Math.min(product.stockQuantity, Math.max(minimumQuantity, item.quantity))
+    quantity: Math.min(product.stockQuantity, Math.max(minimumQuantity, item.quantity)),
   };
 }
 
@@ -146,17 +160,17 @@ export async function getAccountOverview(userId: string) {
         email: true,
         phone: true,
         businessName: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     }),
     prisma.order.count({ where: { userId } }),
     prisma.order.count({
       where: {
         userId,
         status: {
-          in: ["PENDING", "CONFIRMED", "PROCESSING"]
-        }
-      }
+          in: ["PENDING", "CONFIRMED", "PROCESSING"],
+        },
+      },
     }),
     prisma.order.findMany({
       where: { userId },
@@ -166,11 +180,11 @@ export async function getAccountOverview(userId: string) {
         status: true,
         total: true,
         itemCount: true,
-        createdAt: true
+        createdAt: true,
       },
       orderBy: { createdAt: "desc" },
-      take: 3
-    })
+      take: 3,
+    }),
   ]);
 
   return {
@@ -179,8 +193,8 @@ export async function getAccountOverview(userId: string) {
     pendingOrders,
     recentOrders: recentOrders.map((order) => ({
       ...order,
-      total: Number(order.total)
-    }))
+      total: Number(order.total),
+    })),
   };
 }
 
@@ -198,10 +212,10 @@ export async function getAccountSettings(userId: string) {
       businessName: true,
       addresses: {
         where: {
-          isDefault: true
+          isDefault: true,
         },
         orderBy: {
-          updatedAt: "desc"
+          updatedAt: "desc",
         },
         take: 1,
         select: {
@@ -210,8 +224,8 @@ export async function getAccountSettings(userId: string) {
           city: true,
           state: true,
           postalCode: true,
-          country: true
-        }
+          country: true,
+        },
       },
       wholesaleProfile: {
         select: {
@@ -234,10 +248,10 @@ export async function getAccountSettings(userId: string) {
           companyType: true,
           companyNumber: true,
           directorName: true,
-          businessType: true
-        }
-      }
-    }
+          businessType: true,
+        },
+      },
+    },
   });
 
   if (!user) {
@@ -254,7 +268,7 @@ export async function getAccountSettings(userId: string) {
     phone: user.phone,
     businessName: user.businessName,
     wholesaleProfile: user.wholesaleProfile,
-    defaultAddress
+    defaultAddress,
   };
 }
 
@@ -270,10 +284,10 @@ export async function getCheckoutCustomerDefaults(userId: string) {
       businessName: true,
       addresses: {
         where: {
-          isDefault: true
+          isDefault: true,
         },
         orderBy: {
-          updatedAt: "desc"
+          updatedAt: "desc",
         },
         take: 1,
         select: {
@@ -282,10 +296,10 @@ export async function getCheckoutCustomerDefaults(userId: string) {
           city: true,
           state: true,
           postalCode: true,
-          country: true
-        }
-      }
-    }
+          country: true,
+        },
+      },
+    },
   });
 
   const defaultAddress = mapDefaultAddress(user?.addresses[0]);
@@ -300,7 +314,7 @@ export async function getCheckoutCustomerDefaults(userId: string) {
     city: defaultAddress?.city ?? "",
     state: defaultAddress?.state ?? "",
     postalCode: defaultAddress?.postalCode ?? "",
-    country: defaultAddress?.country ?? "USA"
+    country: defaultAddress?.country ?? "USA",
   };
 }
 
@@ -316,25 +330,29 @@ export async function getCustomerOrders(userId: string) {
       total: true,
       subtotal: true,
       itemCount: true,
-      createdAt: true
+      createdAt: true,
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   });
 
   return orders.map((order) => ({
     ...order,
     total: Number(order.total),
-    subtotal: Number(order.subtotal)
+    subtotal: Number(order.subtotal),
   }));
 }
 
-export async function getCustomerOrderById(userId: string, orderId: string, pricingMode: PricingMode) {
+export async function getCustomerOrderById(
+  userId: string,
+  orderId: string,
+  pricingMode: PricingMode,
+) {
   noStore();
 
   const order = await prisma.order.findFirst({
     where: {
       id: orderId,
-      userId
+      userId,
     },
     include: {
       items: {
@@ -349,21 +367,23 @@ export async function getCustomerOrderById(userId: string, orderId: string, pric
               imageUrl: true,
               isActive: true,
               productType: true,
+              vatMode: true,
+              vatRate: true,
               normalPrice: true,
               wholesalePrice: true,
               minOrderQuantity: true,
               stockQuantity: true,
               category: {
                 select: {
-                  name: true
-                }
+                  name: true,
+                },
               },
               variants: {
                 where: {
-                  isActive: true
+                  isActive: true,
                 },
                 orderBy: {
-                  position: "asc"
+                  position: "asc",
                 },
                 select: {
                   id: true,
@@ -372,15 +392,15 @@ export async function getCustomerOrderById(userId: string, orderId: string, pric
                   normalPrice: true,
                   wholesalePrice: true,
                   minOrderQuantity: true,
-                  stockQuantity: true
-                }
-              }
-            }
-          }
-        }
+                  stockQuantity: true,
+                },
+              },
+            },
+          },
+        },
       },
-      shippingAddress: true
-    }
+      shippingAddress: true,
+    },
   });
 
   if (!order) {
@@ -402,12 +422,9 @@ export async function getCustomerOrderById(userId: string, orderId: string, pric
     items: order.items.map((item) => ({
       ...item,
       unitPrice: Number(item.unitPrice),
-      lineTotal: Number(item.lineTotal)
+      lineTotal: Number(item.lineTotal),
     })),
     reorderItems,
-    unavailableReorderItems
+    unavailableReorderItems,
   };
 }
-
-
-

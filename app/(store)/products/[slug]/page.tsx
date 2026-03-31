@@ -1,5 +1,4 @@
-﻿import Link from "next/link";
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 
 import { AddToCartControls } from "@/components/store/add-to-cart-controls";
 import { ProductDetailTabs } from "@/components/store/product-detail-tabs";
@@ -8,6 +7,7 @@ import { StockBadge } from "@/components/store/status-badge";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { getProductBySlug } from "@/lib/data/store";
 import { buildProductGalleryImages } from "@/lib/product-gallery";
+import { getDisplayedPriceVatLabel } from "@/lib/product-pricing";
 import {
   canViewWholesalePricing,
   getPricingModeForRole,
@@ -34,6 +34,7 @@ export default async function ProductDetailsPage({
 
   const isVariable = product.productType === "VARIABLE";
   const optionCount = product.variants.length;
+  const optionLabel = product.variantLabel?.toLowerCase() || "option";
   const galleryImages = buildProductGalleryImages(
     product.imageUrl,
     product.galleryImageUrls,
@@ -44,11 +45,12 @@ export default async function ProductDetailsPage({
       ? "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-3"
       : "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-2"
     : "mt-8 grid gap-4 rounded-[2rem] bg-[#f9f4ea] p-5 sm:grid-cols-1";
+  const vatLabel = getDisplayedPriceVatLabel(product.vatRate);
 
   return (
     <div className="page-shell space-y-8 py-12">
-      <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-        <div>
+      <div className="grid gap-6 lg:grid-cols-[minmax(250px,0.9fr)_minmax(0,1.8fr)] xl:grid-cols-[minmax(260px,1fr)_minmax(0,3fr)] xl:items-start">
+        <div className="xl:max-w-sm">
           <ProductGallery productName={product.name} images={galleryImages} />
         </div>
 
@@ -69,92 +71,7 @@ export default async function ProductDetailsPage({
             {product.description}
           </p>
 
-          {galleryImages.length > 1 ? (
-            <p className="mt-4 text-sm leading-6 text-slate-500">
-              This product includes {galleryImages.length} gallery images so
-              customers can browse multiple views before ordering.
-            </p>
-          ) : null}
-
-          {isVariable ? (
-            <div className="mt-6 rounded-[1.7rem] border border-[var(--brand)]/15 bg-[rgba(255,250,242,0.86)] p-4 text-sm leading-6 text-slate-600">
-              {showWholesalePrice
-                ? `Available in ${optionCount} ${product.variantLabel?.toLowerCase() || "option"}${optionCount === 1 ? "" : "s"}. Choose an option below to see its exact price, stock, and wholesale minimum.`
-                : `Available in ${optionCount} ${product.variantLabel?.toLowerCase() || "option"}${optionCount === 1 ? "" : "s"}. Choose an option below to see its exact price and stock. Wholesale pricing unlocks after you register for a wholesale account.`}
-            </div>
-          ) : null}
-
-          <div className={priceGridClass}>
-            {showNormalPrice ? (
-              <div
-                className={
-                  pricingMode === "retail"
-                    ? "rounded-[1.25rem] bg-white p-4"
-                    : "p-4"
-                }
-              >
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
-                  {isVariable ? "price from" : "price"}
-                </p>
-                <p className="mt-2 font-heading text-2xl font-semibold text-slate-900">
-                  {formatCurrency(product.normalPrice)}
-                </p>
-              </div>
-            ) : null}
-            {showWholesalePrice ? (
-              <>
-                <div
-                  className={
-                    pricingMode === "wholesale"
-                      ? "rounded-[1.25rem] bg-white p-4"
-                      : "p-4"
-                  }
-                >
-                  <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
-                    {isVariable ? "Wholesale price from" : "Wholesale price"}
-                  </p>
-                  <p className="mt-2 font-heading text-2xl font-semibold text-slate-900">
-                    {formatCurrency(product.wholesalePrice)}
-                  </p>
-                </div>
-                <div className="p-4">
-                  <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
-                    {isVariable
-                      ? "Wholesale minimum from"
-                      : "Wholesale minimum"}
-                  </p>
-                  <p className="mt-2 font-heading text-2xl font-semibold text-slate-900">
-                    {product.minOrderQuantity}
-                  </p>
-                </div>
-              </>
-            ) : null}
-          </div>
-
-          <p className="mt-4 text-sm leading-6 text-slate-600">
-            {showWholesalePrice
-              ? isVariable
-                ? "Wholesale pricing is active, and the selected option below controls the exact MOQ and price you order."
-                : "Wholesale pricing and minimum quantities are active for your account."
-              : isVariable
-                ? "Retail pricing is shown here. Create a wholesale account to unlock wholesale prices and bulk minimums for each option."
-                : "Retail pricing is shown here. Create a wholesale account to unlock wholesale pricing and bulk minimums."}
-          </p>
-
-          {!showWholesalePrice ? (
-            <div className="mt-6 flex flex-wrap gap-3">
-              {!user ? (
-                <Link
-                  href="/login"
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-[#fff4df] transition hover:bg-[#653713]"
-                >
-                  <span className="text-white">Log in</span>
-                </Link>
-              ) : null}
-            </div>
-          ) : null}
-
-          <div className="mt-8 border-t border-slate-200 pt-8">
+          <div className="mt-5 border-t border-slate-200 pt-8">
             <AddToCartControls
               product={product}
               pricingMode={pricingMode}

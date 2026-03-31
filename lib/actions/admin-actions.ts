@@ -5,7 +5,15 @@ import { revalidatePath } from "next/cache";
 
 import { ActionResponse } from "@/lib/actions/action-response";
 import { requireAdmin } from "@/lib/auth-helpers";
-import { normalizeGalleryImageUrls } from "@/lib/product-gallery";
+import {
+  getGalleryImageValidationError,
+  normalizeGalleryImageUrls,
+} from "@/lib/product-gallery";
+import {
+  getUploadedFile,
+  getUploadedFiles,
+  saveUploadedProductImage,
+} from "@/lib/product-image-uploads";
 import { summarizeActiveProductVariants } from "@/lib/product-variants";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
@@ -14,8 +22,22 @@ import {
   orderStatusSchema,
   productSchema,
   type CategoryInput,
-  type ProductInput
+  type ProductInput,
 } from "@/lib/validations/admin";
+
+function parseProductPayload(formData: FormData) {
+  const payload = formData.get("payload");
+
+  if (typeof payload !== "string") {
+    return null;
+  }
+
+  try {
+    return JSON.parse(payload) as unknown;
+  } catch {
+    return null;
+  }
+}
 
 function normalizeVariants(input: ProductInput) {
   return (input.variants ?? []).map((variant, index) => ({
@@ -26,7 +48,7 @@ function normalizeVariants(input: ProductInput) {
     stockQuantity: variant.stockQuantity,
     minOrderQuantity: variant.minOrderQuantity,
     isActive: variant.isActive,
-    position: index
+    position: index,
   }));
 }
 
@@ -45,8 +67,13 @@ function buildProductPayload(input: ProductInput) {
           normalPrice: input.normalPrice,
           wholesalePrice: input.wholesalePrice,
           stockQuantity: input.stockQuantity,
-          minOrderQuantity: input.minOrderQuantity
+          minOrderQuantity: input.minOrderQuantity,
         };
+  const imageUrl = input.imageUrl?.trim();
+
+  if (!imageUrl) {
+    throw new Error("Upload a product cover image before saving.");
+  }
 
   return {
     slug,
@@ -60,64 +87,141 @@ function buildProductPayload(input: ProductInput) {
       ingredients: normalizeOptionalText(input.ingredients),
       nutritional: normalizeOptionalText(input.nutritional),
       faq: normalizeOptionalText(input.faq),
-      imageUrl: input.imageUrl,
-      galleryImageUrls: normalizeGalleryImageUrls(input.imageUrl, input.galleryImageUrlsText),
+      imageUrl,
+      galleryImageUrls: normalizeGalleryImageUrls(
+        imageUrl,
+        input.retainedGalleryImageUrls,
+      ),
       productType: input.productType,
-      variantLabel: input.productType === "VARIABLE" ? input.variantLabel?.trim() || "Option" : null,
+      variantLabel:
+        input.productType === "VARIABLE"
+          ? input.variantLabel?.trim() || "Option"
+          : null,
+      vatMode: input.vatMode,
+      vatRate: input.vatRate,
       categoryId: input.categoryId,
       isActive: input.isActive,
-      ...pricingSummary
-    }
+      ...pricingSummary,
+    },
   };
 }
 
 export async function upsertProductAction(
-  input: ProductInput
+  formData: FormData,
 ): Promise<ActionResponse<{ id: string }>> {
   await requireAdmin();
 
-  const parsed = productSchema.safeParse(input);
+  const payload = parseProductPayload(formData);
+
+  if (!payload) {
+    return {
+      success: false,
+      error: "Please refresh the form and try again.",
+    };
+  }
+
+  const parsed = productSchema.safeParse(payload);
 
   if (!parsed.success) {
     return {
       success: false,
       error: "Please review the product form and try again.",
-      fieldErrors: parsed.error.flatten().fieldErrors
+      fieldErrors: parsed.error.flatten().fieldErrors,
     };
   }
 
   const existingProduct = parsed.data.id
     ? await prisma.product.findUnique({
         where: { id: parsed.data.id },
-        select: { slug: true }
+        select: { slug: true },
       })
     : null;
 
   try {
-    const payload = buildProductPayload(parsed.data);
+    const primaryImageFile = getUploadedFile(formData.get("primaryImageFile"));
+    const galleryImageFiles = getUploadedFiles(
+      formData.getAll("galleryImageFiles"),
+    );
+
+    let imageUrl = parsed.data.imageUrl?.trim() ?? "";
+
+    if (!imageUrl && !primaryImageFile) {
+      return {
+        success: false,
+        error: "Upload a product cover image before saving.",
+        fieldErrors: {
+          imageUrl: ["Upload a product cover image before saving."],
+        },
+      };
+    }
+
+    if (
+      parsed.data.retainedGalleryImageUrls.length + galleryImageFiles.length >
+      8
+    ) {
+      return {
+        success: false,
+        error: "You can keep up to 8 gallery images.",
+        fieldErrors: {
+          retainedGalleryImageUrls: ["You can keep up to 8 gallery images."],
+        },
+      };
+    }
+
+    if (primaryImageFile) {
+      imageUrl = await saveUploadedProductImage(primaryImageFile);
+    }
+
+    const uploadedGalleryImageUrls = await Promise.all(
+      galleryImageFiles.map((file) => saveUploadedProductImage(file)),
+    );
+    const retainedGalleryImageUrls = [
+      ...parsed.data.retainedGalleryImageUrls,
+      ...uploadedGalleryImageUrls,
+    ];
+    const galleryImageValidationError = getGalleryImageValidationError(
+      retainedGalleryImageUrls,
+    );
+
+    if (galleryImageValidationError) {
+      return {
+        success: false,
+        error: galleryImageValidationError,
+        fieldErrors: {
+          retainedGalleryImageUrls: [galleryImageValidationError],
+        },
+      };
+    }
+
+    const normalizedInput: ProductInput = {
+      ...parsed.data,
+      imageUrl,
+      retainedGalleryImageUrls,
+    };
+    const normalizedPayload = buildProductPayload(normalizedInput);
 
     const product = await prisma.$transaction(async (tx) => {
       const savedProduct = parsed.data.id
         ? await tx.product.update({
             where: { id: parsed.data.id },
-            data: payload.productData
+            data: normalizedPayload.productData,
           })
         : await tx.product.create({
-            data: payload.productData
+            data: normalizedPayload.productData,
           });
 
       await tx.productVariant.deleteMany({
         where: {
-          productId: savedProduct.id
-        }
+          productId: savedProduct.id,
+        },
       });
 
-      if (payload.variants.length) {
+      if (normalizedPayload.variants.length) {
         await tx.productVariant.createMany({
-          data: payload.variants.map((variant) => ({
+          data: normalizedPayload.variants.map((variant) => ({
             productId: savedProduct.id,
-            ...variant
-          }))
+            ...variant,
+          })),
         });
       }
 
@@ -136,7 +240,7 @@ export async function upsertProductAction(
     return {
       success: true,
       data: { id: product.id },
-      message: parsed.data.id ? "Product updated." : "Product created."
+      message: parsed.data.id ? "Product updated." : "Product created.",
     };
   } catch (error) {
     if (
@@ -145,7 +249,8 @@ export async function upsertProductAction(
     ) {
       return {
         success: false,
-        error: "A product, product slug, or option SKU with this value already exists."
+        error:
+          "A product, product slug, or option SKU with this value already exists.",
       };
     }
 
@@ -154,7 +259,7 @@ export async function upsertProductAction(
       error:
         error instanceof Error
           ? error.message
-          : "Unable to save the product right now."
+          : "Unable to save the product right now.",
     };
   }
 }
@@ -164,7 +269,7 @@ export async function deleteProductAction(id: string): Promise<ActionResponse> {
 
   try {
     await prisma.product.delete({
-      where: { id }
+      where: { id },
     });
 
     revalidatePath("/");
@@ -174,18 +279,19 @@ export async function deleteProductAction(id: string): Promise<ActionResponse> {
 
     return {
       success: true,
-      message: "Product deleted."
+      message: "Product deleted.",
     };
   } catch {
     return {
       success: false,
-      error: "This product cannot be deleted because it is linked to existing orders."
+      error:
+        "This product cannot be deleted because it is linked to existing orders.",
     };
   }
 }
 
 export async function upsertCategoryAction(
-  input: CategoryInput
+  input: CategoryInput,
 ): Promise<ActionResponse<{ id: string }>> {
   await requireAdmin();
 
@@ -195,7 +301,7 @@ export async function upsertCategoryAction(
     return {
       success: false,
       error: "Please review the category form and try again.",
-      fieldErrors: parsed.error.flatten().fieldErrors
+      fieldErrors: parsed.error.flatten().fieldErrors,
     };
   }
 
@@ -207,16 +313,16 @@ export async function upsertCategoryAction(
             name: parsed.data.name,
             slug: parsed.data.slug || slugify(parsed.data.name),
             description: parsed.data.description || null,
-            isActive: parsed.data.isActive
-          }
+            isActive: parsed.data.isActive,
+          },
         })
       : await prisma.category.create({
           data: {
             name: parsed.data.name,
             slug: parsed.data.slug || slugify(parsed.data.name),
             description: parsed.data.description || null,
-            isActive: parsed.data.isActive
-          }
+            isActive: parsed.data.isActive,
+          },
         });
 
     revalidatePath("/");
@@ -226,7 +332,7 @@ export async function upsertCategoryAction(
     return {
       success: true,
       data: { id: category.id },
-      message: parsed.data.id ? "Category updated." : "Category created."
+      message: parsed.data.id ? "Category updated." : "Category created.",
     };
   } catch (error) {
     if (
@@ -235,13 +341,13 @@ export async function upsertCategoryAction(
     ) {
       return {
         success: false,
-        error: "A category with this name or slug already exists."
+        error: "A category with this name or slug already exists.",
       };
     }
 
     return {
       success: false,
-      error: "Unable to save the category right now."
+      error: "Unable to save the category right now.",
     };
   }
 }
@@ -254,28 +360,28 @@ export async function deleteCategoryAction(id: string): Promise<ActionResponse> 
     include: {
       _count: {
         select: {
-          products: true
-        }
-      }
-    }
+          products: true,
+        },
+      },
+    },
   });
 
   if (!category) {
     return {
       success: false,
-      error: "Category not found."
+      error: "Category not found.",
     };
   }
 
   if (category._count.products > 0) {
     return {
       success: false,
-      error: "Remove products from this category before deleting it."
+      error: "Remove products from this category before deleting it.",
     };
   }
 
   await prisma.category.delete({
-    where: { id }
+    where: { id },
   });
 
   revalidatePath("/");
@@ -284,11 +390,14 @@ export async function deleteCategoryAction(id: string): Promise<ActionResponse> 
 
   return {
     success: true,
-    message: "Category deleted."
+    message: "Category deleted.",
   };
 }
 
-export async function updateOrderStatusAction(input: { id: string; status: string }): Promise<ActionResponse> {
+export async function updateOrderStatusAction(input: {
+  id: string;
+  status: string;
+}): Promise<ActionResponse> {
   await requireAdmin();
 
   const parsed = orderStatusSchema.safeParse(input);
@@ -296,15 +405,15 @@ export async function updateOrderStatusAction(input: { id: string; status: strin
   if (!parsed.success) {
     return {
       success: false,
-      error: "Please choose a valid status."
+      error: "Please choose a valid status.",
     };
   }
 
   await prisma.order.update({
     where: { id: parsed.data.id },
     data: {
-      status: parsed.data.status
-    }
+      status: parsed.data.status,
+    },
   });
 
   revalidatePath("/admin");
@@ -315,6 +424,6 @@ export async function updateOrderStatusAction(input: { id: string; status: strin
 
   return {
     success: true,
-    message: "Order status updated."
+    message: "Order status updated.",
   };
 }

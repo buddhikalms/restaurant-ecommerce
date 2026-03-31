@@ -28,6 +28,11 @@ enum ProductType {
   VARIABLE
 }
 
+enum VatMode {
+  INCLUDED
+  EXCLUDED
+}
+
 model User {
   id               String            @id @default(cuid())
   name             String
@@ -69,6 +74,8 @@ model Product {
   galleryImageUrls Json             @default("[]")
   productType      ProductType      @default(SIMPLE)
   variantLabel     String?
+  vatMode          VatMode          @default(INCLUDED)
+  vatRate          Decimal          @default(20) @db.Decimal(5, 2)
   normalPrice      Decimal          @default(0) @db.Decimal(10, 2)
   wholesalePrice   Decimal          @db.Decimal(10, 2)
   stockQuantity    Int
@@ -190,3 +197,4 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
 }
+

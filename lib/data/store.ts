@@ -1,8 +1,9 @@
-﻿import { unstable_noStore as noStore } from "next/cache";
+import { unstable_noStore as noStore } from "next/cache";
 import { Prisma } from "prisma-generated-client-v2";
 
 import { PRODUCT_PAGE_SIZE } from "@/lib/constants";
 import { coerceGalleryImageUrls } from "@/lib/product-gallery";
+import { calculatePriceWithVat } from "@/lib/product-pricing";
 import { prisma } from "@/lib/prisma";
 import { type PricingMode } from "@/lib/user-roles";
 
@@ -30,6 +31,8 @@ function productSelect() {
     galleryImageUrls: true,
     productType: true,
     variantLabel: true,
+    vatMode: true,
+    vatRate: true,
     normalPrice: true,
     wholesalePrice: true,
     stockQuantity: true,
@@ -37,10 +40,10 @@ function productSelect() {
     isActive: true,
     variants: {
       where: {
-        isActive: true
+        isActive: true,
       },
       orderBy: {
-        position: "asc"
+        position: "asc",
       },
       select: {
         id: true,
@@ -51,16 +54,16 @@ function productSelect() {
         stockQuantity: true,
         minOrderQuantity: true,
         isActive: true,
-        position: true
-      }
+        position: true,
+      },
     },
     category: {
       select: {
         id: true,
         name: true,
-        slug: true
-      }
-    }
+        slug: true,
+      },
+    },
   } satisfies Prisma.ProductSelect;
 }
 
@@ -69,24 +72,13 @@ type StoreProductRecord = Prisma.ProductGetPayload<{
 }>;
 
 function getProductWhere(filters: ProductFilterOptions): Prisma.ProductWhereInput {
-  const priceField = filters.pricingMode === "wholesale" ? "wholesalePrice" : "normalPrice";
-  const priceFilter =
-    filters.minPrice !== undefined || filters.maxPrice !== undefined
-      ? ({
-          [priceField]: {
-            ...(filters.minPrice !== undefined ? { gte: filters.minPrice } : {}),
-            ...(filters.maxPrice !== undefined ? { lte: filters.maxPrice } : {})
-          }
-        } as Prisma.ProductWhereInput)
-      : {};
-
   return {
     isActive: true,
     ...(filters.category
       ? {
           category: {
-            slug: filters.category
-          }
+            slug: filters.category,
+          },
         }
       : {}),
     ...(filters.query
@@ -101,34 +93,72 @@ function getProductWhere(filters: ProductFilterOptions): Prisma.ProductWhereInpu
                   isActive: true,
                   OR: [
                     { name: { contains: filters.query } },
-                    { sku: { contains: filters.query } }
-                  ]
-                }
-              }
-            }
-          ]
+                    { sku: { contains: filters.query } },
+                  ],
+                },
+              },
+            },
+          ],
         }
       : {}),
-    ...priceFilter
   };
 }
 
 function serializeProduct(product: StoreProductRecord) {
+  const vatRate = Number(product.vatRate);
+
   return {
     ...product,
     galleryImageUrls: coerceGalleryImageUrls(product.galleryImageUrls),
-    normalPrice: Number(product.normalPrice),
-    wholesalePrice: Number(product.wholesalePrice),
+    vatRate,
+    normalPrice: calculatePriceWithVat(
+      product.normalPrice,
+      vatRate,
+      product.vatMode,
+    ),
+    wholesalePrice: calculatePriceWithVat(
+      product.wholesalePrice,
+      vatRate,
+      product.vatMode,
+    ),
     variants: product.variants.map((variant) => ({
       ...variant,
-      normalPrice: Number(variant.normalPrice),
-      wholesalePrice: Number(variant.wholesalePrice)
+      normalPrice: calculatePriceWithVat(
+        variant.normalPrice,
+        vatRate,
+        product.vatMode,
+      ),
+      wholesalePrice: calculatePriceWithVat(
+        variant.wholesalePrice,
+        vatRate,
+        product.vatMode,
+      ),
     })),
     category: {
       name: product.category.name,
-      slug: product.category.slug
-    }
+      slug: product.category.slug,
+    },
   };
+}
+
+function matchesRequestedPrice(
+  product: ReturnType<typeof serializeProduct>,
+  filters: ProductFilterOptions,
+) {
+  const activePrice =
+    filters.pricingMode === "wholesale"
+      ? product.wholesalePrice
+      : product.normalPrice;
+
+  if (filters.minPrice !== undefined && activePrice < filters.minPrice) {
+    return false;
+  }
+
+  if (filters.maxPrice !== undefined && activePrice > filters.maxPrice) {
+    return false;
+  }
+
+  return true;
 }
 
 export async function getStoreCategories() {
@@ -138,10 +168,10 @@ export async function getStoreCategories() {
     where: { isActive: true },
     include: {
       _count: {
-        select: { products: true }
-      }
+        select: { products: true },
+      },
     },
-    orderBy: { name: "asc" }
+    orderBy: { name: "asc" },
   });
 }
 
@@ -152,7 +182,7 @@ export async function getFeaturedProducts() {
     where: { isActive: true },
     select: productSelect(),
     orderBy: [{ stockQuantity: "desc" }, { createdAt: "desc" }],
-    take: 3
+    take: 3,
   });
 
   return products.map(serializeProduct);
@@ -163,23 +193,25 @@ export async function getProducts(filters: ProductFilterOptions) {
 
   const page = Math.max(filters.page ?? 1, 1);
   const where = getProductWhere(filters);
-
-  const [products, total] = await Promise.all([
-    prisma.product.findMany({
-      where,
-      select: productSelect(),
-      orderBy: [{ createdAt: "desc" }, { name: "asc" }],
-      take: PRODUCT_PAGE_SIZE,
-      skip: (page - 1) * PRODUCT_PAGE_SIZE
-    }),
-    prisma.product.count({ where })
-  ]);
+  const products = await prisma.product.findMany({
+    where,
+    select: productSelect(),
+    orderBy: [{ createdAt: "desc" }, { name: "asc" }],
+  });
+  const serializedProducts = products
+    .map(serializeProduct)
+    .filter((product) => matchesRequestedPrice(product, filters));
+  const total = serializedProducts.length;
+  const paginatedProducts = serializedProducts.slice(
+    (page - 1) * PRODUCT_PAGE_SIZE,
+    page * PRODUCT_PAGE_SIZE,
+  );
 
   return {
-    products: products.map(serializeProduct),
+    products: paginatedProducts,
     total,
     page,
-    totalPages: Math.max(Math.ceil(total / PRODUCT_PAGE_SIZE), 1)
+    totalPages: Math.max(Math.ceil(total / PRODUCT_PAGE_SIZE), 1),
   };
 }
 
@@ -188,7 +220,7 @@ export async function getProductBySlug(slug: string) {
 
   const product = await prisma.product.findUnique({
     where: { slug },
-    select: productSelect()
+    select: productSelect(),
   });
 
   if (!product || !product.isActive) {
@@ -206,14 +238,14 @@ export async function getHomepageContent() {
     getStoreCategories(),
     prisma.product.count({
       where: {
-        isActive: true
-      }
-    })
+        isActive: true,
+      },
+    }),
   ]);
 
   return {
     featuredProducts,
     categories,
-    totalProducts
+    totalProducts,
   };
 }

@@ -1,6 +1,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 
 import { coerceGalleryImageUrls } from "@/lib/product-gallery";
+import { calculatePriceWithVat } from "@/lib/product-pricing";
 import { prisma } from "@/lib/prisma";
 
 type AdminProductFilters = {
@@ -21,40 +22,40 @@ export async function getAdminMetrics() {
     totalRetailCustomers,
     totalWholesaleCustomers,
     orderAggregation,
-    pendingAggregation
+    pendingAggregation,
   ] = await Promise.all([
     prisma.product.count(),
     prisma.order.count(),
     prisma.user.count({
       where: {
-        role: "CUSTOMER"
-      }
+        role: "CUSTOMER",
+      },
     }),
     prisma.user.count({
       where: {
-        role: "WHOLESALE_CUSTOMER"
-      }
+        role: "WHOLESALE_CUSTOMER",
+      },
     }),
     prisma.order.aggregate({
       _sum: {
-        total: true
+        total: true,
       },
       where: {
         status: {
-          not: "CANCELLED"
-        }
-      }
+          not: "CANCELLED",
+        },
+      },
     }),
     prisma.order.aggregate({
       _sum: {
-        total: true
+        total: true,
       },
       where: {
         status: {
-          in: ["PENDING", "CONFIRMED", "PROCESSING"]
-        }
-      }
-    })
+          in: ["PENDING", "CONFIRMED", "PROCESSING"],
+        },
+      },
+    }),
   ]);
 
   return {
@@ -64,7 +65,7 @@ export async function getAdminMetrics() {
     totalRetailCustomers,
     totalWholesaleCustomers,
     revenueSummary: Number(orderAggregation._sum.total ?? 0),
-    pendingRevenue: Number(pendingAggregation._sum.total ?? 0)
+    pendingRevenue: Number(pendingAggregation._sum.total ?? 0),
   };
 }
 
@@ -82,29 +83,42 @@ export async function getAdminProducts(filters: AdminProductFilters) {
                 some: {
                   OR: [
                     { name: { contains: filters.query } },
-                    { sku: { contains: filters.query } }
-                  ]
-                }
-              }
-            }
-          ]
+                    { sku: { contains: filters.query } },
+                  ],
+                },
+              },
+            },
+          ],
         }
       : undefined,
     include: {
       category: true,
       variants: {
         where: { isActive: true },
-        select: { id: true }
-      }
+        select: { id: true },
+      },
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   });
 
-  return products.map((product) => ({
-    ...product,
-    normalPrice: Number(product.normalPrice),
-    wholesalePrice: Number(product.wholesalePrice)
-  }));
+  return products.map((product) => {
+    const vatRate = Number(product.vatRate);
+
+    return {
+      ...product,
+      vatRate,
+      normalPrice: calculatePriceWithVat(
+        product.normalPrice,
+        vatRate,
+        product.vatMode,
+      ),
+      wholesalePrice: calculatePriceWithVat(
+        product.wholesalePrice,
+        vatRate,
+        product.vatMode,
+      ),
+    };
+  });
 }
 
 export async function getAdminProductById(id: string) {
@@ -114,9 +128,9 @@ export async function getAdminProductById(id: string) {
     where: { id },
     include: {
       variants: {
-        orderBy: { position: "asc" }
-      }
-    }
+        orderBy: { position: "asc" },
+      },
+    },
   });
 
   if (!product) {
@@ -126,13 +140,14 @@ export async function getAdminProductById(id: string) {
   return {
     ...product,
     galleryImageUrls: coerceGalleryImageUrls(product.galleryImageUrls),
+    vatRate: Number(product.vatRate),
     normalPrice: Number(product.normalPrice),
     wholesalePrice: Number(product.wholesalePrice),
     variants: product.variants.map((variant) => ({
       ...variant,
       normalPrice: Number(variant.normalPrice),
-      wholesalePrice: Number(variant.wholesalePrice)
-    }))
+      wholesalePrice: Number(variant.wholesalePrice),
+    })),
   };
 }
 
@@ -143,11 +158,11 @@ export async function getAdminCategories() {
     include: {
       _count: {
         select: {
-          products: true
-        }
-      }
+          products: true,
+        },
+      },
     },
-    orderBy: { name: "asc" }
+    orderBy: { name: "asc" },
   });
 }
 
@@ -163,10 +178,10 @@ export async function getAdminOrders(filters: AdminOrderFilters) {
               { orderNumber: { contains: filters.query } },
               { user: { email: { contains: filters.query } } },
               { user: { businessName: { contains: filters.query } } },
-              { user: { name: { contains: filters.query } } }
-            ]
+              { user: { name: { contains: filters.query } } },
+            ],
           }
-        : {})
+        : {}),
     },
     include: {
       user: {
@@ -174,17 +189,17 @@ export async function getAdminOrders(filters: AdminOrderFilters) {
           name: true,
           email: true,
           businessName: true,
-          role: true
-        }
-      }
+          role: true,
+        },
+      },
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   });
 
   return orders.map((order) => ({
     ...order,
     subtotal: Number(order.subtotal),
-    total: Number(order.total)
+    total: Number(order.total),
   }));
 }
 
@@ -200,14 +215,14 @@ export async function getAdminOrderById(id: string) {
           email: true,
           phone: true,
           businessName: true,
-          role: true
-        }
+          role: true,
+        },
       },
       shippingAddress: true,
       items: {
-        orderBy: { createdAt: "asc" }
-      }
-    }
+        orderBy: { createdAt: "asc" },
+      },
+    },
   });
 
   if (!order) {
@@ -221,8 +236,8 @@ export async function getAdminOrderById(id: string) {
     items: order.items.map((item) => ({
       ...item,
       unitPrice: Number(item.unitPrice),
-      lineTotal: Number(item.lineTotal)
-    }))
+      lineTotal: Number(item.lineTotal),
+    })),
   };
 }
 
@@ -232,16 +247,16 @@ export async function getAdminCustomers() {
   const customers = await prisma.user.findMany({
     where: {
       role: {
-        in: ["CUSTOMER", "WHOLESALE_CUSTOMER"]
-      }
+        in: ["CUSTOMER", "WHOLESALE_CUSTOMER"],
+      },
     },
     include: {
       orders: {
         orderBy: { createdAt: "desc" },
-        take: 5
-      }
+        take: 5,
+      },
     },
-    orderBy: [{ role: "desc" }, { createdAt: "desc" }]
+    orderBy: [{ role: "desc" }, { createdAt: "desc" }],
   });
 
   return customers.map((customer) => ({
@@ -249,7 +264,7 @@ export async function getAdminCustomers() {
     orders: customer.orders.map((order) => ({
       ...order,
       subtotal: Number(order.subtotal),
-      total: Number(order.total)
-    }))
+      total: Number(order.total),
+    })),
   }));
 }

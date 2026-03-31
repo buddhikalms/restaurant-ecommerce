@@ -47,7 +47,7 @@ export function CartTable() {
             <thead className="bg-[#f9f4ea] text-left text-xs uppercase tracking-[0.16em] text-slate-500">
               <tr>
                 <th className="px-6 py-4">Product</th>
-                <th className="px-6 py-4">Unit price</th>
+                <th className="px-6 py-4">Unit total</th>
                 <th className="px-6 py-4">Quantity</th>
                 <th className="px-6 py-4">Line total</th>
                 <th className="px-6 py-4">Actions</th>
@@ -169,8 +169,8 @@ export function CartTable() {
           </div>
           <p className="mt-3 text-xs leading-5 text-slate-500">
             {pricingMode === "wholesale"
-              ? "Shipping will be coordinated after order review. Final invoicing reflects confirmed availability."
-              : "Shipping and taxes are finalized after order review and confirmation."}
+              ? "Shipping will be coordinated after order review. VAT is already included in the shown product totals."
+              : "Shipping is finalized after order review. VAT is already included in the shown product totals."}
           </p>
           <Link
             href="/checkout"

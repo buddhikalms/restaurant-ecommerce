@@ -1,36 +1,46 @@
-export function parseGalleryImageUrlsText(text?: string | null) {
+function parseGalleryImageUrlsText(text?: string | null) {
   return Array.from(
     new Set(
       (text ?? "")
         .split(/\r?\n/)
         .map((value) => value.trim())
-        .filter(Boolean)
-    )
+        .filter(Boolean),
+    ),
   );
 }
 
-function isValidUrl(value: string) {
-  try {
-    new URL(value);
+function normalizeImageReferences(values: string[]) {
+  return Array.from(
+    new Set(
+      values.map((value) => value.trim()).filter(Boolean),
+    ),
+  );
+}
+
+export function isValidImageReference(value: string) {
+  const normalizedValue = value.trim();
+
+  if (!normalizedValue) {
+    return false;
+  }
+
+  if (normalizedValue.startsWith("/")) {
     return true;
+  }
+
+  try {
+    const url = new URL(normalizedValue);
+    return url.protocol === "http:" || url.protocol === "https:";
   } catch {
     return false;
   }
 }
 
-function sanitizeGalleryImageUrls(values: string[]) {
-  return Array.from(
-    new Set(
-      values
-        .map((value) => value.trim())
-        .filter(Boolean)
-    )
-  );
-}
-
 export function coerceGalleryImageUrls(value: unknown): string[] {
   if (Array.isArray(value)) {
-    return sanitizeGalleryImageUrls(value.filter((item): item is string => typeof item === "string"));
+    return normalizeImageReferences(
+      value.filter((item): item is string => typeof item === "string"),
+    ).filter(isValidImageReference);
   }
 
   if (typeof value === "string") {
@@ -43,39 +53,47 @@ export function coerceGalleryImageUrls(value: unknown): string[] {
     try {
       return coerceGalleryImageUrls(JSON.parse(normalized));
     } catch {
-      return parseGalleryImageUrlsText(normalized);
+      return parseGalleryImageUrlsText(normalized).filter(isValidImageReference);
     }
   }
 
   return [];
 }
 
-export function getGalleryImageValidationError(text?: string | null) {
-  const galleryImageUrls = parseGalleryImageUrlsText(text);
+export function getGalleryImageValidationError(values: string[] = []) {
+  const galleryImageUrls = normalizeImageReferences(values);
 
   if (galleryImageUrls.length > 8) {
-    return "You can add up to 8 gallery images.";
+    return "You can keep up to 8 gallery images.";
   }
 
-  if (galleryImageUrls.some((url) => !isValidUrl(url))) {
-    return "Each gallery image must be a valid URL on its own line.";
+  if (galleryImageUrls.some((value) => !isValidImageReference(value))) {
+    return "Each gallery image must be a valid uploaded image or URL.";
   }
 
   return null;
 }
 
-export function normalizeGalleryImageUrls(primaryImageUrl: string, text?: string | null) {
+export function normalizeGalleryImageUrls(
+  primaryImageUrl: string,
+  values: string[] = [],
+) {
   const normalizedPrimaryImageUrl = primaryImageUrl.trim();
 
-  return parseGalleryImageUrlsText(text).filter((url) => url !== normalizedPrimaryImageUrl);
+  return normalizeImageReferences(values)
+    .filter(isValidImageReference)
+    .filter((value) => value !== normalizedPrimaryImageUrl);
 }
 
-export function buildProductGalleryImages(primaryImageUrl: string, galleryImageUrls: unknown = []) {
+export function buildProductGalleryImages(
+  primaryImageUrl: string,
+  galleryImageUrls: unknown = [],
+) {
   return Array.from(
     new Set(
       [primaryImageUrl, ...coerceGalleryImageUrls(galleryImageUrls)]
         .map((value) => value.trim())
-        .filter(Boolean)
-    )
+        .filter(isValidImageReference),
+    ),
   );
 }

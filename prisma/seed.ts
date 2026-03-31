@@ -1,4 +1,4 @@
-﻿import { PrismaClient, Role, OrderStatus, ProductType } from "prisma-generated-client-v2";
+import { PrismaClient, Role, OrderStatus, ProductType, VatMode } from "prisma-generated-client-v2";
 import { hash } from "bcryptjs";
 
 import { summarizeActiveProductVariants } from "../lib/product-variants";
@@ -341,6 +341,8 @@ async function main() {
         galleryImageUrls: product.galleryImageUrls ?? [],
         productType: product.productType ?? ProductType.SIMPLE,
         variantLabel: product.productType === ProductType.VARIABLE ? product.variantLabel ?? "Option" : null,
+        vatMode: VatMode.INCLUDED,
+        vatRate: 20,
         normalPrice: summary.normalPrice,
         wholesalePrice: summary.wholesalePrice,
         stockQuantity: summary.stockQuantity,
@@ -357,6 +359,8 @@ async function main() {
         galleryImageUrls: product.galleryImageUrls ?? [],
         productType: product.productType ?? ProductType.SIMPLE,
         variantLabel: product.productType === ProductType.VARIABLE ? product.variantLabel ?? "Option" : null,
+        vatMode: VatMode.INCLUDED,
+        vatRate: 20,
         normalPrice: summary.normalPrice,
         wholesalePrice: summary.wholesalePrice,
         stockQuantity: summary.stockQuantity,

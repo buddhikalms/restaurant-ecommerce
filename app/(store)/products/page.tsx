@@ -1,4 +1,4 @@
-﻿import { EmptyState } from "@/components/ui/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { ProductCard } from "@/components/store/product-card";
 import { ProductFilters } from "@/components/store/product-filters";
@@ -32,8 +32,8 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
       minPrice: minPrice ? Number(minPrice) : undefined,
       maxPrice: maxPrice ? Number(maxPrice) : undefined,
       page,
-      pricingMode
-    })
+      pricingMode,
+    }),
   ]);
 
   const buildHref = (nextPage: number) => {
@@ -73,7 +73,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
 
       <div className="mt-8">
         {productResult.products.length ? (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {productResult.products.map((product) => (
               <ProductCard
                 key={product.id}
@@ -96,5 +96,3 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
     </div>
   );
 }
-
-

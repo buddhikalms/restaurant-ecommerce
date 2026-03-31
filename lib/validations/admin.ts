@@ -1,12 +1,32 @@
 import { z } from "zod";
 
-import { getGalleryImageValidationError } from "@/lib/product-gallery";
+import {
+  getGalleryImageValidationError,
+  isValidImageReference,
+} from "@/lib/product-gallery";
 
 const productTabContentSchema = z
   .string()
   .trim()
   .max(5000, "Tab content must be 5000 characters or fewer")
   .optional();
+
+const productImageReferenceSchema = z
+  .string()
+  .trim()
+  .optional()
+  .superRefine((value, ctx) => {
+    if (!value) {
+      return;
+    }
+
+    if (!isValidImageReference(value)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Current image reference is invalid",
+      });
+    }
+  });
 
 export const categorySchema = z.object({
   id: z.string().optional(),
@@ -24,7 +44,7 @@ export const productVariantSchema = z.object({
   id: z.string().optional(),
   name: z.string().trim().min(1, "Option name is required"),
   sku: z.string().trim().min(2, "Option SKU is required"),
-  normalPrice: z.coerce.number().positive("price must be greater than zero"),
+  normalPrice: z.coerce.number().positive("Price must be greater than zero"),
   wholesalePrice: z.coerce
     .number()
     .positive("Wholesale price must be greater than zero"),
@@ -50,15 +70,20 @@ export const productSchema = z
     ingredients: productTabContentSchema,
     nutritional: productTabContentSchema,
     faq: productTabContentSchema,
-    imageUrl: z.string().url("Enter a valid image URL"),
-    galleryImageUrlsText: z.string().optional(),
+    imageUrl: productImageReferenceSchema,
+    retainedGalleryImageUrls: z.array(z.string().trim()).default([]),
     productType: z.enum(["SIMPLE", "VARIABLE"]),
     variantLabel: z
       .string()
       .trim()
       .max(40, "Option label must be 40 characters or fewer")
       .optional(),
-    normalPrice: z.coerce.number().min(0, "price cannot be negative"),
+    vatMode: z.enum(["INCLUDED", "EXCLUDED"]),
+    vatRate: z.coerce
+      .number()
+      .min(0, "VAT rate cannot be negative")
+      .max(100, "VAT rate must be 100 or less"),
+    normalPrice: z.coerce.number().min(0, "Price cannot be negative"),
     wholesalePrice: z.coerce
       .number()
       .min(0, "Wholesale price cannot be negative"),
@@ -73,13 +98,13 @@ export const productSchema = z
   })
   .superRefine((value, ctx) => {
     const galleryImageValidationError = getGalleryImageValidationError(
-      value.galleryImageUrlsText,
+      value.retainedGalleryImageUrls,
     );
 
     if (galleryImageValidationError) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["galleryImageUrlsText"],
+        path: ["retainedGalleryImageUrls"],
         message: galleryImageValidationError,
       });
     }
@@ -89,7 +114,7 @@ export const productSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["normalPrice"],
-          message: "price must be greater than zero",
+          message: "Price must be greater than zero",
         });
       }
 
