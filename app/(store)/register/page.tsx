@@ -13,24 +13,31 @@ export default async function RegisterPage() {
   }
 
   return (
-    <div className="page-shell py-12">
-      <div className="mx-auto max-w-3xl surface-card rounded-[2.5rem] border border-white/70 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">Register</p>
-        <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900">Create your customer account</h1>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-600">
-          Open a standard customer account to place everyday orders, track status changes, and manage your order history from one place.
-        </p>
-        <div className="mt-8">
-          <RegisterForm mode="customer" />
-        </div>
-        <div className="mt-6 space-y-2 text-sm text-slate-600">
-          <p>
-            Already registered? <Link href="/login" className="font-semibold text-[var(--brand-dark)]">Log in here</Link>
+    <div className="page-shell py-6 sm:py-8">
+      <div className="mx-auto grid max-w-5xl gap-4 lg:grid-cols-[0.88fr_1.12fr]">
+        <section className="paper-panel rounded-lg p-5">
+          <p className="section-label">Customer registration</p>
+          <h1 className="section-title mt-2">Create a customer account</h1>
+          <p className="section-copy mt-3 max-w-md">
+            Set up a simple buying account for repeat ordering, saved details, and easier checkout.
           </p>
-          <p>
-            Need business pricing? <Link href="/wholesale/register" className="font-semibold text-[var(--brand-dark)]">Register as a wholesale customer</Link>
-          </p>
-        </div>
+          <div className="mt-4 space-y-2 text-[0.82rem] text-[var(--muted-foreground)]">
+            <p>
+              Already registered? <Link href="/login" className="warm-link">Sign in</Link>
+            </p>
+            <p>
+              Need trade pricing? <Link href="/wholesale/register" className="warm-link">Create a wholesale account</Link>
+            </p>
+          </div>
+        </section>
+
+        <section className="surface-card rounded-lg p-5">
+          <p className="section-label">Create account</p>
+          <h2 className="section-subtitle mt-2">Your details</h2>
+          <div className="mt-4">
+            <RegisterForm mode="customer" />
+          </div>
+        </section>
       </div>
     </div>
   );

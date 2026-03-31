@@ -26,25 +26,19 @@ export default async function CartPage({
   const skippedCount = toCount(query.skipped);
 
   return (
-    <div className="page-shell py-12">
-      <div className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
-          Cart
-        </p>
-        <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900 sm:text-5xl">
-          {pricingMode === "wholesale"
-            ? "Review your wholesale cart"
-            : "Review your cart"}
+    <div className="page-shell py-6 sm:py-8">
+      <section className="surface-card rounded-xl p-5">
+        <p className="section-label">Cart</p>
+        <h1 className="section-title mt-2">
+          {pricingMode === "wholesale" ? "Review your wholesale basket" : "Review your basket"}
         </h1>
-        <p className="mt-4 text-base leading-7 text-slate-600">
-          {pricingMode === "wholesale"
-            ? "Adjust quantities, confirm product lines, and continue to your wholesale order submission."
-            : "Adjust quantities, confirm product lines, and continue to checkout."}
+        <p className="section-copy mt-2">
+          Adjust quantities and continue to checkout.
         </p>
-      </div>
+      </section>
 
       {reordered ? (
-        <div className="mt-6 rounded-[1.5rem] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800">
+        <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-[0.84rem] leading-6 text-[var(--muted-foreground)]">
           {addedCount > 0
             ? `${addedCount} item line${addedCount === 1 ? "" : "s"} were added from your previous order.`
             : "We checked your previous order against the current catalog."}{" "}
@@ -54,7 +48,7 @@ export default async function CartPage({
         </div>
       ) : null}
 
-      <div className="mt-8">
+      <div className="mt-4">
         <CartTable />
       </div>
     </div>

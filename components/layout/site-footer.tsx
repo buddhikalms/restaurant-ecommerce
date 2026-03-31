@@ -2,39 +2,36 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-20 border-t border-white/70 bg-[#2c2419] text-[#f8f0df]">
-      <div className="page-shell grid gap-10 py-12 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
-        <div>
-          <p className="font-heading text-2xl font-semibold">
-            CeylonTaste
-          </p>
-          <p className="mt-4 max-w-md text-sm leading-6 text-[#d4c4a6]">
-            Flexible retail and wholesale ordering for homes, restaurants,
-            cafes, hotel kitchens, and catering teams that need dependable stock
-            visibility and cleaner buying workflows.
-          </p>
-        </div>
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#f5d7a3]">
-            Browse
-          </p>
-          <div className="mt-4 flex flex-col gap-3 text-sm text-[#d4c4a6]">
-            <Link href="/about">About us</Link>
-            <Link href="/contact">Contact us</Link>
-            <Link href="/products">All products</Link>
-            <Link href="/cart">Cart</Link>
-            <Link href="/checkout">Checkout</Link>
+    <footer className="mt-12 border-t border-[var(--border)] bg-[var(--surface)]">
+      <div className="page-shell py-8">
+        <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
+          <div>
+            <p className="text-sm font-semibold text-[var(--foreground)]">CeylonTaste</p>
+            <p className="mt-2 max-w-sm text-[0.82rem] leading-6 text-[var(--muted-foreground)]">
+              Minimal wholesale ordering for restaurants, cafes, and food service teams.
+            </p>
           </div>
-        </div>
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#f5d7a3]">
-            Accounts
-          </p>
-          <div className="mt-4 flex flex-col gap-3 text-sm text-[#d4c4a6]">
-            <Link href="/login">Login</Link>
-            <Link href="/register">Customer registration</Link>
-            <Link href="/wholesale/register">Wholesale registration</Link>
-            <Link href="/account/orders">Retail order history</Link>
+          <div>
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+              Browse
+            </p>
+            <div className="mt-2 flex flex-col gap-1.5 text-[0.82rem] text-[var(--muted-foreground)]">
+              <Link href="/products" className="transition hover:text-[var(--foreground)]">Products</Link>
+              <Link href="/about" className="transition hover:text-[var(--foreground)]">About</Link>
+              <Link href="/contact" className="transition hover:text-[var(--foreground)]">Contact</Link>
+              <Link href="/checkout" className="transition hover:text-[var(--foreground)]">Checkout</Link>
+            </div>
+          </div>
+          <div>
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+              Account
+            </p>
+            <div className="mt-2 flex flex-col gap-1.5 text-[0.82rem] text-[var(--muted-foreground)]">
+              <Link href="/login" className="transition hover:text-[var(--foreground)]">Login</Link>
+              <Link href="/register" className="transition hover:text-[var(--foreground)]">Register</Link>
+              <Link href="/wholesale/register" className="transition hover:text-[var(--foreground)]">Wholesale</Link>
+              <Link href="/account/orders" className="transition hover:text-[var(--foreground)]">Orders</Link>
+            </div>
           </div>
         </div>
       </div>

@@ -20,111 +20,75 @@ export function CartTable() {
 
   if (!items.length) {
     return (
-      <div className="surface-card rounded-[2rem] border border-white/70 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-        <h2 className="font-heading text-2xl font-semibold text-slate-900">
-          Your cart is empty
-        </h2>
-        <p className="mt-3 text-sm leading-6 text-slate-600">
-          {pricingMode === "wholesale"
-            ? "Add wholesale products to build your next replenishment order."
-            : "Add products to build your next order."}
+      <div className="surface-card rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-[var(--foreground)]">Your cart is empty</h2>
+        <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+          Add products to start building your order.
         </p>
         <Link
           href="/products"
-          className="mt-6 inline-flex h-11 items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-white transition hover:bg-[var(--brand-dark)]"
+          className="mt-4 inline-flex h-9 items-center justify-center rounded-lg bg-[var(--brand)] px-3.5 text-[0.84rem] font-medium text-white transition hover:bg-[var(--brand-dark)]"
         >
-          <span className="text-white">Browse products</span>
+          Browse products
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="surface-card overflow-hidden rounded-[2rem] border border-white/70 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="surface-card overflow-hidden rounded-lg">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-[#f9f4ea] text-left text-xs uppercase tracking-[0.16em] text-slate-500">
+          <table className="min-w-full text-left">
+            <thead className="border-b border-[var(--border)] bg-[var(--surface-muted)] text-[0.72rem] uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
               <tr>
-                <th className="px-6 py-4">Product</th>
-                <th className="px-6 py-4">Unit total</th>
-                <th className="px-6 py-4">Quantity</th>
-                <th className="px-6 py-4">Line total</th>
-                <th className="px-6 py-4">Actions</th>
+                <th className="px-4 py-3">Product</th>
+                <th className="px-4 py-3">Price</th>
+                <th className="px-4 py-3">Qty</th>
+                <th className="px-4 py-3">Total</th>
+                <th className="px-4 py-3">Remove</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white text-sm text-slate-700">
+            <tbody className="divide-y divide-[var(--border)]">
               {items.map((item) => (
                 <tr key={item.itemId}>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-3">
                       <RemoteImage
                         src={item.imageUrl}
                         alt={item.name}
-                        width={128}
-                        height={128}
-                        className="h-16 w-16 rounded-2xl object-cover"
+                        width={72}
+                        height={72}
+                        className="h-14 w-14 rounded-md object-cover"
                       />
                       <div>
-                        <p className="font-semibold text-slate-900">
-                          {item.name}
-                        </p>
-                        {item.variantName ? (
-                          <p className="text-xs uppercase tracking-[0.14em] text-[var(--brand-dark)]">
-                            {item.variantName}
-                          </p>
-                        ) : null}
-                        <p className="text-xs uppercase tracking-[0.14em] text-slate-500">
-                          {item.sku}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          {pricingMode === "wholesale"
-                            ? `Wholesale MOQ ${item.minimumQuantity}`
-                            : `${pricingLabel} pricing`}
-                        </p>
+                        <p className="text-sm font-medium text-[var(--foreground)]">{item.name}</p>
+                        {item.variantName ? <p className="text-[0.72rem] text-[var(--muted-foreground)]">{item.variantName}</p> : null}
+                        <p className="text-[0.72rem] text-[var(--muted-foreground)]">{item.sku}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-medium text-slate-900">
-                    {formatCurrency(item.unitPrice)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1">
+                  <td className="px-4 py-4 text-sm text-[var(--foreground)]">{formatCurrency(item.unitPrice)}</td>
+                  <td className="px-4 py-4">
+                    <div className="flex h-8 items-center rounded-md border border-[var(--border)] bg-[var(--surface-muted)] px-1">
                       <button
-                        className="h-8 w-8 rounded-full bg-white text-lg font-medium text-slate-700"
-                        onClick={() =>
-                          updateQuantity(
-                            item.itemId,
-                            item.quantity - item.minimumQuantity,
-                          )
-                        }
+                        className="inline-flex h-6 w-6 items-center justify-center rounded text-sm text-[var(--muted-foreground)]"
+                        onClick={() => updateQuantity(item.itemId, item.quantity - item.minimumQuantity)}
                       >
                         -
                       </button>
-                      <span className="min-w-12 text-center font-semibold text-slate-900">
-                        {item.quantity}
-                      </span>
+                      <span className="w-8 text-center text-[0.82rem] text-[var(--foreground)]">{item.quantity}</span>
                       <button
-                        className="h-8 w-8 rounded-full bg-white text-lg font-medium text-slate-700"
-                        onClick={() =>
-                          updateQuantity(
-                            item.itemId,
-                            item.quantity + item.minimumQuantity,
-                          )
-                        }
+                        className="inline-flex h-6 w-6 items-center justify-center rounded text-sm text-[var(--muted-foreground)]"
+                        onClick={() => updateQuantity(item.itemId, item.quantity + item.minimumQuantity)}
                       >
                         +
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-semibold text-slate-900">
-                    {formatCurrency(item.unitPrice * item.quantity)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      className="text-sm font-semibold text-rose-600"
-                      onClick={() => removeItem(item.itemId)}
-                    >
+                  <td className="px-4 py-4 text-sm font-medium text-[var(--foreground)]">{formatCurrency(item.unitPrice * item.quantity)}</td>
+                  <td className="px-4 py-4">
+                    <button className="text-[0.8rem] text-[var(--danger)]" onClick={() => removeItem(item.itemId)}>
                       Remove
                     </button>
                   </td>
@@ -135,55 +99,31 @@ export function CartTable() {
         </div>
       </div>
 
-      <aside className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-          {pricingLabel} order summary
-        </p>
-        <div className="mt-6 space-y-4 text-sm text-slate-600">
+      <aside className="surface-card rounded-lg p-4">
+        <p className="section-label">{pricingLabel} summary</p>
+        <div className="mt-3 space-y-2 text-[0.82rem] text-[var(--muted-foreground)]">
           {items.map((item) => (
-            <div
-              key={item.itemId}
-              className="flex items-center justify-between gap-4"
-            >
-              <div>
-                <p className="font-medium text-slate-900">{item.name}</p>
-                {item.variantName ? (
-                  <p className="text-xs uppercase tracking-[0.14em] text-slate-500">
-                    {item.variantName}
-                  </p>
-                ) : null}
-                <p>{item.quantity} units</p>
-              </div>
-              <p className="font-semibold text-slate-900">
-                {formatCurrency(item.unitPrice * item.quantity)}
-              </p>
+            <div key={item.itemId} className="flex items-center justify-between gap-3">
+              <span className="line-clamp-1">{item.name}</span>
+              <span>{formatCurrency(item.unitPrice * item.quantity)}</span>
             </div>
           ))}
         </div>
-        <div className="mt-6 border-t border-slate-200 pt-6">
-          <div className="flex items-center justify-between text-sm text-slate-600">
+        <div className="mt-4 border-t border-[var(--border)] pt-4">
+          <div className="flex items-center justify-between text-sm text-[var(--foreground)]">
             <span>Subtotal</span>
-            <span className="font-semibold text-slate-900">
-              {formatCurrency(subtotal)}
-            </span>
+            <span className="font-medium">{formatCurrency(subtotal)}</span>
           </div>
-          <p className="mt-3 text-xs leading-5 text-slate-500">
-            {pricingMode === "wholesale"
-              ? "Shipping will be coordinated after order review. VAT is already included in the shown product totals."
-              : "Shipping is finalized after order review. VAT is already included in the shown product totals."}
+          <p className="mt-2 text-[0.72rem] leading-5 text-[var(--muted-foreground)]">
+            Shipping is confirmed after review.
           </p>
           <Link
             href="/checkout"
-            className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-white transition hover:bg-[var(--brand-dark)]"
+            className="mt-4 inline-flex h-9 w-full items-center justify-center rounded-lg bg-[var(--brand)] px-3.5 text-[0.84rem] font-medium text-white transition hover:bg-[var(--brand-dark)]"
           >
-            <span className="text-white"> Continue to checkout</span>
+            Continue to checkout
           </Link>
-          <Button
-            type="button"
-            variant="secondary"
-            className="mt-3 w-full"
-            onClick={clearCart}
-          >
+          <Button type="button" variant="secondary" className="mt-2 w-full" onClick={clearCart}>
             Clear cart
           </Button>
         </div>

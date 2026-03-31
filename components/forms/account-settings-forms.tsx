@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
@@ -34,16 +34,49 @@ function NoticeMessage({ notice }: { notice: Notice | null }) {
     return null;
   }
 
+  return <p className={notice.type === "success" ? "notice-success" : "notice-error"}>{notice.text}</p>;
+}
+
+function SettingsPanel({
+  eyebrow,
+  title,
+  description,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  children: ReactNode;
+}) {
   return (
-    <p
-      className={
-        notice.type === "success"
-          ? "rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
-          : "rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
-      }
-    >
-      {notice.text}
-    </p>
+    <div className="surface-card rounded-lg p-5">
+      <div className="flex flex-col gap-1">
+        <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
+          {eyebrow}
+        </p>
+        <h2 className="text-lg font-semibold text-[var(--foreground)]">{title}</h2>
+        <p className="text-[0.82rem] leading-5 text-[var(--muted-foreground)]">{description}</p>
+      </div>
+      <div className="mt-4">{children}</div>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  children,
+  error,
+}: {
+  label: string;
+  children: ReactNode;
+  error?: string;
+}) {
+  return (
+    <div>
+      <label className="field-label">{label}</label>
+      {children}
+      <FieldError message={error} />
+    </div>
   );
 }
 
@@ -70,11 +103,7 @@ export function CustomerProfileSettingsForm({
   const router = useRouter();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isPending, startTransition] = useTransition();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<CustomerProfileFormValues>({
+  const form = useForm<CustomerProfileFormValues>({
     resolver: zodResolver(customerProfileFormSchema),
     defaultValues: {
       name: defaults.name,
@@ -85,61 +114,49 @@ export function CustomerProfileSettingsForm({
   });
 
   return (
-    <form
-      className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]"
-      onSubmit={handleSubmit((values) => {
-        setNotice(null);
-        startTransition(async () => {
-          const result = await updateCustomerProfileAction(values);
-
-          if (!result.success) {
-            setNotice({ type: "error", text: result.error });
-            return;
-          }
-
-          setNotice({ type: "success", text: result.message ?? "Profile saved." });
-          router.refresh();
-        });
-      })}
+    <SettingsPanel
+      eyebrow="Account details"
+      title="Profile settings"
+      description="Keep your primary contact details current for order updates and faster checkout."
     >
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Account details</p>
-        <h2 className="font-heading text-2xl font-semibold text-slate-900">Profile settings</h2>
-        <p className="text-sm leading-6 text-slate-600">
-          Keep your contact information current so order updates and checkout details stay accurate.
-        </p>
-      </div>
+      <form
+        className="space-y-4"
+        onSubmit={form.handleSubmit((values) => {
+          setNotice(null);
+          startTransition(async () => {
+            const result = await updateCustomerProfileAction(values);
 
-      <div className="mt-6 grid gap-5 md:grid-cols-2">
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Full name</label>
-          <Input {...register("name")} />
-          <FieldError message={errors.name?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
-          <Input type="email" {...register("email")} />
-          <FieldError message={errors.email?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Phone</label>
-          <Input {...register("phone")} />
-          <FieldError message={errors.phone?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Business name</label>
-          <Input {...register("businessName")} />
-          <FieldError message={errors.businessName?.message} />
-        </div>
-      </div>
+            if (!result.success) {
+              setNotice({ type: "error", text: result.error });
+              return;
+            }
 
-      <div className="mt-6 space-y-4">
+            setNotice({ type: "success", text: result.message ?? "Profile saved." });
+            router.refresh();
+          });
+        })}
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="Full name" error={form.formState.errors.name?.message}>
+            <Input {...form.register("name")} />
+          </Field>
+          <Field label="Email" error={form.formState.errors.email?.message}>
+            <Input type="email" {...form.register("email")} />
+          </Field>
+          <Field label="Phone" error={form.formState.errors.phone?.message}>
+            <Input {...form.register("phone")} />
+          </Field>
+          <Field label="Business name" error={form.formState.errors.businessName?.message}>
+            <Input {...form.register("businessName")} />
+          </Field>
+        </div>
+
         <NoticeMessage notice={notice} />
         <Button type="submit" disabled={isPending}>
           {isPending ? "Saving profile..." : "Save profile"}
         </Button>
-      </div>
-    </form>
+      </form>
+    </SettingsPanel>
   );
 }
 
@@ -160,11 +177,7 @@ export function DefaultAddressSettingsForm({
   const router = useRouter();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isPending, startTransition] = useTransition();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<DefaultAddressFormValues>({
+  const form = useForm<DefaultAddressFormValues>({
     resolver: zodResolver(defaultAddressFormSchema),
     defaultValues: {
       line1: defaults?.line1 ?? "",
@@ -177,75 +190,59 @@ export function DefaultAddressSettingsForm({
   });
 
   return (
-    <form
-      className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]"
-      onSubmit={handleSubmit((values) => {
-        setNotice(null);
-        startTransition(async () => {
-          const result = await updateDefaultAddressAction(values);
-
-          if (!result.success) {
-            setNotice({ type: "error", text: result.error });
-            return;
-          }
-
-          setNotice({ type: "success", text: result.message ?? "Address saved." });
-          router.refresh();
-        });
-      })}
+    <SettingsPanel
+      eyebrow={mode === "wholesale" ? "Checkout defaults" : "Shipping defaults"}
+      title={mode === "wholesale" ? "Default checkout address" : "Default shipping address"}
+      description="These values prefill future orders so repeat purchasing stays quick and consistent."
     >
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-          {mode === "wholesale" ? "Checkout defaults" : "Shipping defaults"}
-        </p>
-        <h2 className="font-heading text-2xl font-semibold text-slate-900">
-          {mode === "wholesale" ? "Default checkout address" : "Default shipping address"}
-        </h2>
-        <p className="text-sm leading-6 text-slate-600">
-          These fields prefill future checkout forms and help speed up repeat orders.
-        </p>
-      </div>
+      <form
+        className="space-y-4"
+        onSubmit={form.handleSubmit((values) => {
+          setNotice(null);
+          startTransition(async () => {
+            const result = await updateDefaultAddressAction(values);
 
-      <div className="mt-6 grid gap-5 md:grid-cols-2">
-        <div className="md:col-span-2">
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Address line 1</label>
-          <Input {...register("line1")} />
-          <FieldError message={errors.line1?.message} />
-        </div>
-        <div className="md:col-span-2">
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Address line 2</label>
-          <Input {...register("line2")} />
-          <FieldError message={errors.line2?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">City</label>
-          <Input {...register("city")} />
-          <FieldError message={errors.city?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">State</label>
-          <Input {...register("state")} />
-          <FieldError message={errors.state?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Postal code</label>
-          <Input {...register("postalCode")} />
-          <FieldError message={errors.postalCode?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Country</label>
-          <Input {...register("country")} />
-          <FieldError message={errors.country?.message} />
-        </div>
-      </div>
+            if (!result.success) {
+              setNotice({ type: "error", text: result.error });
+              return;
+            }
 
-      <div className="mt-6 space-y-4">
+            setNotice({ type: "success", text: result.message ?? "Address saved." });
+            router.refresh();
+          });
+        })}
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="md:col-span-2">
+            <Field label="Address line 1" error={form.formState.errors.line1?.message}>
+              <Input {...form.register("line1")} />
+            </Field>
+          </div>
+          <div className="md:col-span-2">
+            <Field label="Address line 2" error={form.formState.errors.line2?.message}>
+              <Input {...form.register("line2")} />
+            </Field>
+          </div>
+          <Field label="City" error={form.formState.errors.city?.message}>
+            <Input {...form.register("city")} />
+          </Field>
+          <Field label="State" error={form.formState.errors.state?.message}>
+            <Input {...form.register("state")} />
+          </Field>
+          <Field label="Postal code" error={form.formState.errors.postalCode?.message}>
+            <Input {...form.register("postalCode")} />
+          </Field>
+          <Field label="Country" error={form.formState.errors.country?.message}>
+            <Input {...form.register("country")} />
+          </Field>
+        </div>
+
         <NoticeMessage notice={notice} />
         <Button type="submit" disabled={isPending}>
           {isPending ? "Saving address..." : "Save address"}
         </Button>
-      </div>
-    </form>
+      </form>
+    </SettingsPanel>
   );
 }
 
@@ -264,11 +261,7 @@ export function WholesaleContactSettingsForm({
   const router = useRouter();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isPending, startTransition] = useTransition();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<WholesaleContactFormValues>({
+  const form = useForm<WholesaleContactFormValues>({
     resolver: zodResolver(wholesaleContactFormSchema),
     defaultValues: {
       firstName: defaults.firstName,
@@ -281,71 +274,55 @@ export function WholesaleContactSettingsForm({
   });
 
   return (
-    <form
-      className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]"
-      onSubmit={handleSubmit((values) => {
-        setNotice(null);
-        startTransition(async () => {
-          const result = await updateWholesaleContactAction(values);
-
-          if (!result.success) {
-            setNotice({ type: "error", text: result.error });
-            return;
-          }
-
-          setNotice({ type: "success", text: result.message ?? "Wholesale contact details saved." });
-          router.refresh();
-        });
-      })}
+    <SettingsPanel
+      eyebrow="Buyer profile"
+      title="Wholesale contact details"
+      description="Update the main buyer details used for account communication and replenishment orders."
     >
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Buyer profile</p>
-        <h2 className="font-heading text-2xl font-semibold text-slate-900">Wholesale contact details</h2>
-        <p className="text-sm leading-6 text-slate-600">
-          Update the primary buyer information your team uses for account communication and replenishment orders.
-        </p>
-      </div>
+      <form
+        className="space-y-4"
+        onSubmit={form.handleSubmit((values) => {
+          setNotice(null);
+          startTransition(async () => {
+            const result = await updateWholesaleContactAction(values);
 
-      <div className="mt-6 grid gap-5 md:grid-cols-2">
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">First name</label>
-          <Input {...register("firstName")} />
-          <FieldError message={errors.firstName?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Last name</label>
-          <Input {...register("lastName")} />
-          <FieldError message={errors.lastName?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
-          <Input type="email" {...register("email")} />
-          <FieldError message={errors.email?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Trading name</label>
-          <Input {...register("tradingName")} />
-          <FieldError message={errors.tradingName?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Mobile number</label>
-          <Input {...register("mobileNumber")} />
-          <FieldError message={errors.mobileNumber?.message} />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Telephone number</label>
-          <Input {...register("telephoneNumber")} />
-          <FieldError message={errors.telephoneNumber?.message} />
-        </div>
-      </div>
+            if (!result.success) {
+              setNotice({ type: "error", text: result.error });
+              return;
+            }
 
-      <div className="mt-6 space-y-4">
+            setNotice({ type: "success", text: result.message ?? "Wholesale contact details saved." });
+            router.refresh();
+          });
+        })}
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="First name" error={form.formState.errors.firstName?.message}>
+            <Input {...form.register("firstName")} />
+          </Field>
+          <Field label="Last name" error={form.formState.errors.lastName?.message}>
+            <Input {...form.register("lastName")} />
+          </Field>
+          <Field label="Email" error={form.formState.errors.email?.message}>
+            <Input type="email" {...form.register("email")} />
+          </Field>
+          <Field label="Trading name" error={form.formState.errors.tradingName?.message}>
+            <Input {...form.register("tradingName")} />
+          </Field>
+          <Field label="Mobile number" error={form.formState.errors.mobileNumber?.message}>
+            <Input {...form.register("mobileNumber")} />
+          </Field>
+          <Field label="Telephone number" error={form.formState.errors.telephoneNumber?.message}>
+            <Input {...form.register("telephoneNumber")} />
+          </Field>
+        </div>
+
         <NoticeMessage notice={notice} />
         <Button type="submit" disabled={isPending}>
           {isPending ? "Saving contact details..." : "Save contact details"}
         </Button>
-      </div>
-    </form>
+      </form>
+    </SettingsPanel>
   );
 }
 
@@ -373,12 +350,7 @@ export function WholesaleBusinessSettingsForm({
   const router = useRouter();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isPending, startTransition] = useTransition();
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors }
-  } = useForm<WholesaleBusinessFormValues>({
+  const form = useForm<WholesaleBusinessFormValues>({
     resolver: zodResolver(wholesaleBusinessFormSchema),
     defaultValues: {
       deliveryAddressLine1: defaults.deliveryAddressLine1,
@@ -398,169 +370,140 @@ export function WholesaleBusinessSettingsForm({
       businessType: defaults.businessType
     }
   });
-  const showInvoiceAddress = Boolean(useWatch({ control, name: "differentInvoiceAddress" }));
-  const selectedCompanyType = useWatch({ control, name: "companyType" });
+  const showInvoiceAddress = Boolean(useWatch({ control: form.control, name: "differentInvoiceAddress" }));
+  const selectedCompanyType = useWatch({ control: form.control, name: "companyType" });
 
   return (
-    <form
-      className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]"
-      onSubmit={handleSubmit((values) => {
-        setNotice(null);
-        startTransition(async () => {
-          const result = await updateWholesaleBusinessProfileAction(values);
-
-          if (!result.success) {
-            setNotice({ type: "error", text: result.error });
-            return;
-          }
-
-          setNotice({ type: "success", text: result.message ?? "Wholesale business profile saved." });
-          router.refresh();
-        });
-      })}
+    <SettingsPanel
+      eyebrow="Business details"
+      title="Company and invoicing profile"
+      description="Keep your delivery, invoicing, and business registration details aligned with your wholesale account."
     >
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Business details</p>
-        <h2 className="font-heading text-2xl font-semibold text-slate-900">Company and invoicing profile</h2>
-        <p className="text-sm leading-6 text-slate-600">
-          Keep your delivery, invoicing, and company registration details in sync for wholesale approvals and admin follow-up.
-        </p>
-      </div>
+      <form
+        className="space-y-4"
+        onSubmit={form.handleSubmit((values) => {
+          setNotice(null);
+          startTransition(async () => {
+            const result = await updateWholesaleBusinessProfileAction(values);
 
-      <div className="mt-6 space-y-6">
-        <section className="rounded-[1.7rem] border border-slate-200 bg-[rgba(255,250,242,0.72)] p-5">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Delivery address</h3>
-          <div className="mt-4 grid gap-5 md:grid-cols-2">
+            if (!result.success) {
+              setNotice({ type: "error", text: result.error });
+              return;
+            }
+
+            setNotice({ type: "success", text: result.message ?? "Wholesale business profile saved." });
+            router.refresh();
+          });
+        })}
+      >
+        <section className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
+          <h3 className="text-sm font-semibold text-[var(--foreground)]">Delivery address</h3>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Address line 1</label>
-              <Input {...register("deliveryAddressLine1")} />
-              <FieldError message={errors.deliveryAddressLine1?.message} />
+              <Field label="Address line 1" error={form.formState.errors.deliveryAddressLine1?.message}>
+                <Input {...form.register("deliveryAddressLine1")} />
+              </Field>
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Line 2</label>
-              <Input {...register("deliveryAddressLine2")} />
-              <FieldError message={errors.deliveryAddressLine2?.message} />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Line 3</label>
-              <Input {...register("deliveryAddressLine3")} />
-              <FieldError message={errors.deliveryAddressLine3?.message} />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Town</label>
-              <Input {...register("deliveryTown")} />
-              <FieldError message={errors.deliveryTown?.message} />
-            </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Postcode</label>
-              <Input {...register("deliveryPostcode")} />
-              <FieldError message={errors.deliveryPostcode?.message} />
-            </div>
+            <Field label="Address line 2" error={form.formState.errors.deliveryAddressLine2?.message}>
+              <Input {...form.register("deliveryAddressLine2")} />
+            </Field>
+            <Field label="Address line 3" error={form.formState.errors.deliveryAddressLine3?.message}>
+              <Input {...form.register("deliveryAddressLine3")} />
+            </Field>
+            <Field label="Town" error={form.formState.errors.deliveryTown?.message}>
+              <Input {...form.register("deliveryTown")} />
+            </Field>
+            <Field label="Postcode" error={form.formState.errors.deliveryPostcode?.message}>
+              <Input {...form.register("deliveryPostcode")} />
+            </Field>
           </div>
         </section>
 
-        <section className="space-y-5">
-          <label className="flex items-center gap-3 rounded-[1.4rem] border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700">
-            <input type="checkbox" {...register("differentInvoiceAddress")} className="h-4 w-4 rounded border-slate-300" />
-            <span>Different invoice address?</span>
+        <section className="space-y-3">
+          <label className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[0.82rem] text-[var(--foreground)]">
+            <input type="checkbox" {...form.register("differentInvoiceAddress")} className="h-4 w-4 rounded border-[var(--border-strong)]" />
+            <span>Use a different invoice address</span>
           </label>
 
           {showInvoiceAddress ? (
-            <div className="rounded-[1.7rem] border border-slate-200 bg-[rgba(255,250,242,0.72)] p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Invoice address</h3>
-              <div className="mt-4 grid gap-5 md:grid-cols-2">
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
+              <h3 className="text-sm font-semibold text-[var(--foreground)]">Invoice address</h3>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <div className="md:col-span-2">
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Address line 1</label>
-                  <Input {...register("invoiceAddressLine1")} />
-                  <FieldError message={errors.invoiceAddressLine1?.message} />
+                  <Field label="Address line 1" error={form.formState.errors.invoiceAddressLine1?.message}>
+                    <Input {...form.register("invoiceAddressLine1")} />
+                  </Field>
                 </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Line 2</label>
-                  <Input {...register("invoiceAddressLine2")} />
-                  <FieldError message={errors.invoiceAddressLine2?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Line 3</label>
-                  <Input {...register("invoiceAddressLine3")} />
-                  <FieldError message={errors.invoiceAddressLine3?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Town</label>
-                  <Input {...register("invoiceTown")} />
-                  <FieldError message={errors.invoiceTown?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Postcode</label>
-                  <Input {...register("invoicePostcode")} />
-                  <FieldError message={errors.invoicePostcode?.message} />
-                </div>
+                <Field label="Address line 2" error={form.formState.errors.invoiceAddressLine2?.message}>
+                  <Input {...form.register("invoiceAddressLine2")} />
+                </Field>
+                <Field label="Address line 3" error={form.formState.errors.invoiceAddressLine3?.message}>
+                  <Input {...form.register("invoiceAddressLine3")} />
+                </Field>
+                <Field label="Town" error={form.formState.errors.invoiceTown?.message}>
+                  <Input {...form.register("invoiceTown")} />
+                </Field>
+                <Field label="Postcode" error={form.formState.errors.invoicePostcode?.message}>
+                  <Input {...form.register("invoicePostcode")} />
+                </Field>
               </div>
             </div>
           ) : null}
         </section>
 
-        <section className="space-y-5">
+        <section className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
           <div>
-            <label className="mb-3 block text-sm font-semibold text-slate-700">Company type</label>
-            <div className="grid gap-3 md:grid-cols-2">
+            <label className="field-label">Company type</label>
+            <div className="grid gap-2 md:grid-cols-2">
               {wholesaleCompanyTypes.map((companyType) => (
                 <label
                   key={companyType}
-                  className="flex items-center gap-3 rounded-[1.4rem] border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700"
+                  className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[0.82rem] text-[var(--foreground)]"
                 >
-                  <input type="radio" value={companyType} {...register("companyType")} className="h-4 w-4 border-slate-300" />
+                  <input type="radio" value={companyType} {...form.register("companyType")} className="h-4 w-4 border-[var(--border-strong)]" />
                   <span>{companyType}</span>
                 </label>
               ))}
             </div>
-            <FieldError message={errors.companyType?.message} />
+            <FieldError message={form.formState.errors.companyType?.message} />
           </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Business type</label>
-            <Select {...register("businessType")}>
-              <option value="">Choose business type</option>
-              {wholesaleBusinessTypes.map((businessType) => (
-                <option key={businessType} value={businessType}>
-                  {businessType}
-                </option>
-              ))}
-            </Select>
-            <FieldError message={errors.businessType?.message} />
+          <div className="mt-4">
+            <Field label="Business type" error={form.formState.errors.businessType?.message}>
+              <Select {...form.register("businessType")}>
+                <option value="">Choose business type</option>
+                {wholesaleBusinessTypes.map((businessType) => (
+                  <option key={businessType} value={businessType}>
+                    {businessType}
+                  </option>
+                ))}
+              </Select>
+            </Field>
           </div>
 
-          <div className="rounded-[1.7rem] border border-slate-200 bg-[rgba(255,250,242,0.72)] p-5">
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Limited company details</h3>
-              <p className="text-xs text-slate-500">
-                {selectedCompanyType === "Limited company"
-                  ? "These fields are required for limited company accounts."
-                  : "These fields remain optional unless you select Limited company."}
-              </p>
-            </div>
-            <div className="mt-4 grid gap-5 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">Company registration number</label>
-                <Input {...register("companyNumber")} />
-                <FieldError message={errors.companyNumber?.message} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">Director name</label>
-                <Input {...register("directorName")} />
-                <FieldError message={errors.directorName?.message} />
-              </div>
+          <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
+            <h3 className="text-sm font-semibold text-[var(--foreground)]">Limited company details</h3>
+            <p className="mt-1 text-[0.78rem] leading-5 text-[var(--muted-foreground)]">
+              {selectedCompanyType === "Limited company"
+                ? "These fields are required for limited company accounts."
+                : "These fields stay optional unless you choose Limited company."}
+            </p>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <Field label="Company number" error={form.formState.errors.companyNumber?.message}>
+                <Input {...form.register("companyNumber")} />
+              </Field>
+              <Field label="Director name" error={form.formState.errors.directorName?.message}>
+                <Input {...form.register("directorName")} />
+              </Field>
             </div>
           </div>
         </section>
-      </div>
 
-      <div className="mt-6 space-y-4">
         <NoticeMessage notice={notice} />
         <Button type="submit" disabled={isPending}>
           {isPending ? "Saving business profile..." : "Save business profile"}
         </Button>
-      </div>
-    </form>
+      </form>
+    </SettingsPanel>
   );
 }
-

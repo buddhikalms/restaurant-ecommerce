@@ -1,70 +1,51 @@
-﻿import { ContactForm } from "@/components/forms/contact-form";
+import { companyDetails } from "@/lib/company-details";
+import { ContactForm } from "@/components/forms/contact-form";
 
 export default function ContactPage() {
   return (
-    <div className="page-shell py-12">
-      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="surface-card rounded-[2.5rem] border border-white/70 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] lg:p-10">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
-            Contact us
-          </p>
-          <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900">
-            Get in touch with CeylonTaste
-          </h1>
-          <p className="mt-4 text-sm leading-6 text-slate-600">
-            Questions about products, orders, delivery, or wholesale registration can all come through here.
+    <div className="page-shell py-6 sm:py-8">
+      <div className="grid gap-4 lg:grid-cols-[0.88fr_1.12fr]">
+        <section className="paper-panel rounded-lg p-5">
+          <p className="section-label">Contact</p>
+          <h1 className="section-title mt-2">Talk to the team</h1>
+          <p className="section-copy mt-3 max-w-md">
+            Use this page for product questions, delivery support, wholesale setup, or help choosing the right items for your kitchen.
           </p>
 
-          <div className="mt-8 space-y-5">
-            <div className="rounded-[1.7rem] border border-slate-200 bg-[rgba(255,250,242,0.72)] p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Email
-              </p>
-              <a
-                href="mailto:info@ceylontaste.co.uk"
-                className="mt-2 inline-flex text-base font-semibold text-[var(--brand-dark)] transition hover:text-[var(--brand)]"
-              >
-                info@ceylontaste.co.uk
+          <div className="mt-5 space-y-3">
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="section-label">Email</p>
+              <a href={`mailto:${companyDetails.email}`} className="mt-2 inline-flex text-sm font-medium text-[var(--brand-dark)] transition hover:text-[var(--brand)]">
+                {companyDetails.email}
               </a>
             </div>
-
-            <div className="rounded-[1.7rem] border border-slate-200 bg-[rgba(255,250,242,0.72)] p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Company address
-              </p>
-              <div className="mt-2 space-y-1 text-sm leading-6 text-slate-700">
-                <p>Apartment 32</p>
-                <p>3 Denman Place</p>
-                <p>Brighton</p>
-                <p>BN1 9BZ</p>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="section-label">Address</p>
+              <div className="mt-2 text-[0.82rem] leading-6 text-[var(--muted-foreground)]">
+                {companyDetails.addressLines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
               </div>
             </div>
-
-            <div className="rounded-[1.7rem] border border-dashed border-slate-300 bg-white p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Contact number
-              </p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Phone number will be added soon.
+            <div className="rounded-lg border border-dashed border-[var(--border-strong)] bg-[var(--surface)] p-4">
+              <p className="section-label">Phone</p>
+              <p className="mt-2 text-[0.82rem] leading-6 text-[var(--muted-foreground)]">
+                Phone support details will be added soon.
               </p>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="surface-card rounded-[2.5rem] border border-white/70 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] lg:p-10">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
-            Send a message
+        <section className="surface-card rounded-lg p-5">
+          <p className="section-label">Send a message</p>
+          <h2 className="section-subtitle mt-2">We&apos;ll reply as soon as we can</h2>
+          <p className="section-copy mt-3 max-w-2xl">
+            Keep the message brief and we&apos;ll route it to the right person quickly.
           </p>
-          <h2 className="mt-3 font-heading text-3xl font-semibold text-slate-900">
-            We’ll get back to you
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-600">
-            Use the form below and we’ll reply as soon as possible.
-          </p>
-          <div className="mt-8">
+          <div className="mt-4">
             <ContactForm />
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

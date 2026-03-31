@@ -182,7 +182,7 @@ export async function getFeaturedProducts() {
     where: { isActive: true },
     select: productSelect(),
     orderBy: [{ stockQuantity: "desc" }, { createdAt: "desc" }],
-    take: 3,
+    take: 4,
   });
 
   return products.map(serializeProduct);
@@ -233,8 +233,13 @@ export async function getProductBySlug(slug: string) {
 export async function getHomepageContent() {
   noStore();
 
-  const [featuredProducts, categories, totalProducts] = await Promise.all([
-    getFeaturedProducts(),
+  const [homepageProducts, categories, totalProducts] = await Promise.all([
+    prisma.product.findMany({
+      where: { isActive: true },
+      select: productSelect(),
+      orderBy: [{ stockQuantity: "desc" }, { createdAt: "desc" }],
+      take: 8,
+    }),
     getStoreCategories(),
     prisma.product.count({
       where: {
@@ -243,8 +248,11 @@ export async function getHomepageContent() {
     }),
   ]);
 
+  const serializedHomepageProducts = homepageProducts.map(serializeProduct);
+
   return {
-    featuredProducts,
+    featuredProducts: serializedHomepageProducts.slice(0, 4),
+    recommendedProducts: serializedHomepageProducts.slice(4, 8),
     categories,
     totalProducts,
   };

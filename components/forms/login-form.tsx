@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
@@ -32,7 +32,7 @@ export function LoginForm({ callbackUrl = "/account" }: { callbackUrl?: string }
 
   return (
     <form
-      className="space-y-5"
+      className="space-y-3"
       onSubmit={handleSubmit((values) => {
         setMessage(null);
         startTransition(async () => {
@@ -53,16 +53,16 @@ export function LoginForm({ callbackUrl = "/account" }: { callbackUrl?: string }
       })}
     >
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
+        <label className="field-label">Email</label>
         <Input type="email" placeholder="buyer@restaurant.com" {...register("email")} />
         <FieldError message={errors.email?.message} />
       </div>
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
+        <label className="field-label">Password</label>
         <Input type="password" placeholder="Enter your password" {...register("password")} />
         <FieldError message={errors.password?.message} />
       </div>
-      {message ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{message}</p> : null}
+      {message ? <p className="rounded-md bg-[var(--surface-muted)] px-3 py-2 text-[0.82rem] text-[var(--danger)]">{message}</p> : null}
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending ? "Signing in..." : "Sign in"}
       </Button>

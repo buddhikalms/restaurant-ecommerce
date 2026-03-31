@@ -13,29 +13,36 @@ export default async function WholesaleRegisterPage() {
   }
 
   return (
-    <div className="page-shell py-12">
-      <div className="mx-auto max-w-4xl surface-card rounded-[2.5rem] border border-white/70 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">Wholesale Registration</p>
-        <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900">Create your wholesale buyer account</h1>
-        <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-600">
-          Register your business with your contact, delivery, invoice, and company details to unlock wholesale pricing and bulk ordering.
-        </p>
-        {user?.role === "CUSTOMER" ? (
-          <p className="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            You are currently signed in with a retail account. Submitting this form will create a separate wholesale login if you use a different email address.
+    <div className="page-shell py-6 sm:py-8">
+      <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <section className="paper-panel rounded-lg p-5">
+          <p className="section-label">Wholesale registration</p>
+          <h1 className="section-title mt-2">Open a wholesale buyer account</h1>
+          <p className="section-copy mt-3 max-w-md">
+            Add your business, delivery, and invoicing details to unlock trade pricing and easier bulk ordering.
           </p>
-        ) : null}
-        <div className="mt-8">
-          <RegisterForm mode="wholesale" />
-        </div>
-        <div className="mt-6 space-y-2 text-sm text-slate-600">
-          <p>
-            Already registered? <Link href="/login" className="font-semibold text-[var(--brand-dark)]">Log in here</Link>
-          </p>
-          <p>
-            Shopping as a regular customer? <Link href="/register" className="font-semibold text-[var(--brand-dark)]">Create a customer account</Link>
-          </p>
-        </div>
+          {user?.role === "CUSTOMER" ? (
+            <p className="notice-warn mt-4">
+              You are currently signed in with a retail account. Use a different email if you want a separate wholesale login.
+            </p>
+          ) : null}
+          <div className="mt-4 space-y-2 text-[0.82rem] text-[var(--muted-foreground)]">
+            <p>
+              Already registered? <Link href="/login" className="warm-link">Sign in</Link>
+            </p>
+            <p>
+              Need a regular customer account? <Link href="/register" className="warm-link">Register here</Link>
+            </p>
+          </div>
+        </section>
+
+        <section className="surface-card rounded-lg p-5">
+          <p className="section-label">Trade account setup</p>
+          <h2 className="section-subtitle mt-2">Business details</h2>
+          <div className="mt-4">
+            <RegisterForm mode="wholesale" />
+          </div>
+        </section>
       </div>
     </div>
   );

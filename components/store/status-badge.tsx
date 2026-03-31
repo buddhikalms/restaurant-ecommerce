@@ -1,4 +1,4 @@
-﻿import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { getOrderStatusTone, getStockLabel } from "@/lib/utils";
 
 export function OrderStatusBadge({ status }: { status: string }) {
@@ -7,6 +7,12 @@ export function OrderStatusBadge({ status }: { status: string }) {
 
 export function StockBadge({ stockQuantity }: { stockQuantity: number }) {
   const label = getStockLabel(stockQuantity);
-  const tone = stockQuantity <= 0 ? "bg-rose-100 text-rose-700" : stockQuantity <= 10 ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700";
+  const tone =
+    stockQuantity <= 0
+      ? "bg-[rgba(179,86,72,0.12)] text-[var(--danger)]"
+      : stockQuantity <= 10
+        ? "bg-[rgba(184,107,87,0.12)] text-[var(--brand-dark)]"
+        : "bg-[rgba(85,99,71,0.12)] text-[var(--accent-dark)]";
+
   return <Badge className={tone}>{label}</Badge>;
 }

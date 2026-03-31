@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -12,7 +12,7 @@ export function ProductFilters({
   initialQuery,
   initialCategory,
   initialMinPrice,
-  initialMaxPrice
+  initialMaxPrice,
 }: {
   categories: Array<{ id: string; name: string; slug: string }>;
   initialQuery?: string;
@@ -41,14 +41,14 @@ export function ProductFilters({
   };
 
   return (
-    <div className="surface-card rounded-[2rem] border border-white/70 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-      <div className="grid gap-4 lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end">
+    <div className="surface-card rounded-lg p-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[2fr_1fr_1fr_1fr_auto] xl:items-end">
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Search</label>
-          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by product name, SKU, or description" />
+          <label className="field-label">Search</label>
+          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products or SKU" />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Category</label>
+          <label className="field-label">Category</label>
           <Select value={category} onChange={(event) => setCategory(event.target.value)}>
             <option value="">All categories</option>
             {categories.map((item) => (
@@ -59,20 +59,19 @@ export function ProductFilters({
           </Select>
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Min price</label>
+          <label className="field-label">Min price</label>
           <Input value={minPrice} onChange={(event) => setMinPrice(event.target.value)} placeholder="0" type="number" min="0" />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Max price</label>
+          <label className="field-label">Max price</label>
           <Input value={maxPrice} onChange={(event) => setMaxPrice(event.target.value)} placeholder="500" type="number" min="0" />
         </div>
-        <div className="flex gap-3">
-          <Button type="button" onClick={updateSearch}>
-            Apply
-          </Button>
+        <div className="flex gap-2 xl:flex-col">
+          <Button type="button" onClick={updateSearch} className="flex-1 xl:flex-none">Apply</Button>
           <Button
             type="button"
             variant="secondary"
+            className="flex-1 xl:flex-none"
             onClick={() => {
               setQuery("");
               setCategory("");

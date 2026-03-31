@@ -1,4 +1,4 @@
-﻿import { type ClassValue, clsx } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { format } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
@@ -50,16 +50,16 @@ export function getStockLabel(stockQuantity: number) {
 export function getOrderStatusTone(status: string) {
   switch (status) {
     case "CONFIRMED":
-      return "bg-blue-100 text-blue-800";
+      return "bg-[rgba(184,107,87,0.12)] text-[var(--brand-dark)]";
     case "PROCESSING":
-      return "bg-amber-100 text-amber-800";
+      return "bg-[rgba(239,228,200,0.7)] text-[var(--foreground)]";
     case "SHIPPED":
-      return "bg-indigo-100 text-indigo-800";
+      return "bg-[rgba(85,99,71,0.1)] text-[var(--accent-dark)]";
     case "COMPLETED":
-      return "bg-emerald-100 text-emerald-800";
+      return "bg-[rgba(85,99,71,0.14)] text-[var(--accent-dark)]";
     case "CANCELLED":
-      return "bg-rose-100 text-rose-800";
+      return "bg-[rgba(179,86,72,0.12)] text-[var(--danger)]";
     default:
-      return "bg-slate-100 text-slate-800";
+      return "bg-[var(--surface-muted)] text-[var(--foreground)]";
   }
 }

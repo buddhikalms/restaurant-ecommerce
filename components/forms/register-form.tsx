@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useState, useTransition, type ReactNode } from "react";
+import { useForm, useWatch } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field-error";
@@ -47,6 +47,44 @@ type RegisterValues = {
   businessType?: string;
 };
 
+function CompactField({
+  label,
+  children,
+  error,
+}: {
+  label: string;
+  children: ReactNode;
+  error?: string;
+}) {
+  return (
+    <div>
+      <label className="field-label">{label}</label>
+      {children}
+      <FieldError message={error} />
+    </div>
+  );
+}
+
+function SectionBlock({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
+      <div className="mb-4">
+        <h3 className="text-sm font-semibold text-[var(--foreground)]">{title}</h3>
+        {description ? <p className="mt-1 text-[0.8rem] leading-5 text-[var(--muted-foreground)]">{description}</p> : null}
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export function RegisterForm({ mode = "customer" }: { mode?: "customer" | "wholesale" }) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
@@ -59,8 +97,8 @@ export function RegisterForm({ mode = "customer" }: { mode?: "customer" | "whole
   const action = mode === "wholesale" ? registerWholesaleCustomerAction : registerCustomerAction;
   const {
     register,
+    control,
     handleSubmit,
-    watch,
     formState: { errors }
   } = useForm<RegisterValues>({
     resolver: zodResolver(schema) as never,
@@ -93,12 +131,12 @@ export function RegisterForm({ mode = "customer" }: { mode?: "customer" | "whole
       businessType: ""
     }
   });
-  const showInvoiceAddress = Boolean(watch("differentInvoiceAddress"));
-  const selectedCompanyType = watch("companyType");
+  const showInvoiceAddress = Boolean(useWatch({ control, name: "differentInvoiceAddress" }));
+  const selectedCompanyType = useWatch({ control, name: "companyType" });
 
   return (
     <form
-      className="space-y-8"
+      className="space-y-4"
       onSubmit={handleSubmit((values) => {
         setMessage(null);
         startTransition(async () => {
@@ -126,221 +164,168 @@ export function RegisterForm({ mode = "customer" }: { mode?: "customer" | "whole
       })}
     >
       {mode === "wholesale" ? (
-        <div className="space-y-8">
-          <section className="space-y-5">
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">Your details</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                Please complete the wholesale registration form below with your contact, address, and company details.
-              </p>
+        <div className="space-y-4">
+          <SectionBlock
+            title="Your details"
+            description="Add the main buyer contact details for your business account."
+          >
+            <div className="grid gap-4 md:grid-cols-2">
+              <CompactField label="First name" error={errors.firstName?.message}>
+                <Input placeholder="First name" {...register("firstName")} />
+              </CompactField>
+              <CompactField label="Last name" error={errors.lastName?.message}>
+                <Input placeholder="Last name" {...register("lastName")} />
+              </CompactField>
+              <CompactField label="Mobile number" error={errors.mobileNumber?.message}>
+                <Input placeholder="Mobile number" {...register("mobileNumber")} />
+              </CompactField>
+              <CompactField label="Telephone number" error={errors.telephoneNumber?.message}>
+                <Input placeholder="Telephone number" {...register("telephoneNumber")} />
+              </CompactField>
+              <CompactField label="Trading name" error={errors.tradingName?.message}>
+                <Input placeholder="Trading name" {...register("tradingName")} />
+              </CompactField>
+              <CompactField label="Email" error={errors.email?.message}>
+                <Input type="email" placeholder="buyer@restaurant.com" {...register("email")} />
+              </CompactField>
             </div>
+          </SectionBlock>
 
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Details</h4>
-              <div className="mt-4 grid gap-5 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">First name</label>
-                  <Input placeholder="Name*" {...register("firstName")} />
-                  <FieldError message={errors.firstName?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Last name</label>
-                  <Input placeholder="Last name*" {...register("lastName")} />
-                  <FieldError message={errors.lastName?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Mobile number</label>
-                  <Input placeholder="Mobile Number*" {...register("mobileNumber")} />
-                  <FieldError message={errors.mobileNumber?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Telephone number</label>
-                  <Input placeholder="Telephone number*" {...register("telephoneNumber")} />
-                  <FieldError message={errors.telephoneNumber?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Trading name</label>
-                  <Input placeholder="Trading Name" {...register("tradingName")} />
-                  <FieldError message={errors.tradingName?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
-                  <Input type="email" placeholder="Email*" {...register("email")} />
-                  <FieldError message={errors.email?.message} />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="space-y-5 rounded-[1.8rem] border border-slate-200 bg-[rgba(255,250,242,0.72)] p-5">
-            <h4 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Delivery address</h4>
-            <div className="grid gap-5 md:grid-cols-2">
+          <SectionBlock title="Delivery address" description="These details will be used during trade checkout.">
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-semibold text-slate-700">Address line 1</label>
-                <Input placeholder="Delivery Address*" {...register("deliveryAddressLine1")} />
-                <FieldError message={errors.deliveryAddressLine1?.message} />
+                <CompactField label="Address line 1" error={errors.deliveryAddressLine1?.message}>
+                  <Input placeholder="Address line 1" {...register("deliveryAddressLine1")} />
+                </CompactField>
               </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">Line 2</label>
-                <Input placeholder="Line 2" {...register("deliveryAddressLine2")} />
-                <FieldError message={errors.deliveryAddressLine2?.message} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">Line 3</label>
-                <Input placeholder="Line 3" {...register("deliveryAddressLine3")} />
-                <FieldError message={errors.deliveryAddressLine3?.message} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">Town</label>
-                <Input placeholder="Delivery Address Town" {...register("deliveryTown")} />
-                <FieldError message={errors.deliveryTown?.message} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">Postcode</label>
-                <Input placeholder="Delivery Address Postcode" {...register("deliveryPostcode")} />
-                <FieldError message={errors.deliveryPostcode?.message} />
-              </div>
+              <CompactField label="Address line 2" error={errors.deliveryAddressLine2?.message}>
+                <Input placeholder="Address line 2" {...register("deliveryAddressLine2")} />
+              </CompactField>
+              <CompactField label="Address line 3" error={errors.deliveryAddressLine3?.message}>
+                <Input placeholder="Address line 3" {...register("deliveryAddressLine3")} />
+              </CompactField>
+              <CompactField label="Town" error={errors.deliveryTown?.message}>
+                <Input placeholder="Town" {...register("deliveryTown")} />
+              </CompactField>
+              <CompactField label="Postcode" error={errors.deliveryPostcode?.message}>
+                <Input placeholder="Postcode" {...register("deliveryPostcode")} />
+              </CompactField>
             </div>
-          </section>
+          </SectionBlock>
 
-          <section className="space-y-5">
-            <label className="flex items-center gap-3 rounded-[1.4rem] border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700">
-              <input type="checkbox" {...register("differentInvoiceAddress")} className="h-4 w-4 rounded border-slate-300" />
-              <span>Different invoice address?</span>
+          <section className="space-y-3">
+            <label className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[0.82rem] text-[var(--foreground)]">
+              <input type="checkbox" {...register("differentInvoiceAddress")} className="h-4 w-4 rounded border-[var(--border-strong)]" />
+              <span>Use a different invoice address</span>
             </label>
 
             {showInvoiceAddress ? (
-              <div className="rounded-[1.8rem] border border-slate-200 bg-[rgba(255,250,242,0.72)] p-5">
-                <h4 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Invoice address</h4>
-                <div className="mt-4 grid gap-5 md:grid-cols-2">
+              <SectionBlock title="Invoice address">
+                <div className="grid gap-4 md:grid-cols-2">
                   <div className="md:col-span-2">
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Address line 1</label>
-                    <Input placeholder="Invoice Address" {...register("invoiceAddressLine1")} />
-                    <FieldError message={errors.invoiceAddressLine1?.message} />
+                    <CompactField label="Address line 1" error={errors.invoiceAddressLine1?.message}>
+                      <Input placeholder="Address line 1" {...register("invoiceAddressLine1")} />
+                    </CompactField>
                   </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Line 2</label>
-                    <Input placeholder="Line 2" {...register("invoiceAddressLine2")} />
-                    <FieldError message={errors.invoiceAddressLine2?.message} />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Line 3</label>
-                    <Input placeholder="Line 3" {...register("invoiceAddressLine3")} />
-                    <FieldError message={errors.invoiceAddressLine3?.message} />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Town</label>
-                    <Input placeholder="Invoice Address Town" {...register("invoiceTown")} />
-                    <FieldError message={errors.invoiceTown?.message} />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Postcode</label>
-                    <Input placeholder="Invoice Address Postcode" {...register("invoicePostcode")} />
-                    <FieldError message={errors.invoicePostcode?.message} />
-                  </div>
+                  <CompactField label="Address line 2" error={errors.invoiceAddressLine2?.message}>
+                    <Input placeholder="Address line 2" {...register("invoiceAddressLine2")} />
+                  </CompactField>
+                  <CompactField label="Address line 3" error={errors.invoiceAddressLine3?.message}>
+                    <Input placeholder="Address line 3" {...register("invoiceAddressLine3")} />
+                  </CompactField>
+                  <CompactField label="Town" error={errors.invoiceTown?.message}>
+                    <Input placeholder="Town" {...register("invoiceTown")} />
+                  </CompactField>
+                  <CompactField label="Postcode" error={errors.invoicePostcode?.message}>
+                    <Input placeholder="Postcode" {...register("invoicePostcode")} />
+                  </CompactField>
                 </div>
-              </div>
+              </SectionBlock>
             ) : null}
           </section>
 
-          <section className="space-y-5">
-            <div>
-              <label className="mb-3 block text-sm font-semibold text-slate-700">Company type</label>
-              <div className="grid gap-3 md:grid-cols-2">
-                {wholesaleCompanyTypes.map((companyType) => (
-                  <label
-                    key={companyType}
-                    className="flex items-center gap-3 rounded-[1.4rem] border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700"
-                  >
-                    <input type="radio" value={companyType} {...register("companyType")} className="h-4 w-4 border-slate-300" />
-                    <span>{companyType}</span>
-                  </label>
-                ))}
+          <SectionBlock title="Business profile" description="Choose the company structure and business type that fits your account.">
+            <div className="space-y-4">
+              <div>
+                <label className="field-label">Company type</label>
+                <div className="grid gap-2 md:grid-cols-2">
+                  {wholesaleCompanyTypes.map((companyType) => (
+                    <label
+                      key={companyType}
+                      className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[0.82rem] text-[var(--foreground)]"
+                    >
+                      <input type="radio" value={companyType} {...register("companyType")} className="h-4 w-4 border-[var(--border-strong)]" />
+                      <span>{companyType}</span>
+                    </label>
+                  ))}
+                </div>
+                <FieldError message={errors.companyType?.message} />
               </div>
-              <FieldError message={errors.companyType?.message} />
-            </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Business type</label>
-              <Select {...register("businessType")}>
-                <option value="">Choose business type</option>
-                {wholesaleBusinessTypes.map((businessType) => (
-                  <option key={businessType} value={businessType}>
-                    {businessType}
-                  </option>
-                ))}
-              </Select>
-              <FieldError message={errors.businessType?.message} />
-            </div>
+              <CompactField label="Business type" error={errors.businessType?.message}>
+                <Select {...register("businessType")}>
+                  <option value="">Choose business type</option>
+                  {wholesaleBusinessTypes.map((businessType) => (
+                    <option key={businessType} value={businessType}>
+                      {businessType}
+                    </option>
+                  ))}
+                </Select>
+              </CompactField>
 
-            <div className="rounded-[1.8rem] border border-slate-200 bg-[rgba(255,250,242,0.72)] p-5">
-              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <h4 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Limited company details</h4>
-                <p className="text-xs text-slate-500">
+              <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
+                <h4 className="text-sm font-semibold text-[var(--foreground)]">Limited company details</h4>
+                <p className="mt-1 text-[0.78rem] leading-5 text-[var(--muted-foreground)]">
                   {selectedCompanyType === "Limited company"
-                    ? "These details are required for limited company registrations."
-                    : "These fields are optional unless you select Limited company."}
+                    ? "These fields are required for limited company accounts."
+                    : "These fields stay optional unless you choose Limited company."}
                 </p>
-              </div>
-              <div className="mt-4 grid gap-5 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Company registration number</label>
-                  <Input placeholder="Company Registration No" {...register("companyNumber")} />
-                  <FieldError message={errors.companyNumber?.message} />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Director name</label>
-                  <Input placeholder="Director Name" {...register("directorName")} />
-                  <FieldError message={errors.directorName?.message} />
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <CompactField label="Company number" error={errors.companyNumber?.message}>
+                    <Input placeholder="Company number" {...register("companyNumber")} />
+                  </CompactField>
+                  <CompactField label="Director name" error={errors.directorName?.message}>
+                    <Input placeholder="Director name" {...register("directorName")} />
+                  </CompactField>
                 </div>
               </div>
             </div>
-          </section>
+          </SectionBlock>
 
-          <section className="grid gap-5 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
-              <Input type="password" placeholder="Minimum 8 characters" {...register("password")} />
-              <FieldError message={errors.password?.message} />
+          <SectionBlock title="Security">
+            <div className="grid gap-4 md:grid-cols-2">
+              <CompactField label="Password" error={errors.password?.message}>
+                <Input type="password" placeholder="Minimum 8 characters" {...register("password")} />
+              </CompactField>
+              <CompactField label="Confirm password" error={errors.confirmPassword?.message}>
+                <Input type="password" placeholder="Re-enter your password" {...register("confirmPassword")} />
+              </CompactField>
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">Confirm password</label>
-              <Input type="password" placeholder="Re-enter your password" {...register("confirmPassword")} />
-              <FieldError message={errors.confirmPassword?.message} />
-            </div>
-          </section>
+          </SectionBlock>
         </div>
       ) : (
-        <div className="grid gap-5 md:grid-cols-2">
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Full name</label>
+        <div className="grid gap-4 md:grid-cols-2">
+          <CompactField label="Full name" error={errors.name?.message}>
             <Input placeholder="Elena Rivera" {...register("name")} />
-            <FieldError message={errors.name?.message} />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
+          </CompactField>
+          <CompactField label="Email" error={errors.email?.message}>
             <Input type="email" placeholder="buyer@restaurant.com" {...register("email")} />
-            <FieldError message={errors.email?.message} />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Phone</label>
+          </CompactField>
+          <CompactField label="Phone" error={errors.phone?.message}>
             <Input placeholder="+1 555 0102" {...register("phone")} />
-            <FieldError message={errors.phone?.message} />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
+          </CompactField>
+          <CompactField label="Password" error={errors.password?.message}>
             <Input type="password" placeholder="Minimum 8 characters" {...register("password")} />
-            <FieldError message={errors.password?.message} />
-          </div>
+          </CompactField>
           <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-semibold text-slate-700">Confirm password</label>
-            <Input type="password" placeholder="Re-enter your password" {...register("confirmPassword")} />
-            <FieldError message={errors.confirmPassword?.message} />
+            <CompactField label="Confirm password" error={errors.confirmPassword?.message}>
+              <Input type="password" placeholder="Re-enter your password" {...register("confirmPassword")} />
+            </CompactField>
           </div>
         </div>
       )}
 
-      {message ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{message}</p> : null}
+      {message ? <p className="notice-error">{message}</p> : null}
 
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending

@@ -1,11 +1,13 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
-import { LogIn, Menu, UserRound, X } from "lucide-react";
+import { ArrowRight, LogIn, Menu, ShoppingCart, UserRound, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-import { LogoutButton } from "@/components/layout/logout-button";
-import { CartIndicator } from "@/components/store/cart-indicator";
+import { StoreSearchForm } from "@/components/layout/store-search-form";
+import { useCart } from "@/components/providers/cart-provider";
 
 const DESKTOP_BREAKPOINT_QUERY = "(min-width: 768px)";
 
@@ -24,6 +26,12 @@ export function SiteHeaderMobileMenu({
   user,
 }: SiteHeaderMobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const { itemCount } = useCart();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(DESKTOP_BREAKPOINT_QUERY);
@@ -63,9 +71,9 @@ export function SiteHeaderMobileMenu({
 
   const navItems = [
     { href: "/", label: "Home" },
+    { href: "/products", label: "Products" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
-    { href: "/products", label: "Products" },
     { href: "/checkout", label: "Checkout" },
     ...(user?.role === "ADMIN" ? [{ href: "/admin", label: "Admin" }] : []),
   ];
@@ -78,86 +86,135 @@ export function SiteHeaderMobileMenu({
         aria-controls="mobile-site-menu"
         aria-expanded={isOpen}
         aria-label={isOpen ? "Close menu" : "Open menu"}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/72 text-slate-800 shadow-[0_12px_28px_rgba(15,23,42,0.12)] backdrop-blur-xl transition hover:border-[var(--brand)]/35 hover:bg-white/82"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--foreground)] shadow-[0_10px_26px_rgba(47,45,41,0.08)] transition hover:bg-[var(--surface-muted)]"
       >
-        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
       </button>
 
       {isOpen ? (
         <div
           id="mobile-site-menu"
-          className="fixed inset-0 z-[60] flex min-h-screen flex-col overflow-hidden bg-[rgba(28,20,12,0.12)] backdrop-blur-[56px] md:hidden"
+          className="fixed inset-0 z-[60] bg-[rgba(15,10,8,0.55)] backdrop-blur-sm md:hidden"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,248,232,0.46),transparent_34%),radial-gradient(circle_at_top_right,rgba(215,178,109,0.14),transparent_28%),linear-gradient(180deg,rgba(255,251,244,0.28)_0%,rgba(244,232,209,0.14)_100%)]" />
-
-          <div className="relative flex items-center justify-between border-b border-white/40 bg-white/10 px-4 py-4 shadow-[0_12px_30px_rgba(15,23,42,0.08)] backdrop-blur-[40px] sm:px-6">
-            <div>
-              <p className="font-heading text-lg font-semibold text-slate-900">
-                Menu
-              </p>
-              <p className="text-xs uppercase tracking-[0.16em] text-slate-600">
-                Browse CeylonTaste
-              </p>
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="flex h-[100dvh] flex-col overflow-hidden bg-[linear-gradient(180deg,#1a120d_0%,#24160f_44%,#120b08_100%)] text-white"
+          >
+            <div className="flex items-center justify-between border-b border-white/10 px-5 pb-4 pt-5">
+              <div>
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-[#f3d6a7]">
+                  Quick navigation
+                </p>
+                <p className="mt-1 text-lg font-semibold text-white">Browse CeylonTaste</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close menu"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/12 bg-white/10 text-white transition hover:bg-white/16"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              aria-label="Close menu"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/50 bg-white/62 text-slate-800 shadow-[0_12px_28px_rgba(15,23,42,0.12)] backdrop-blur-[28px] transition hover:border-[var(--brand)]/35 hover:bg-white/82"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pb-6 pt-5">
+              <div className="rounded-[1.4rem] border border-white/10 bg-white/7 p-3 shadow-[0_18px_45px_rgba(0,0,0,0.18)] backdrop-blur-md">
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/55">
+                  Search
+                </p>
+                <StoreSearchForm className="mt-3 h-11" placeholder="Search products or SKU" />
+              </div>
 
-          <div className="relative flex-1 overflow-y-auto px-4 pb-8 pt-6 sm:px-6">
-            <nav className="flex flex-col gap-3">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="rounded-[1.6rem] border border-white/45 bg-white/24 px-5 py-4 text-base font-semibold text-slate-700 shadow-[0_14px_40px_rgba(15,23,42,0.08)] backdrop-blur-[34px] transition hover:border-[var(--brand)]/25 hover:bg-white/54 hover:text-[var(--brand-dark)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+              <nav className="mt-6 flex flex-col gap-3">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="group flex items-center justify-between rounded-[1.25rem] border border-white/10 bg-white/7 px-4 py-4 text-base font-semibold text-white transition hover:bg-white/12"
+                  >
+                    <span>{item.label}</span>
+                    <ArrowRight className="h-4 w-4 text-white/50 transition group-hover:translate-x-0.5 group-hover:text-white/85" />
+                  </Link>
+                ))}
+              </nav>
 
-            <div className="mt-8 border-t border-white/32 pt-6">
-              <div className="flex flex-col gap-3">
-                {user ? (
-                  <>
-                    <Link
-                      href={dashboardPath}
-                      onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-[var(--brand)]/20 bg-[#fff5e3]/92 px-5 text-sm font-semibold text-[var(--brand-dark)] shadow-[0_10px_26px_rgba(155,95,25,0.14)] transition hover:border-[var(--brand)]/40 hover:bg-white"
-                    >
-                      <UserRound className="h-4 w-4" />
-                      <span>{user.name || "Dashboard"}</span>
-                    </Link>
-                    <div onClick={() => setIsOpen(false)}>
-                      <CartIndicator />
-                    </div>
-                    <div onClick={() => setIsOpen(false)}>
-                      <LogoutButton />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/login"
-                      onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[var(--brand-dark)] px-5 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(74,42,10,0.28)] transition hover:bg-[#653713]"
-                    >
-                      <LogIn className="h-4 w-4 text-white" />
-                      <span className="text-white">Log in</span>
-                    </Link>
-                    <div onClick={() => setIsOpen(false)}>
-                      <CartIndicator />
-                    </div>
-                  </>
-                )}
+              <div className="mt-auto pt-6">
+                <div className="rounded-[1.4rem] border border-white/10 bg-white/7 p-4 backdrop-blur-md">
+                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#f3d6a7]">
+                    {user ? "Account" : "Get started"}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-white/72">
+                    {user
+                      ? user.name
+                        ? `Signed in as ${user.name}.`
+                        : "Signed in and ready to manage orders."
+                      : "Log in to manage orders faster and keep wholesale access close."}
+                  </p>
+
+                  <div className="mt-4 flex flex-col gap-3">
+                    {user ? (
+                      <>
+                        <Link
+                          href={dashboardPath}
+                          onClick={() => setIsOpen(false)}
+                          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-4 text-sm font-semibold text-[#1b120d] shadow-[0_14px_30px_rgba(0,0,0,0.18)] transition hover:brightness-95"
+                        >
+                          <UserRound className="h-4 w-4" />
+                          <span>Open dashboard</span>
+                        </Link>
+                        <Link
+                          href="/cart"
+                          onClick={() => setIsOpen(false)}
+                          className="inline-flex h-11 items-center justify-between rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-medium text-white transition hover:bg-white/14"
+                        >
+                          <span className="inline-flex items-center gap-2">
+                            <ShoppingCart className="h-4 w-4" />
+                            Cart
+                          </span>
+                          <span className="inline-flex min-w-6 items-center justify-center rounded-md bg-white/14 px-2 py-1 text-[0.72rem] font-semibold text-white/85">
+                            {itemCount}
+                          </span>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsOpen(false);
+                            signOut({ callbackUrl: "/" });
+                          }}
+                          className="inline-flex h-11 items-center justify-center rounded-xl border border-white/10 bg-transparent px-4 text-sm font-medium text-white transition hover:bg-white/10"
+                        >
+                          Sign out
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          href="/login"
+                          onClick={() => setIsOpen(false)}
+                          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,var(--brand)_0%,var(--brand-dark)_100%)] px-4 text-sm font-semibold text-white shadow-[0_18px_38px_rgba(141,48,30,0.3)] transition hover:brightness-105"
+                        >
+                          <LogIn className="h-4 w-4" />
+                          <span>Log in</span>
+                        </Link>
+                        <Link
+                          href="/cart"
+                          onClick={() => setIsOpen(false)}
+                          className="inline-flex h-11 items-center justify-between rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-medium text-white transition hover:bg-white/14"
+                        >
+                          <span className="inline-flex items-center gap-2">
+                            <ShoppingCart className="h-4 w-4" />
+                            Cart
+                          </span>
+                          <span className="inline-flex min-w-6 items-center justify-center rounded-md bg-white/14 px-2 py-1 text-[0.72rem] font-semibold text-white/85">
+                            {itemCount}
+                          </span>
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -166,4 +223,3 @@ export function SiteHeaderMobileMenu({
     </div>
   );
 }
-

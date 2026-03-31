@@ -19,7 +19,7 @@ export function AccountNav({
   ];
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap gap-2">
       {items.map((item) => {
         const active =
           currentPath === item.href || currentPath.startsWith(`${item.href}/`);
@@ -28,10 +28,10 @@ export function AccountNav({
           <Link key={item.href} href={item.href}>
             <span
               className={cn(
-                "inline-flex h-10 items-center justify-center rounded-full px-4 text-sm font-semibold transition",
+                "inline-flex h-8 items-center justify-center rounded-lg px-3 text-[0.78rem] font-medium transition",
                 active
-                  ? "bg-[var(--brand-dark)] text-white"
-                  : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50",
+                  ? "bg-[var(--brand)] text-white"
+                  : "border border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]",
               )}
             >
               {item.label}

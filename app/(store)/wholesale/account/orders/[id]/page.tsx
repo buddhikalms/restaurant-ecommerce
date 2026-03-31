@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AccountNav } from "@/components/layout/account-nav";
+import { OrderReceiptDownloadLink } from "@/components/store/order-receipt-download-link";
 import { ReorderButton } from "@/components/store/reorder-button";
 import { OrderStatusBadge } from "@/components/store/status-badge";
 import { requireWholesaleUser } from "@/lib/auth-helpers";
@@ -33,54 +34,63 @@ export default async function WholesaleAccountOrderDetailsPage({
   }
 
   return (
-    <div className="page-shell py-12">
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+    <div className="page-shell py-6 sm:py-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">Wholesale order details</p>
-          <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900">{order.orderNumber}</h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">Placed on {formatDate(order.createdAt)}.</p>
+          <p className="section-label">Wholesale order</p>
+          <h1 className="section-title mt-2">{order.orderNumber}</h1>
+          <p className="section-copy mt-2">Placed on {formatDate(order.createdAt)}.</p>
         </div>
         <AccountNav mode="wholesale" />
       </div>
 
       {toValue(query.placed) === "1" ? (
-        <div className="mt-6 rounded-[1.5rem] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800">
-          Your wholesale order was submitted successfully.
-        </div>
+        <div className="notice-success mt-4">Your wholesale order was submitted successfully.</div>
       ) : null}
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-          <div className="flex items-center justify-between gap-4">
+      <div className="mt-4 grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
+        <section className="surface-card rounded-lg p-5">
+          <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Items</p>
-              <h2 className="mt-2 font-heading text-2xl font-semibold text-slate-900">Ordered products</h2>
+              <p className="section-label">Items</p>
+              <h2 className="section-subtitle mt-2">Ordered products</h2>
             </div>
             <OrderStatusBadge status={order.status} />
           </div>
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 space-y-3">
             {order.items.map((item) => (
-              <div key={item.id} className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+              <div key={item.id} className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-semibold text-slate-900">{item.productName}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.14em] text-slate-500">{item.productSku}</p>
+                    <p className="text-sm font-medium text-[var(--foreground)]">{item.productName}</p>
+                    <p className="mt-1 text-[0.68rem] uppercase tracking-[0.12em] text-[var(--muted-foreground)]">{item.productSku}</p>
                   </div>
-                  <p className="font-semibold text-slate-900">{formatCurrency(item.lineTotal)}</p>
+                  <p className="text-sm font-semibold text-[var(--foreground)]">{formatCurrency(item.lineTotal)}</p>
                 </div>
-                <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+                <div className="mt-3 flex items-center justify-between text-[0.8rem] text-[var(--muted-foreground)]">
                   <span>{item.quantity} units</span>
                   <span>{formatCurrency(item.unitPrice)} each</span>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        <aside className="space-y-6">
-          <div className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Summary</p>
-            <div className="mt-6 space-y-3 text-sm text-slate-600">
+        <aside className="space-y-4">
+          <div className="surface-card rounded-lg p-5">
+            <p className="section-label">Receipt</p>
+            <h2 className="section-subtitle mt-2">Download a copy</h2>
+            <p className="mt-3 text-[0.82rem] leading-6 text-[var(--muted-foreground)]">
+              Save a receipt for your internal records or purchasing follow-up.
+            </p>
+            <div className="mt-4">
+              <OrderReceiptDownloadLink orderId={order.id} className="w-full" />
+            </div>
+          </div>
+
+          <div className="surface-card rounded-lg p-5">
+            <p className="section-label">Summary</p>
+            <div className="mt-4 space-y-2 text-[0.82rem] text-[var(--muted-foreground)]">
               <div className="flex items-center justify-between">
                 <span>Items</span>
                 <span>{order.itemCount}</span>
@@ -89,16 +99,17 @@ export default async function WholesaleAccountOrderDetailsPage({
                 <span>Subtotal</span>
                 <span>{formatCurrency(order.subtotal)}</span>
               </div>
-              <div className="flex items-center justify-between text-base font-semibold text-slate-900">
+              <div className="flex items-center justify-between border-t border-[var(--border)] pt-2 text-sm font-semibold text-[var(--foreground)]">
                 <span>Total</span>
                 <span>{formatCurrency(order.total)}</span>
               </div>
             </div>
           </div>
-          <div className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Shipping address</p>
-            <div className="mt-4 text-sm leading-7 text-slate-600">
-              <p className="font-semibold text-slate-900">{order.shippingAddress.contactName}</p>
+
+          <div className="surface-card rounded-lg p-5">
+            <p className="section-label">Shipping address</p>
+            <div className="mt-4 text-[0.82rem] leading-6 text-[var(--muted-foreground)]">
+              <p className="font-medium text-[var(--foreground)]">{order.shippingAddress.contactName}</p>
               {order.shippingAddress.businessName ? <p>{order.shippingAddress.businessName}</p> : null}
               <p>{order.shippingAddress.line1}</p>
               {order.shippingAddress.line2 ? <p>{order.shippingAddress.line2}</p> : null}
@@ -109,16 +120,18 @@ export default async function WholesaleAccountOrderDetailsPage({
               <p>{order.shippingAddress.phone}</p>
             </div>
           </div>
-          <div className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Reorder</p>
-            <h2 className="mt-2 font-heading text-2xl font-semibold text-slate-900">Build this order again</h2>
+
+          <div className="surface-card rounded-lg p-5">
+            <p className="section-label">Reorder</p>
+            <h2 className="section-subtitle mt-2">Build this cart again</h2>
             <div className="mt-4">
               <ReorderButton items={order.reorderItems} unavailableItems={order.unavailableReorderItems} />
             </div>
           </div>
+
           <Link
             href="/wholesale/account/orders"
-            className="inline-flex h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+            className="inline-flex h-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3.5 text-[0.84rem] font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
           >
             Back to orders
           </Link>

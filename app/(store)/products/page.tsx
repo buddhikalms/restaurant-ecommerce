@@ -47,18 +47,18 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
   };
 
   return (
-    <div className="page-shell py-12">
-      <div className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">Product catalog</p>
-        <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900 sm:text-5xl">Browse polished product cards with protected wholesale pricing</h1>
-        <p className="mt-4 text-base leading-7 text-slate-600">
-          Search by keyword, narrow by category, and filter by the {pricingMode === "wholesale" ? "wholesale" : "customer"} price currently active for your session.
+    <div className="page-shell py-6 sm:py-8">
+      <section className="surface-card rounded-xl p-5">
+        <p className="section-label">Products</p>
+        <h1 className="section-title mt-2">Browse the catalog</h1>
+        <p className="section-copy mt-2 max-w-3xl">
+          Compact product cards, lighter controls, and a cleaner layout make browsing quicker for daily wholesale and retail ordering.
         </p>
-      </div>
+      </section>
 
-      <div className="mt-8">
+      <div className="mt-4">
         <ProductFilters
-          categories={categories.map((category) => ({ id: category.id, name: category.name, slug: category.slug }))}
+          categories={categories.map((item) => ({ id: item.id, name: item.name, slug: item.slug }))}
           initialQuery={query}
           initialCategory={category}
           initialMinPrice={minPrice}
@@ -66,14 +66,14 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
         />
       </div>
 
-      <div className="mt-8 flex items-center justify-between gap-4">
-        <p className="text-sm text-slate-600">Showing {productResult.total} products</p>
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-[0.82rem] text-[var(--muted-foreground)]">{productResult.total} products</p>
         <PaginationControls currentPage={productResult.page} totalPages={productResult.totalPages} buildHref={buildHref} />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-4">
         {productResult.products.length ? (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {productResult.products.map((product) => (
               <ProductCard
                 key={product.id}
@@ -87,8 +87,8 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
         ) : (
           <EmptyState
             title="No products matched your filters"
-            description="Try removing a search term or widening the price range to see more items."
-            actionLabel="Reset catalog"
+            description="Try adjusting the search term, category, or price range."
+            actionLabel="Reset filters"
             actionHref="/products"
           />
         )}

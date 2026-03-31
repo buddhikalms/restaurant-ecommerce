@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 
@@ -31,40 +31,39 @@ export function ProductGallery({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="overflow-hidden rounded-[2.5rem] border border-white/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+    <div className="space-y-3">
+      <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)]">
         <RemoteImage
           src={activeImage}
           alt={productName}
-          width={1600}
-          height={1200}
+          width={1200}
+          height={900}
           priority
           className="aspect-[4/3] h-full w-full object-cover"
         />
       </div>
 
       {images.length > 1 ? (
-        <div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
+        <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
           {images.map((image, index) => (
             <button
               key={`${image}-${index}`}
               type="button"
               onClick={() => setSelectedImage(image)}
               className={cn(
-                "group overflow-hidden rounded-[1.3rem] border bg-white shadow-sm transition",
+                "overflow-hidden rounded-md border bg-[var(--surface)]",
                 image === activeImage
-                  ? "border-[var(--brand)] ring-2 ring-[var(--brand)]/20"
-                  : "border-slate-200 hover:border-slate-300",
+                  ? "border-[var(--brand)]"
+                  : "border-[var(--border)] hover:border-[var(--border-strong)]",
               )}
               aria-label={`Show gallery image ${index + 1}`}
             >
               <RemoteImage
                 src={image}
                 alt={`${productName} view ${index + 1}`}
-                width={320}
-                height={320}
-                loading="lazy"
-                className="aspect-square h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                width={240}
+                height={240}
+                className="aspect-square h-full w-full object-cover"
               />
             </button>
           ))}

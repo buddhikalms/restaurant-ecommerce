@@ -36,7 +36,7 @@ export function ContactForm() {
 
   return (
     <form
-      className="space-y-5"
+      className="space-y-4"
       onSubmit={handleSubmit((values) => {
         setMessage(null);
         setIsSuccess(false);
@@ -55,42 +55,40 @@ export function ContactForm() {
         });
       })}
     >
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Name</label>
+          <label className="field-label">Name</label>
           <Input {...register("name")} placeholder="Your name" />
           <FieldError message={errors.name?.message} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
+          <label className="field-label">Email</label>
           <Input type="email" {...register("email")} placeholder="you@example.com" />
           <FieldError message={errors.email?.message} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Phone</label>
+          <label className="field-label">Phone</label>
           <Input {...register("phone")} placeholder="Optional" />
           <FieldError message={errors.phone?.message} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Subject</label>
+          <label className="field-label">Subject</label>
           <Input {...register("subject")} placeholder="How can we help?" />
           <FieldError message={errors.subject?.message} />
         </div>
         <div className="md:col-span-2">
-          <label className="mb-2 block text-sm font-semibold text-slate-700">Message</label>
-          <Textarea {...register("message")} placeholder="Tell us what you need." className="min-h-40" />
+          <label className="field-label">Message</label>
+          <Textarea {...register("message")} placeholder="Tell us what you need." className="min-h-32" />
           <FieldError message={errors.message?.message} />
         </div>
       </div>
 
       {message ? (
-        <p className={isSuccess ? "rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700" : "rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700"}>
-          {message}
-        </p>
+        <p className={isSuccess ? "notice-success" : "notice-error"}>{message}</p>
       ) : null}
 
-      <Button type="submit" className="w-full md:w-auto" disabled={isPending}>
-        {isPending ? "Sending message..." : "Send message"}
+      <Button type="submit" className="w-full sm:w-auto" disabled={isPending}>
+        {isPending ? "Sending..." : "Send message"}
       </Button>
     </form>
   );

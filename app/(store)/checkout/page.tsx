@@ -9,19 +9,17 @@ export default async function CheckoutPage() {
   const customerDefaults = await getCheckoutCustomerDefaults(sessionUser.id);
 
   return (
-    <div className="page-shell py-12">
-      <div className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">Checkout</p>
-        <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900 sm:text-5xl">
+    <div className="page-shell py-6 sm:py-8">
+      <section className="surface-card rounded-xl p-5">
+        <p className="section-label">Checkout</p>
+        <h1 className="section-title mt-2">
           {pricingMode === "wholesale" ? "Submit your wholesale order" : "Submit your order"}
         </h1>
-        <p className="mt-4 text-base leading-7 text-slate-600">
-          {pricingMode === "wholesale"
-            ? "Your account details are prefilled where possible. Inventory and wholesale minimum quantities are checked again before the order is saved."
-            : "Your account details are prefilled where possible. Inventory and pricing are checked again before the order is saved."}
+        <p className="section-copy mt-2">
+          Review delivery details and place your order.
         </p>
-      </div>
-      <div className="mt-8">
+      </section>
+      <div className="mt-4">
         <CheckoutForm
           customerDefaults={customerDefaults}
           pricingMode={pricingMode}

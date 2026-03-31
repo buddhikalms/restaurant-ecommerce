@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { AccountNav } from "@/components/layout/account-nav";
 import { OrderStatusBadge } from "@/components/store/status-badge";
@@ -12,77 +12,86 @@ export default async function WholesaleAccountPage() {
   const overview = await getAccountOverview(user.id);
 
   return (
-    <div className="page-shell py-12">
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+    <div className="page-shell py-6 sm:py-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">Wholesale Dashboard</p>
-          <h1 className="mt-3 font-heading text-4xl font-semibold text-slate-900">{overview.user?.businessName || overview.user?.name}</h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">Manage your wholesale buyer profile, minimum-order purchasing, and business order history from one place.</p>
+          <p className="section-label">Wholesale dashboard</p>
+          <h1 className="section-title mt-2">{overview.user?.businessName || overview.user?.name}</h1>
+          <p className="section-copy mt-2">Manage business details, saved settings, and recent wholesale orders.</p>
         </div>
         <AccountNav mode="wholesale" />
       </div>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-3">
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
         <StatCard label="Total orders" value={overview.totalOrders} />
         <StatCard label="Open orders" value={overview.pendingOrders} />
         <StatCard label="Member since" value={new Date(overview.user?.createdAt || new Date()).getFullYear()} />
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Buyer profile</p>
-          <dl className="mt-6 space-y-4 text-sm text-slate-600">
+      <div className="mt-4 grid gap-4 lg:grid-cols-[0.92fr_1.08fr]">
+        <section className="surface-card rounded-lg p-5">
+          <p className="section-label">Buyer profile</p>
+          <dl className="mt-4 space-y-3 text-[0.82rem] text-[var(--muted-foreground)]">
             <div>
-              <dt className="font-semibold text-slate-900">Contact name</dt>
+              <dt className="font-medium text-[var(--foreground)]">Contact name</dt>
               <dd className="mt-1">{overview.user?.name}</dd>
             </div>
             <div>
-              <dt className="font-semibold text-slate-900">Business</dt>
+              <dt className="font-medium text-[var(--foreground)]">Business</dt>
               <dd className="mt-1">{overview.user?.businessName || "Not provided"}</dd>
             </div>
             <div>
-              <dt className="font-semibold text-slate-900">Email</dt>
+              <dt className="font-medium text-[var(--foreground)]">Email</dt>
               <dd className="mt-1">{overview.user?.email}</dd>
             </div>
             <div>
-              <dt className="font-semibold text-slate-900">Phone</dt>
+              <dt className="font-medium text-[var(--foreground)]">Phone</dt>
               <dd className="mt-1">{overview.user?.phone || "Not provided"}</dd>
             </div>
           </dl>
-        </div>
+        </section>
 
-        <div className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-          <div className="flex items-center justify-between gap-4">
+        <section className="surface-card rounded-lg p-5">
+          <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Recent orders</p>
-              <h2 className="mt-2 font-heading text-2xl font-semibold text-slate-900">Latest wholesale activity</h2>
+              <p className="section-label">Recent orders</p>
+              <h2 className="section-subtitle mt-2">Latest activity</h2>
             </div>
-            <Link href="/wholesale/account/orders" className="text-sm font-semibold text-[var(--brand-dark)]">View all</Link>
+            <Link href="/wholesale/account/orders" className="warm-link text-[0.82rem]">
+              View all
+            </Link>
           </div>
 
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 space-y-3">
             {overview.recentOrders.length ? (
               overview.recentOrders.map((order) => (
-                <Link key={order.id} href={`/wholesale/account/orders/${order.id}`} className="block rounded-[1.6rem] border border-slate-200 bg-white p-5 transition hover:border-[var(--brand)]">
+                <Link
+                  key={order.id}
+                  href={`/wholesale/account/orders/${order.id}`}
+                  className="block rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4 transition hover:border-[var(--border-strong)]"
+                >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="font-semibold text-slate-900">{order.orderNumber}</p>
-                      <p className="mt-1 text-sm text-slate-500">Placed {formatDate(order.createdAt)} | {order.itemCount} items</p>
+                      <p className="text-sm font-medium text-[var(--foreground)]">{order.orderNumber}</p>
+                      <p className="mt-1 text-[0.78rem] text-[var(--muted-foreground)]">
+                        Placed {formatDate(order.createdAt)} - {order.itemCount} items
+                      </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <OrderStatusBadge status={order.status} />
-                      <span className="font-semibold text-slate-900">{formatCurrency(order.total)}</span>
+                      <span className="text-sm font-semibold text-[var(--foreground)]">{formatCurrency(order.total)}</span>
                     </div>
                   </div>
                 </Link>
               ))
             ) : (
-              <p className="text-sm text-slate-600">No wholesale orders yet. Start browsing products to place your first business order.</p>
+              <p className="text-[0.82rem] text-[var(--muted-foreground)]">
+                No wholesale orders yet. Browse products to place your first business order.
+              </p>
             )}
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
 }
-

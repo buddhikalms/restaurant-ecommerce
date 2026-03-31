@@ -48,10 +48,7 @@ export function CheckoutForm({
   const { items, subtotal, clearCart } = useCart();
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const formSchema =
-    pricingMode === "wholesale"
-      ? wholesaleCheckoutFormSchema
-      : retailCheckoutFormSchema;
+  const formSchema = pricingMode === "wholesale" ? wholesaleCheckoutFormSchema : retailCheckoutFormSchema;
   const {
     register,
     handleSubmit,
@@ -74,9 +71,9 @@ export function CheckoutForm({
   });
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
       <form
-        className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]"
+        className="surface-card rounded-lg p-5"
         onSubmit={handleSubmit((values) => {
           if (!items.length) {
             setMessage("Your cart is empty.");
@@ -110,144 +107,89 @@ export function CheckoutForm({
           });
         })}
       >
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Customer name
-            </label>
+            <label className="field-label">Customer name</label>
             <Input {...register("customerName")} />
             <FieldError message={errors.customerName?.message} />
           </div>
           {pricingMode === "wholesale" ? (
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Business name
-              </label>
+              <label className="field-label">Business name</label>
               <Input {...register("businessName")} />
               <FieldError message={errors.businessName?.message} />
             </div>
           ) : null}
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Email
-            </label>
+            <label className="field-label">Email</label>
             <Input type="email" {...register("email")} />
             <FieldError message={errors.email?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Phone
-            </label>
+            <label className="field-label">Phone</label>
             <Input {...register("phone")} />
             <FieldError message={errors.phone?.message} />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Address line 1
-            </label>
+            <label className="field-label">Address line 1</label>
             <Input {...register("line1")} />
             <FieldError message={errors.line1?.message} />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Address line 2
-            </label>
+            <label className="field-label">Address line 2</label>
             <Input {...register("line2")} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              City
-            </label>
+            <label className="field-label">City</label>
             <Input {...register("city")} />
             <FieldError message={errors.city?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              State
-            </label>
+            <label className="field-label">State</label>
             <Input {...register("state")} />
             <FieldError message={errors.state?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Postal code
-            </label>
+            <label className="field-label">Postal code</label>
             <Input {...register("postalCode")} />
             <FieldError message={errors.postalCode?.message} />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Country
-            </label>
+            <label className="field-label">Country</label>
             <Input {...register("country")} />
             <FieldError message={errors.country?.message} />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Order notes
-            </label>
-            <Textarea
-              {...register("notes")}
-              placeholder="Delivery window, receiving instructions, or kitchen notes"
-            />
+            <label className="field-label">Notes</label>
+            <Textarea {...register("notes")} placeholder="Optional delivery notes" />
             <FieldError message={errors.notes?.message} />
           </div>
         </div>
 
-        {message ? (
-          <p className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            {message}
-          </p>
-        ) : null}
+        {message ? <p className="mt-4 rounded-md bg-[var(--surface-muted)] px-3 py-2 text-[0.82rem] text-[var(--danger)]">{message}</p> : null}
 
-        <Button type="submit" className="mt-6 w-full" disabled={isPending || !items.length}>
-          {isPending
-            ? pricingMode === "wholesale"
-              ? "Submitting wholesale order..."
-              : "Submitting order..."
-            : pricingMode === "wholesale"
-              ? "Submit wholesale order"
-              : "Submit order"}
+        <Button type="submit" className="mt-4 w-full" disabled={isPending || !items.length}>
+          {isPending ? "Submitting..." : pricingMode === "wholesale" ? "Submit wholesale order" : "Submit order"}
         </Button>
       </form>
 
-      <aside className="surface-card rounded-[2rem] border border-white/70 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-          {pricingMode === "wholesale" ? "Wholesale order summary" : "Order summary"}
-        </p>
-        <div className="mt-6 space-y-4 text-sm text-slate-600">
+      <aside className="surface-card rounded-lg p-4">
+        <p className="section-label">Order summary</p>
+        <div className="mt-3 space-y-2 text-[0.82rem] text-[var(--muted-foreground)]">
           {items.map((item) => (
-            <div key={item.itemId} className="flex items-start justify-between gap-4">
-              <div>
-                <p className="font-medium text-slate-900">{item.name}</p>
-                {item.variantName ? (
-                  <p className="text-xs uppercase tracking-[0.14em] text-slate-500">
-                    {item.variantName}
-                  </p>
-                ) : null}
-                <p>{item.quantity} units</p>
-              </div>
-              <p className="font-semibold text-slate-900">
-                {formatCurrency(item.quantity * item.unitPrice)}
-              </p>
+            <div key={item.itemId} className="flex items-center justify-between gap-2">
+              <span className="line-clamp-1">{item.name}</span>
+              <span>{formatCurrency(item.quantity * item.unitPrice)}</span>
             </div>
           ))}
         </div>
-        <div className="mt-6 border-t border-slate-200 pt-6">
-          <div className="flex items-center justify-between text-sm text-slate-600">
+        <div className="mt-4 border-t border-[var(--border)] pt-4">
+          <div className="flex items-center justify-between text-sm text-[var(--foreground)]">
             <span>Subtotal</span>
-            <span className="font-semibold text-slate-900">
-              {formatCurrency(subtotal)}
-            </span>
+            <span className="font-medium">{formatCurrency(subtotal)}</span>
           </div>
-          <div className="mt-3 flex items-center justify-between text-sm text-slate-600">
-            <span>Shipping</span>
-            <span className="font-semibold text-slate-900">Quoted after review</span>
-          </div>
-          <p className="mt-4 text-xs leading-5 text-slate-500">
-            {pricingMode === "wholesale"
-              ? "Before final confirmation, inventory, VAT-inclusive totals, and wholesale minimum quantities are revalidated on the server for each selected product option."
-              : "Before final confirmation, inventory and VAT-inclusive totals are revalidated on the server for each selected product option."}
+          <p className="mt-2 text-[0.72rem] leading-5 text-[var(--muted-foreground)]">
+            Shipping is quoted after review.
           </p>
         </div>
       </aside>
