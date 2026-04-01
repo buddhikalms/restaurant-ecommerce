@@ -23,7 +23,7 @@ export async function SiteHeader() {
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-[var(--foreground)]">CeylonTaste</p>
               <p className="hidden truncate text-[0.68rem] text-[var(--muted-foreground)] md:block">
-                Wholesale food supply
+                Wholesale & Retail
               </p>
             </div>
           </Link>
