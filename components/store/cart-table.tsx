@@ -121,7 +121,7 @@ export function CartTable() {
             href="/checkout"
             className="mt-4 inline-flex h-9 w-full items-center justify-center rounded-lg bg-[var(--brand)] px-3.5 text-[0.84rem] font-medium text-white transition hover:bg-[var(--brand-dark)]"
           >
-            Continue to checkout
+            <span className="text-white">Continue to checkout</span>
           </Link>
           <Button type="button" variant="secondary" className="mt-2 w-full" onClick={clearCart}>
             Clear cart
