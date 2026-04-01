@@ -41,7 +41,7 @@ export default async function AdminDashboardPage() {
               View orders
             </Link>
             <Link href="/admin/products/new" className={getButtonClassName({})}>
-              Add product
+              <span className="text-white">Add product</span>
             </Link>
           </>
         }

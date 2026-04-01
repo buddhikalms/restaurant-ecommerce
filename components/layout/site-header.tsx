@@ -82,8 +82,8 @@ export async function SiteHeader() {
                 href="/login"
                 className="inline-flex h-9 items-center gap-2 rounded-md bg-[var(--brand)] px-3 text-[0.82rem] font-medium text-white transition hover:bg-[var(--brand-dark)]"
               >
-                <LogIn className="h-3.5 w-3.5" />
-                <span>Log in</span>
+                <LogIn className="h-3.5 w-3.5 text-white" />
+                <span className="text-white">Log in</span>
               </Link>
             )}
           </div>

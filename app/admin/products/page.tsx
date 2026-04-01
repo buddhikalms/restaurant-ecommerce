@@ -72,7 +72,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
               Manage taxonomy
             </Link>
             <Link href="/admin/products/new" className={getButtonClassName({})}>
-              Add product
+              <span className="text-white">Add product</span>
             </Link>
           </>
         }
