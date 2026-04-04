@@ -21,10 +21,7 @@ type SiteHeaderMobileMenuProps = {
     | null;
 };
 
-export function SiteHeaderMobileMenu({
-  dashboardPath,
-  user,
-}: SiteHeaderMobileMenuProps) {
+export function SiteHeaderMobileMenu({ dashboardPath, user }: SiteHeaderMobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const { itemCount } = useCart();
@@ -72,6 +69,7 @@ export function SiteHeaderMobileMenu({
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/products", label: "Products" },
+    { href: "/food", label: "Cloud Kitchen" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
     { href: "/checkout", label: "Checkout" },
@@ -92,20 +90,11 @@ export function SiteHeaderMobileMenu({
       </button>
 
       {isOpen ? (
-        <div
-          id="mobile-site-menu"
-          className="fixed inset-0 z-[60] bg-[rgba(15,10,8,0.55)] backdrop-blur-sm md:hidden"
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="flex h-[100dvh] flex-col overflow-hidden bg-[linear-gradient(180deg,#1a120d_0%,#24160f_44%,#120b08_100%)] text-white"
-          >
+        <div id="mobile-site-menu" className="fixed inset-0 z-[60] bg-[rgba(15,10,8,0.55)] backdrop-blur-sm md:hidden">
+          <div role="dialog" aria-modal="true" className="flex h-[100dvh] flex-col overflow-hidden bg-[linear-gradient(180deg,#1a120d_0%,#24160f_44%,#120b08_100%)] text-white">
             <div className="flex items-center justify-between border-b border-white/10 px-5 pb-4 pt-5">
               <div>
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-[#f3d6a7]">
-                  Quick navigation
-                </p>
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-[#f3d6a7]">Quick navigation</p>
                 <p className="mt-1 text-lg font-semibold text-white">Browse CeylonTaste</p>
               </div>
               <button
@@ -120,9 +109,7 @@ export function SiteHeaderMobileMenu({
 
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pb-6 pt-5">
               <div className="rounded-[1.4rem] border border-white/10 bg-white/7 p-3 shadow-[0_18px_45px_rgba(0,0,0,0.18)] backdrop-blur-md">
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/55">
-                  Search
-                </p>
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/55">Search</p>
                 <StoreSearchForm className="mt-3 h-11" placeholder="Search products or SKU" />
               </div>
 

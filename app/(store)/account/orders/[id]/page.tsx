@@ -1,40 +1,46 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import Link from "next/link"
+import { notFound } from "next/navigation"
 
-import { AccountNav } from "@/components/layout/account-nav";
-import { OrderReceiptDownloadLink } from "@/components/store/order-receipt-download-link";
-import { ReorderButton } from "@/components/store/reorder-button";
-import { OrderStatusBadge } from "@/components/store/status-badge";
-import { requireRetailUser } from "@/lib/auth-helpers";
-import { getCustomerOrderById } from "@/lib/data/account";
-import { getPricingModeForRole } from "@/lib/user-roles";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { AccountNav } from "@/components/layout/account-nav"
+import { OrderReceiptDownloadLink } from "@/components/store/order-receipt-download-link"
+import { ReorderButton } from "@/components/store/reorder-button"
+import { OrderStatusBadge } from "@/components/store/status-badge"
+import { Badge } from "@/components/ui/badge"
+import { requireRetailUser } from "@/lib/auth-helpers"
+import { getCustomerOrderById } from "@/lib/data/account"
+import { getPricingModeForRole } from "@/lib/user-roles"
+import {
+  formatCurrency,
+  formatDate,
+  formatEnumLabel,
+  getPaymentStatusTone,
+} from "@/lib/utils"
 
-type Params = Promise<{ id: string }>;
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+type Params = Promise<{ id: string }>
+type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
 function toValue(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
+  return Array.isArray(value) ? value[0] : value
 }
 
 export default async function AccountOrderDetailsPage({
   params,
   searchParams,
 }: {
-  params: Params;
-  searchParams: SearchParams;
+  params: Params
+  searchParams: SearchParams
 }) {
-  const user = await requireRetailUser();
-  const { id } = await params;
-  const query = await searchParams;
+  const user = await requireRetailUser()
+  const { id } = await params
+  const query = await searchParams
   const order = await getCustomerOrderById(
     user.id,
     id,
     getPricingModeForRole(user.role),
-  );
+  )
 
   if (!order) {
-    notFound();
+    notFound()
   }
 
   return (
@@ -106,6 +112,35 @@ export default async function AccountOrderDetailsPage({
           </div>
 
           <div className="surface-card rounded-lg p-5">
+            <p className="section-label">Delivery & payment</p>
+            <div className="mt-4 space-y-3 text-[0.82rem] text-[var(--muted-foreground)]">
+              <div className="flex flex-wrap gap-2">
+                {order.shippingMethodName ? (
+                  <Badge className="bg-[rgba(85,99,71,0.12)] text-[var(--accent-dark)]">
+                    {order.shippingMethodName}
+                  </Badge>
+                ) : null}
+                <Badge className={getPaymentStatusTone(order.paymentStatus)}>
+                  {formatEnumLabel(order.paymentStatus)}
+                </Badge>
+              </div>
+              {order.shippingZone?.name ? <p>Zone: {order.shippingZone.name}</p> : null}
+              {order.shippingMethodType ? <p>Method type: {formatEnumLabel(order.shippingMethodType)}</p> : null}
+              {order.paymentMethodName ? <p>Payment method: {formatEnumLabel(order.paymentMethodName)}</p> : null}
+              {order.paymentReference ? <p>Payment reference: {order.paymentReference}</p> : null}
+              {order.transactionId ? <p>Transaction ID: {order.transactionId}</p> : null}
+              {order.estimatedDeliveryMinDays || order.estimatedDeliveryMaxDays ? (
+                <p>
+                  Estimated delivery: {order.estimatedDeliveryMinDays ?? order.estimatedDeliveryMaxDays} to {order.estimatedDeliveryMaxDays ?? order.estimatedDeliveryMinDays} day(s)
+                </p>
+              ) : null}
+              {order.deliveryMethodDescription ? <p>{order.deliveryMethodDescription}</p> : null}
+              {order.deliveryInstructions ? <p>{order.deliveryInstructions}</p> : null}
+              {order.notes ? <p>Delivery note: {order.notes}</p> : null}
+            </div>
+          </div>
+
+          <div className="surface-card rounded-lg p-5">
             <p className="section-label">Summary</p>
             <div className="mt-4 space-y-2 text-[0.82rem] text-[var(--muted-foreground)]">
               <div className="flex items-center justify-between">
@@ -116,6 +151,20 @@ export default async function AccountOrderDetailsPage({
                 <span>Subtotal</span>
                 <span>{formatCurrency(order.subtotal)}</span>
               </div>
+              <div className="flex items-center justify-between">
+                <span>Shipping</span>
+                <span>{formatCurrency(order.shippingCost)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Handling</span>
+                <span>{formatCurrency(order.handlingFee)}</span>
+              </div>
+              {order.codFee > 0 ? (
+                <div className="flex items-center justify-between">
+                  <span>COD fee</span>
+                  <span>{formatCurrency(order.codFee)}</span>
+                </div>
+              ) : null}
               <div className="flex items-center justify-between border-t border-[var(--border)] pt-2 text-sm font-semibold text-[var(--foreground)]">
                 <span>Total</span>
                 <span>{formatCurrency(order.total)}</span>
@@ -165,5 +214,5 @@ export default async function AccountOrderDetailsPage({
         </aside>
       </div>
     </div>
-  );
+  )
 }

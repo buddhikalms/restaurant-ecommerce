@@ -1,4 +1,4 @@
-import { PrismaClient, Role, OrderStatus, ProductType, VatMode } from "prisma-generated-client-v2";
+import { PrismaClient, Role, OrderStatus, ProductType, VatMode, PaymentGateway, PaymentStatus, ShippingMethodType, GatewayMode } from "prisma-generated-client-v2";
 import { hash } from "bcryptjs";
 
 import { summarizeActiveProductVariants } from "../lib/product-variants";
@@ -564,6 +564,479 @@ async function main() {
       businessType: "Restaurant"
     }
   });
+  await prisma.storeSettings.upsert({
+    where: { id: "store-settings" },
+    update: {
+      deliveryNotes: "Delivery options and online payments are managed from the admin settings screen.",
+      defaultHandlingFee: 1.5,
+      weightUnit: "kg",
+      dimensionUnit: "cm",
+      mapsEnabled: false,
+      defaultMapLatitude: 47.6062,
+      defaultMapLongitude: -122.3321,
+      defaultMapZoom: 11,
+      storeLocationName: "CeylonTaste Warehouse",
+      storeAddress: "241 Harbor Street, Seattle, WA 98101",
+      storeLatitude: 47.6062,
+      storeLongitude: -122.3321,
+      serviceAreaCountries: ["USA"]
+    },
+    create: {
+      id: "store-settings",
+      deliveryNotes: "Delivery options and online payments are managed from the admin settings screen.",
+      defaultHandlingFee: 1.5,
+      weightUnit: "kg",
+      dimensionUnit: "cm",
+      mapsEnabled: false,
+      defaultMapLatitude: 47.6062,
+      defaultMapLongitude: -122.3321,
+      defaultMapZoom: 11,
+      storeLocationName: "CeylonTaste Warehouse",
+      storeAddress: "241 Harbor Street, Seattle, WA 98101",
+      storeLatitude: 47.6062,
+      storeLongitude: -122.3321,
+      serviceAreaCountries: ["USA"]
+    }
+  });
+
+  const seattleZone = await prisma.shippingZone.upsert({
+    where: { id: "seed-zone-seattle" },
+    update: {
+      name: "Seattle Local",
+      description: "Local delivery and pickup rules for the Seattle service area.",
+      isEnabled: true,
+      sortOrder: 0
+    },
+    create: {
+      id: "seed-zone-seattle",
+      name: "Seattle Local",
+      description: "Local delivery and pickup rules for the Seattle service area.",
+      isEnabled: true,
+      sortOrder: 0
+    }
+  });
+
+  const westCoastZone = await prisma.shippingZone.upsert({
+    where: { id: "seed-zone-west-coast" },
+    update: {
+      name: "West Coast",
+      description: "Regional delivery rules for WA, OR, and CA.",
+      isEnabled: true,
+      sortOrder: 1
+    },
+    create: {
+      id: "seed-zone-west-coast",
+      name: "West Coast",
+      description: "Regional delivery rules for WA, OR, and CA.",
+      isEnabled: true,
+      sortOrder: 1
+    }
+  });
+
+  const domesticZone = await prisma.shippingZone.upsert({
+    where: { id: "seed-zone-domestic" },
+    update: {
+      name: "Domestic Fallback",
+      description: "Fallback shipping rules for the rest of the USA.",
+      isEnabled: true,
+      sortOrder: 99
+    },
+    create: {
+      id: "seed-zone-domestic",
+      name: "Domestic Fallback",
+      description: "Fallback shipping rules for the rest of the USA.",
+      isEnabled: true,
+      sortOrder: 99
+    }
+  });
+
+  await prisma.shippingZoneRegion.deleteMany({
+    where: {
+      shippingZoneId: {
+        in: [seattleZone.id, westCoastZone.id, domesticZone.id]
+      }
+    }
+  });
+
+  await prisma.shippingZoneRegion.createMany({
+    data: [
+      {
+        shippingZoneId: seattleZone.id,
+        country: "USA",
+        state: "WA",
+        city: "Seattle",
+        postalCodePattern: "981*",
+        sortOrder: 0
+      },
+      {
+        shippingZoneId: westCoastZone.id,
+        country: "USA",
+        state: "WA, OR, CA",
+        sortOrder: 0
+      },
+      {
+        shippingZoneId: domesticZone.id,
+        country: "USA",
+        sortOrder: 0
+      }
+    ]
+  });
+
+  const pickupMethod = await prisma.shippingMethod.upsert({
+    where: { id: "seed-method-pickup" },
+    update: {
+      shippingZoneId: seattleZone.id,
+      name: "Warehouse pickup",
+      description: "Collect from the Seattle warehouse.",
+      type: ShippingMethodType.STORE_PICKUP,
+      baseCost: 0,
+      sortOrder: 0,
+      estimatedMinDays: 0,
+      estimatedMaxDays: 1,
+      instructions: "Pickup is available during warehouse hours.",
+      isEnabled: true,
+      codAllowed: false
+    },
+    create: {
+      id: "seed-method-pickup",
+      shippingZoneId: seattleZone.id,
+      name: "Warehouse pickup",
+      description: "Collect from the Seattle warehouse.",
+      type: ShippingMethodType.STORE_PICKUP,
+      baseCost: 0,
+      sortOrder: 0,
+      estimatedMinDays: 0,
+      estimatedMaxDays: 1,
+      instructions: "Pickup is available during warehouse hours.",
+      isEnabled: true,
+      codAllowed: false
+    }
+  });
+
+  const localDeliveryMethod = await prisma.shippingMethod.upsert({
+    where: { id: "seed-method-local-delivery" },
+    update: {
+      shippingZoneId: seattleZone.id,
+      name: "Local delivery",
+      description: "Same-area local delivery with COD support.",
+      type: ShippingMethodType.LOCAL_DELIVERY,
+      baseCost: 8,
+      maximumDistanceKm: 20,
+      sortOrder: 1,
+      estimatedMinDays: 1,
+      estimatedMaxDays: 2,
+      instructions: "Available for mapped addresses within 20 km of the warehouse.",
+      isEnabled: true,
+      codAllowed: true
+    },
+    create: {
+      id: "seed-method-local-delivery",
+      shippingZoneId: seattleZone.id,
+      name: "Local delivery",
+      description: "Same-area local delivery with COD support.",
+      type: ShippingMethodType.LOCAL_DELIVERY,
+      baseCost: 8,
+      maximumDistanceKm: 20,
+      sortOrder: 1,
+      estimatedMinDays: 1,
+      estimatedMaxDays: 2,
+      instructions: "Available for mapped addresses within 20 km of the warehouse.",
+      isEnabled: true,
+      codAllowed: true
+    }
+  });
+
+  const freeShippingMethod = await prisma.shippingMethod.upsert({
+    where: { id: "seed-method-free-shipping" },
+    update: {
+      shippingZoneId: seattleZone.id,
+      name: "Free shipping over 200",
+      description: "Free delivery for larger local orders.",
+      type: ShippingMethodType.FREE_SHIPPING,
+      baseCost: 0,
+      freeShippingMinimum: 200,
+      sortOrder: 2,
+      estimatedMinDays: 1,
+      estimatedMaxDays: 2,
+      instructions: "Available automatically when the cart subtotal reaches 200.",
+      isEnabled: true,
+      codAllowed: true
+    },
+    create: {
+      id: "seed-method-free-shipping",
+      shippingZoneId: seattleZone.id,
+      name: "Free shipping over 200",
+      description: "Free delivery for larger local orders.",
+      type: ShippingMethodType.FREE_SHIPPING,
+      baseCost: 0,
+      freeShippingMinimum: 200,
+      sortOrder: 2,
+      estimatedMinDays: 1,
+      estimatedMaxDays: 2,
+      instructions: "Available automatically when the cart subtotal reaches 200.",
+      isEnabled: true,
+      codAllowed: true
+    }
+  });
+
+  const westCoastFlatRateMethod = await prisma.shippingMethod.upsert({
+    where: { id: "seed-method-west-coast-flat" },
+    update: {
+      shippingZoneId: westCoastZone.id,
+      name: "Regional flat rate",
+      description: "Flat-rate delivery across the West Coast.",
+      type: ShippingMethodType.FLAT_RATE,
+      baseCost: 18,
+      sortOrder: 0,
+      estimatedMinDays: 2,
+      estimatedMaxDays: 4,
+      instructions: "Tracked regional shipping.",
+      isEnabled: true,
+      codAllowed: false
+    },
+    create: {
+      id: "seed-method-west-coast-flat",
+      shippingZoneId: westCoastZone.id,
+      name: "Regional flat rate",
+      description: "Flat-rate delivery across the West Coast.",
+      type: ShippingMethodType.FLAT_RATE,
+      baseCost: 18,
+      sortOrder: 0,
+      estimatedMinDays: 2,
+      estimatedMaxDays: 4,
+      instructions: "Tracked regional shipping.",
+      isEnabled: true,
+      codAllowed: false
+    }
+  });
+
+  const westCoastWeightMethod = await prisma.shippingMethod.upsert({
+    where: { id: "seed-method-west-coast-weight" },
+    update: {
+      shippingZoneId: westCoastZone.id,
+      name: "Regional weight-based",
+      description: "Weight-based delivery for heavier trade orders.",
+      type: ShippingMethodType.WEIGHT_BASED,
+      baseCost: 22,
+      sortOrder: 1,
+      estimatedMinDays: 2,
+      estimatedMaxDays: 5,
+      instructions: "Uses tiered delivery costs based on cart weight.",
+      isEnabled: true,
+      codAllowed: false
+    },
+    create: {
+      id: "seed-method-west-coast-weight",
+      shippingZoneId: westCoastZone.id,
+      name: "Regional weight-based",
+      description: "Weight-based delivery for heavier trade orders.",
+      type: ShippingMethodType.WEIGHT_BASED,
+      baseCost: 22,
+      sortOrder: 1,
+      estimatedMinDays: 2,
+      estimatedMaxDays: 5,
+      instructions: "Uses tiered delivery costs based on cart weight.",
+      isEnabled: true,
+      codAllowed: false
+    }
+  });
+
+  const domesticPriceMethod = await prisma.shippingMethod.upsert({
+    where: { id: "seed-method-domestic-price" },
+    update: {
+      shippingZoneId: domesticZone.id,
+      name: "Domestic price-based",
+      description: "Fallback delivery rate based on cart value.",
+      type: ShippingMethodType.PRICE_BASED,
+      baseCost: 25,
+      sortOrder: 0,
+      estimatedMinDays: 3,
+      estimatedMaxDays: 6,
+      instructions: "The cart value determines the shipping band.",
+      isEnabled: true,
+      codAllowed: false
+    },
+    create: {
+      id: "seed-method-domestic-price",
+      shippingZoneId: domesticZone.id,
+      name: "Domestic price-based",
+      description: "Fallback delivery rate based on cart value.",
+      type: ShippingMethodType.PRICE_BASED,
+      baseCost: 25,
+      sortOrder: 0,
+      estimatedMinDays: 3,
+      estimatedMaxDays: 6,
+      instructions: "The cart value determines the shipping band.",
+      isEnabled: true,
+      codAllowed: false
+    }
+  });
+
+  await prisma.shippingRateTier.deleteMany({
+    where: {
+      shippingMethodId: {
+        in: [westCoastWeightMethod.id, domesticPriceMethod.id, localDeliveryMethod.id]
+      }
+    }
+  });
+
+  await prisma.shippingRateTier.createMany({
+    data: [
+      {
+        shippingMethodId: westCoastWeightMethod.id,
+        label: "Up to 20 kg",
+        minimumValue: 0,
+        maximumValue: 20,
+        cost: 18,
+        sortOrder: 0
+      },
+      {
+        shippingMethodId: westCoastWeightMethod.id,
+        label: "20 to 40 kg",
+        minimumValue: 20.01,
+        maximumValue: 40,
+        cost: 24,
+        sortOrder: 1
+      },
+      {
+        shippingMethodId: westCoastWeightMethod.id,
+        label: "40 kg and above",
+        minimumValue: 40.01,
+        maximumValue: null,
+        cost: 32,
+        sortOrder: 2
+      },
+      {
+        shippingMethodId: domesticPriceMethod.id,
+        label: "Orders under 100",
+        minimumValue: 0,
+        maximumValue: 99.99,
+        cost: 25,
+        sortOrder: 0
+      },
+      {
+        shippingMethodId: domesticPriceMethod.id,
+        label: "Orders 100 to 250",
+        minimumValue: 100,
+        maximumValue: 249.99,
+        cost: 18,
+        sortOrder: 1
+      },
+      {
+        shippingMethodId: domesticPriceMethod.id,
+        label: "Orders 250 and above",
+        minimumValue: 250,
+        maximumValue: null,
+        cost: 12,
+        sortOrder: 2
+      },
+      {
+        shippingMethodId: localDeliveryMethod.id,
+        label: "Within 10 km",
+        minimumValue: 0,
+        maximumValue: 10,
+        cost: 6,
+        sortOrder: 0
+      },
+      {
+        shippingMethodId: localDeliveryMethod.id,
+        label: "10 to 20 km",
+        minimumValue: 10.01,
+        maximumValue: 20,
+        cost: 8,
+        sortOrder: 1
+      }
+    ]
+  });
+
+  await prisma.paymentMethodSetting.upsert({
+    where: { gateway: PaymentGateway.STRIPE },
+    update: {
+      displayName: "Stripe",
+      instructions: "Enable and add keys from the admin settings page to use Stripe Checkout.",
+      isEnabled: false,
+      mode: GatewayMode.SANDBOX,
+      publicKey: null,
+      secretKey: null,
+      webhookSecret: null,
+      extraFee: 0,
+      allowedShippingMethodTypes: [],
+      allowedZoneIds: []
+    },
+    create: {
+      gateway: PaymentGateway.STRIPE,
+      displayName: "Stripe",
+      instructions: "Enable and add keys from the admin settings page to use Stripe Checkout.",
+      isEnabled: false,
+      mode: GatewayMode.SANDBOX,
+      publicKey: null,
+      secretKey: null,
+      webhookSecret: null,
+      extraFee: 0,
+      allowedShippingMethodTypes: [],
+      allowedZoneIds: []
+    }
+  });
+
+  await prisma.paymentMethodSetting.upsert({
+    where: { gateway: PaymentGateway.PAYPAL },
+    update: {
+      displayName: "PayPal",
+      instructions: "Enable and add API credentials from the admin settings page to use PayPal.",
+      isEnabled: false,
+      mode: GatewayMode.SANDBOX,
+      publicKey: null,
+      secretKey: null,
+      webhookSecret: null,
+      extraFee: 0,
+      allowedShippingMethodTypes: [],
+      allowedZoneIds: []
+    },
+    create: {
+      gateway: PaymentGateway.PAYPAL,
+      displayName: "PayPal",
+      instructions: "Enable and add API credentials from the admin settings page to use PayPal.",
+      isEnabled: false,
+      mode: GatewayMode.SANDBOX,
+      publicKey: null,
+      secretKey: null,
+      webhookSecret: null,
+      extraFee: 0,
+      allowedShippingMethodTypes: [],
+      allowedZoneIds: []
+    }
+  });
+
+  await prisma.paymentMethodSetting.upsert({
+    where: { gateway: PaymentGateway.CASH_ON_DELIVERY },
+    update: {
+      displayName: "Cash on delivery",
+      instructions: "Pay the courier when the order arrives.",
+      isEnabled: true,
+      mode: GatewayMode.SANDBOX,
+      publicKey: null,
+      secretKey: null,
+      webhookSecret: null,
+      extraFee: 0,
+      maximumOrderAmount: 500,
+      allowedShippingMethodTypes: [ShippingMethodType.LOCAL_DELIVERY, ShippingMethodType.FREE_SHIPPING],
+      allowedZoneIds: [seattleZone.id]
+    },
+    create: {
+      gateway: PaymentGateway.CASH_ON_DELIVERY,
+      displayName: "Cash on delivery",
+      instructions: "Pay the courier when the order arrives.",
+      isEnabled: true,
+      mode: GatewayMode.SANDBOX,
+      publicKey: null,
+      secretKey: null,
+      webhookSecret: null,
+      extraFee: 0,
+      maximumOrderAmount: 500,
+      allowedShippingMethodTypes: [ShippingMethodType.LOCAL_DELIVERY, ShippingMethodType.FREE_SHIPPING],
+      allowedZoneIds: [seattleZone.id]
+    }
+  });
   const sampleOrderNumber = `WS-${new Date().getFullYear()}-0001`;
   const sampleItems = products.slice(0, 3).map(({ record, seed }, index) => {
     const quantity = index === 0 ? 4 : 2;
@@ -638,4 +1111,8 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+
+
+
 

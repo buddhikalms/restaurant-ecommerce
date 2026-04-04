@@ -1,20 +1,26 @@
-import { notFound } from "next/navigation";
+import { notFound } from "next/navigation"
 
-import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { AdminOrderStatusForm } from "@/components/forms/admin-order-status-form";
-import { OrderStatusBadge } from "@/components/store/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getAdminOrderById } from "@/lib/data/admin";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { AdminOrderStatusForm } from "@/components/forms/admin-order-status-form"
+import { OrderStatusBadge } from "@/components/store/status-badge"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getAdminOrderById } from "@/lib/data/admin"
+import {
+  formatCurrency,
+  formatDate,
+  formatEnumLabel,
+  getPaymentStatusTone,
+} from "@/lib/utils"
 
-type Params = Promise<{ id: string }>;
+type Params = Promise<{ id: string }>
 
 export default async function AdminOrderDetailsPage({ params }: { params: Params }) {
-  const { id } = await params;
-  const order = await getAdminOrderById(id);
+  const { id } = await params
+  const order = await getAdminOrderById(id)
 
   if (!order) {
-    notFound();
+    notFound()
   }
 
   return (
@@ -78,21 +84,76 @@ export default async function AdminOrderDetailsPage({ params }: { params: Params
 
           <Card className="rounded-2xl border-[var(--admin-border)] bg-[var(--admin-surface)] shadow-none">
             <CardHeader className="border-b border-[var(--admin-border)] px-4 py-3">
-              <p className="admin-kicker">Shipping</p>
-              <CardTitle className="mt-1 text-sm">Delivery address</CardTitle>
+              <p className="admin-kicker">Delivery</p>
+              <CardTitle className="mt-1 text-sm">Shipping and address</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-1.5 p-4 text-[0.82rem] text-[var(--admin-muted-foreground)]">
-              <p className="font-medium text-[var(--admin-foreground)]">
-                {order.shippingAddress.contactName}
-              </p>
-              {order.shippingAddress.businessName ? <p>{order.shippingAddress.businessName}</p> : null}
-              <p>{order.shippingAddress.line1}</p>
-              {order.shippingAddress.line2 ? <p>{order.shippingAddress.line2}</p> : null}
-              <p>
-                {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
-              </p>
-              <p>{order.shippingAddress.country}</p>
-              <p>{order.shippingAddress.phone}</p>
+            <CardContent className="space-y-3 p-4 text-[0.82rem] text-[var(--admin-muted-foreground)]">
+              <div className="flex flex-wrap gap-2">
+                {order.shippingMethodName ? (
+                  <Badge className="bg-[rgba(85,99,71,0.12)] text-[var(--accent-dark)]">
+                    {order.shippingMethodName}
+                  </Badge>
+                ) : null}
+                {order.paymentStatus ? (
+                  <Badge className={getPaymentStatusTone(order.paymentStatus)}>
+                    {formatEnumLabel(order.paymentStatus)}
+                  </Badge>
+                ) : null}
+              </div>
+              <div>
+                <p className="font-medium text-[var(--admin-foreground)]">
+                  {order.shippingAddress.contactName}
+                </p>
+                {order.shippingAddress.businessName ? <p>{order.shippingAddress.businessName}</p> : null}
+                <p>{order.shippingAddress.line1}</p>
+                {order.shippingAddress.line2 ? <p>{order.shippingAddress.line2}</p> : null}
+                <p>
+                  {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
+                </p>
+                <p>{order.shippingAddress.country}</p>
+                <p>{order.shippingAddress.phone}</p>
+              </div>
+              {order.shippingZone?.name ? <p>Zone: {order.shippingZone.name}</p> : null}
+              {order.shippingMethodType ? <p>Method type: {formatEnumLabel(order.shippingMethodType)}</p> : null}
+              {order.estimatedDeliveryMinDays || order.estimatedDeliveryMaxDays ? (
+                <p>
+                  Estimated delivery: {order.estimatedDeliveryMinDays ?? order.estimatedDeliveryMaxDays} to {order.estimatedDeliveryMaxDays ?? order.estimatedDeliveryMinDays} day(s)
+                </p>
+              ) : null}
+              {order.deliveryMethodDescription ? <p>{order.deliveryMethodDescription}</p> : null}
+              {order.deliveryInstructions ? <p>{order.deliveryInstructions}</p> : null}
+              {order.notes ? <p>Customer note: {order.notes}</p> : null}
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl border-[var(--admin-border)] bg-[var(--admin-surface)] shadow-none">
+            <CardHeader className="border-b border-[var(--admin-border)] px-4 py-3">
+              <p className="admin-kicker">Payment</p>
+              <CardTitle className="mt-1 text-sm">Gateway details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 p-4 text-[0.82rem] text-[var(--admin-muted-foreground)]">
+              <div className="flex items-center justify-between">
+                <span>Method</span>
+                <span>{order.paymentMethodName ? formatEnumLabel(order.paymentMethodName) : "Not set"}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Status</span>
+                <span>{formatEnumLabel(order.paymentStatus)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Reference</span>
+                <span>{order.paymentReference || "-"}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Transaction</span>
+                <span>{order.transactionId || "-"}</span>
+              </div>
+              {order.paidAt ? (
+                <div className="flex items-center justify-between">
+                  <span>Paid at</span>
+                  <span>{formatDate(order.paidAt)}</span>
+                </div>
+              ) : null}
             </CardContent>
           </Card>
 
@@ -110,6 +171,20 @@ export default async function AdminOrderDetailsPage({ params }: { params: Params
                 <span>Subtotal</span>
                 <span>{formatCurrency(order.subtotal)}</span>
               </div>
+              <div className="flex items-center justify-between">
+                <span>Shipping</span>
+                <span>{formatCurrency(order.shippingCost)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Handling</span>
+                <span>{formatCurrency(order.handlingFee)}</span>
+              </div>
+              {order.codFee > 0 ? (
+                <div className="flex items-center justify-between">
+                  <span>COD fee</span>
+                  <span>{formatCurrency(order.codFee)}</span>
+                </div>
+              ) : null}
               <div className="flex items-center justify-between text-sm font-semibold text-[var(--admin-foreground)]">
                 <span>Total</span>
                 <span>{formatCurrency(order.total)}</span>
@@ -121,5 +196,5 @@ export default async function AdminOrderDetailsPage({ params }: { params: Params
         </div>
       </div>
     </div>
-  );
+  )
 }

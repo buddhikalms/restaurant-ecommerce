@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -15,6 +15,7 @@ import {
   Settings,
   ShoppingCart,
   Users,
+  UtensilsCrossed,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -27,6 +28,7 @@ const NAV_ICONS = {
   "/admin": LayoutDashboard,
   "/admin/orders": ShoppingCart,
   "/admin/products": Package,
+  "/admin/cloud-kitchen": UtensilsCrossed,
   "/admin/customers": Users,
   "/admin/analytics": ChartColumn,
   "/admin/settings": Settings,
@@ -41,10 +43,7 @@ function isNavItemActive(currentPath: string, href: string) {
 }
 
 function getPageLabel(currentPath: string) {
-  return (
-    ADMIN_NAV_ITEMS.find((item) => isNavItemActive(currentPath, item.href))
-      ?.label ?? "Admin"
-  );
+  return ADMIN_NAV_ITEMS.find((item) => isNavItemActive(currentPath, item.href))?.label ?? "Admin";
 }
 
 function getSearchConfig(currentPath: string) {
@@ -68,6 +67,30 @@ function getSearchConfig(currentPath: string) {
     return {
       path: "/admin/orders",
       placeholder: "Search order number, customer, or business",
+      searchable: true,
+    };
+  }
+
+  if (currentPath.startsWith("/admin/cloud-kitchen/orders")) {
+    return {
+      path: "/admin/cloud-kitchen/orders",
+      placeholder: "Search food order, customer, or kitchen",
+      searchable: true,
+    };
+  }
+
+  if (currentPath.startsWith("/admin/cloud-kitchen/foods")) {
+    return {
+      path: "/admin/cloud-kitchen/foods",
+      placeholder: "Search food item or category",
+      searchable: true,
+    };
+  }
+
+  if (currentPath.startsWith("/admin/cloud-kitchen/kitchens")) {
+    return {
+      path: "/admin/cloud-kitchen/kitchens",
+      placeholder: "Search kitchen or branch",
       searchable: true,
     };
   }
@@ -124,20 +147,12 @@ export function AdminShell({
     closeMobileNav();
 
     if (!searchConfig.searchable) {
-      router.push(
-        nextValue
-          ? `${searchConfig.path}?q=${encodeURIComponent(nextValue)}`
-          : searchConfig.path,
-      );
+      router.push(nextValue ? `${searchConfig.path}?q=${encodeURIComponent(nextValue)}` : searchConfig.path);
       return;
     }
 
     const nextQueryString = nextParams.toString();
-    router.push(
-      nextQueryString
-        ? `${searchConfig.path}?${nextQueryString}`
-        : searchConfig.path,
-    );
+    router.push(nextQueryString ? `${searchConfig.path}?${nextQueryString}` : searchConfig.path);
   };
 
   const sidebar = (
@@ -148,30 +163,22 @@ export function AdminShell({
             {isSidebarCollapsed ? "CT" : "CeylonTaste Admin"}
           </p>
           {!isSidebarCollapsed ? (
-            <p className="mt-1 truncate text-[0.72rem] text-white">
-              Wholesale operations hub
-            </p>
+            <p className="mt-1 truncate text-[0.72rem] text-white">Wholesale operations hub</p>
           ) : null}
         </Link>
         <button
           type="button"
           onClick={() => setIsSidebarCollapsed((current) => !current)}
           className="hidden h-8 w-8 items-center justify-center rounded-lg border border-[var(--admin-sidebar-border)] bg-white/5 text-white transition hover:bg-white/10 lg:inline-flex"
-          aria-label={
-            isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
-          }
+          aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {isSidebarCollapsed ? (
-            <ChevronsRight className="h-4 w-4" />
-          ) : (
-            <ChevronsLeft className="h-4 w-4" />
-          )}
+          {isSidebarCollapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
         </button>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
         {ADMIN_NAV_ITEMS.map((item) => {
-          const Icon = NAV_ICONS[item.href];
+          const Icon = NAV_ICONS[item.href as keyof typeof NAV_ICONS] ?? LayoutDashboard;
           const active = isNavItemActive(currentPath, item.href);
 
           return (
@@ -181,17 +188,13 @@ export function AdminShell({
               onClick={closeMobileNav}
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.82rem] font-medium transition",
-                active
-                  ? "bg-white/14 text-white ring-1 ring-inset ring-white/10"
-                  : "text-white hover:bg-white/8 hover:text-white",
+                active ? "bg-white/14 text-white ring-1 ring-inset ring-white/10" : "text-white hover:bg-white/8 hover:text-white",
                 isSidebarCollapsed && "justify-center px-2",
               )}
               title={item.label}
             >
               <Icon className="h-4 w-4 shrink-0 text-white" />
-              {!isSidebarCollapsed ? (
-                <span className="text-white">{item.label}</span>
-              ) : null}
+              {!isSidebarCollapsed ? <span className="text-white">{item.label}</span> : null}
             </Link>
           );
         })}
@@ -202,14 +205,10 @@ export function AdminShell({
           {!isSidebarCollapsed ? (
             <>
               <p className="font-medium text-white">{userName}</p>
-              <p className="mt-1 truncate text-white">
-                {userEmail ?? "admin@ceylontaste"}
-              </p>
+              <p className="mt-1 truncate text-white">{userEmail ?? "admin@ceylontaste"}</p>
             </>
           ) : (
-            <p className="text-center font-medium text-white">
-              {getInitials(userName)}
-            </p>
+            <p className="text-center font-medium text-white">{getInitials(userName)}</p>
           )}
         </div>
       </div>
@@ -230,12 +229,7 @@ export function AdminShell({
 
         {isMobileNavOpen ? (
           <div className="fixed inset-0 z-50 flex lg:hidden">
-            <button
-              type="button"
-              className="flex-1 bg-slate-950/40"
-              aria-label="Close navigation"
-              onClick={closeMobileNav}
-            />
+            <button type="button" className="flex-1 bg-slate-950/40" aria-label="Close navigation" onClick={closeMobileNav} />
             <aside className="w-[270px] border-l border-[var(--admin-sidebar-border)] bg-[var(--admin-sidebar)] shadow-2xl">
               <div className="flex items-center justify-end px-3 py-3">
                 <button
@@ -268,16 +262,10 @@ export function AdminShell({
                 <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[var(--admin-muted-foreground)]">
                   {pageLabel}
                 </p>
-                <p className="truncate text-[0.82rem] text-[var(--admin-foreground)]">
-                  Daily wholesale admin workflow
-                </p>
+                <p className="truncate text-[0.82rem] text-[var(--admin-foreground)]">Daily wholesale admin workflow</p>
               </div>
 
-              <form
-                key={`desktop-${currentPath}-${currentQuery}`}
-                className="hidden min-w-[280px] flex-1 sm:block"
-                onSubmit={handleSearchSubmit}
-              >
+              <form key={`desktop-${currentPath}-${currentQuery}`} className="hidden min-w-[280px] flex-1 sm:block" onSubmit={handleSearchSubmit}>
                 <div className="flex h-9 items-center rounded-lg border border-[var(--admin-border)] bg-[var(--admin-surface)] px-3">
                   <Search className="h-4 w-4 text-[var(--admin-muted-foreground)]" />
                   <input
@@ -290,11 +278,7 @@ export function AdminShell({
               </form>
 
               <div className="ml-auto flex items-center gap-2">
-                <button
-                  type="button"
-                  className="admin-icon-button relative"
-                  aria-label="Notifications"
-                >
+                <button type="button" className="admin-icon-button relative" aria-label="Notifications">
                   <Bell className="h-4 w-4" />
                   <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[var(--admin-accent)]" />
                 </button>
@@ -305,23 +289,15 @@ export function AdminShell({
                       {getInitials(userName)}
                     </div>
                     <div className="hidden sm:block">
-                      <p className="text-[0.78rem] font-medium text-[var(--admin-foreground)]">
-                        {userName}
-                      </p>
-                      <p className="text-[0.7rem] text-[var(--admin-muted-foreground)]">
-                        Administrator
-                      </p>
+                      <p className="text-[0.78rem] font-medium text-[var(--admin-foreground)]">{userName}</p>
+                      <p className="text-[0.7rem] text-[var(--admin-muted-foreground)]">Administrator</p>
                     </div>
                     <ChevronDown className="hidden h-4 w-4 text-[var(--admin-muted-foreground)] sm:block" />
                   </summary>
                   <div className="absolute right-0 z-40 mt-2 w-56 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-2 shadow-lg shadow-slate-950/5">
                     <div className="border-b border-[var(--admin-border)] px-2.5 pb-2 pt-1">
-                      <p className="text-[0.8rem] font-medium text-[var(--admin-foreground)]">
-                        {userName}
-                      </p>
-                      <p className="mt-0.5 text-[0.74rem] text-[var(--admin-muted-foreground)]">
-                        {userEmail ?? "admin@ceylontaste"}
-                      </p>
+                      <p className="text-[0.8rem] font-medium text-[var(--admin-foreground)]">{userName}</p>
+                      <p className="mt-0.5 text-[0.74rem] text-[var(--admin-muted-foreground)]">{userEmail ?? "admin@ceylontaste"}</p>
                     </div>
                     <div className="space-y-1 px-1 py-2">
                       <Link
@@ -331,21 +307,14 @@ export function AdminShell({
                       >
                         Account settings
                       </Link>
-                      <LogoutButton
-                        className="w-full justify-start"
-                        variant="ghost"
-                      />
+                      <LogoutButton className="w-full justify-start" variant="ghost" />
                     </div>
                   </div>
                 </details>
               </div>
             </div>
 
-            <form
-              key={`mobile-${currentPath}-${currentQuery}`}
-              className="border-t border-[var(--admin-border)] px-4 py-3 sm:hidden"
-              onSubmit={handleSearchSubmit}
-            >
+            <form key={`mobile-${currentPath}-${currentQuery}`} className="border-t border-[var(--admin-border)] px-4 py-3 sm:hidden" onSubmit={handleSearchSubmit}>
               <div className="flex h-9 items-center rounded-lg border border-[var(--admin-border)] bg-[var(--admin-surface)] px-3">
                 <Search className="h-4 w-4 text-[var(--admin-muted-foreground)]" />
                 <input

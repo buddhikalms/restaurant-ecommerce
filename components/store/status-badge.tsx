@@ -1,8 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import { getOrderStatusTone, getStockLabel } from "@/lib/utils";
+import { formatEnumLabel, getOrderStatusTone, getStockLabel } from "@/lib/utils";
 
 export function OrderStatusBadge({ status }: { status: string }) {
-  return <Badge className={getOrderStatusTone(status)}>{status.replace("_", " ")}</Badge>;
+  return <Badge className={getOrderStatusTone(status)}>{formatEnumLabel(status)}</Badge>;
 }
 
 export function StockBadge({ stockQuantity }: { stockQuantity: number }) {

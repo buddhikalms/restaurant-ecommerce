@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { LogIn, UserRound } from "lucide-react";
 
 import { auth } from "@/auth";
@@ -21,7 +21,9 @@ export async function SiteHeader() {
               CT
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-[var(--foreground)]">CeylonTaste</p>
+              <p className="truncate text-sm font-semibold text-[var(--foreground)]">
+                CeylonTaste
+              </p>
               <p className="hidden truncate text-[0.68rem] text-[var(--muted-foreground)] md:block">
                 Wholesale & Retail
               </p>
@@ -32,8 +34,8 @@ export async function SiteHeader() {
             <nav className="flex items-center gap-1 text-[0.82rem] text-[var(--muted-foreground)]">
               {[
                 { href: "/products", label: "Products" },
-                { href: "/about", label: "About" },
-                { href: "/contact", label: "Contact" },
+                { href: "/food", label: "Cloud Kitchen" },
+
                 { href: "/checkout", label: "Checkout" },
               ].map((item) => (
                 <Link

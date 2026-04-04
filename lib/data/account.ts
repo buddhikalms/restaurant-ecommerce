@@ -28,6 +28,9 @@ function mapDefaultAddress(
     state: string;
     postalCode: string;
     country: string;
+    latitude?: { toString(): string } | null;
+    longitude?: { toString(): string } | null;
+    placeId?: string | null;
   } | null,
 ) {
   if (!address) {
@@ -41,6 +44,9 @@ function mapDefaultAddress(
     state: address.state,
     postalCode: address.postalCode,
     country: address.country,
+    latitude: address.latitude ? Number(address.latitude) : null,
+    longitude: address.longitude ? Number(address.longitude) : null,
+    placeId: address.placeId ?? null,
   };
 }
 
@@ -400,6 +406,12 @@ export async function getCustomerOrderById(
         },
       },
       shippingAddress: true,
+      shippingZone: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 
@@ -418,6 +430,9 @@ export async function getCustomerOrderById(
   return {
     ...order,
     subtotal: Number(order.subtotal),
+    shippingCost: Number(order.shippingCost),
+    handlingFee: Number(order.handlingFee),
+    codFee: Number(order.codFee),
     total: Number(order.total),
     items: order.items.map((item) => ({
       ...item,
@@ -428,3 +443,10 @@ export async function getCustomerOrderById(
     unavailableReorderItems,
   };
 }
+
+
+
+
+
+
+

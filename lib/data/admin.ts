@@ -362,6 +362,12 @@ export async function getAdminOrderById(id: string) {
         },
       },
       shippingAddress: true,
+      shippingZone: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
       items: {
         orderBy: { createdAt: "asc" },
       },
@@ -375,6 +381,9 @@ export async function getAdminOrderById(id: string) {
   return {
     ...order,
     subtotal: Number(order.subtotal),
+    shippingCost: Number(order.shippingCost),
+    handlingFee: Number(order.handlingFee),
+    codFee: Number(order.codFee),
     total: Number(order.total),
     items: order.items.map((item) => ({
       ...item,
@@ -618,3 +627,7 @@ export async function getAdminAnalytics() {
     ],
   };
 }
+
+
+
+

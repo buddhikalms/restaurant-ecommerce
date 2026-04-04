@@ -5,6 +5,11 @@ const envSchema = z.object({
   AUTH_SECRET: z.string().min(1),
   AUTH_URL: z.string().optional(),
   NEXT_PUBLIC_APP_URL: z.string().default("http://localhost:3000"),
+  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string().optional(),
+  NEXT_PUBLIC_GOOGLE_MAP_ID: z.string().optional(),
+  NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_LATITUDE: z.string().optional(),
+  NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_LONGITUDE: z.string().optional(),
+  NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_ZOOM: z.string().optional(),
   ADMIN_NOTIFICATION_EMAIL: z.string().email().optional(),
   CONTACT_NOTIFICATION_EMAIL: z.string().email().optional(),
   EMAIL_FROM: z.string().optional(),
@@ -13,7 +18,7 @@ const envSchema = z.object({
   SMTP_PORT: z.string().optional(),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
-  SMTP_SECURE: z.string().optional()
+  SMTP_SECURE: z.string().optional(),
 });
 
 export const env = envSchema.parse({
@@ -21,6 +26,14 @@ export const env = envSchema.parse({
   AUTH_SECRET: process.env.AUTH_SECRET,
   AUTH_URL: process.env.AUTH_URL,
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+  NEXT_PUBLIC_GOOGLE_MAP_ID: process.env.NEXT_PUBLIC_GOOGLE_MAP_ID,
+  NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_LATITUDE:
+    process.env.NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_LATITUDE,
+  NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_LONGITUDE:
+    process.env.NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_LONGITUDE,
+  NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_ZOOM:
+    process.env.NEXT_PUBLIC_CLOUD_KITCHEN_DEFAULT_ZOOM,
   ADMIN_NOTIFICATION_EMAIL: process.env.ADMIN_NOTIFICATION_EMAIL,
   CONTACT_NOTIFICATION_EMAIL: process.env.CONTACT_NOTIFICATION_EMAIL,
   EMAIL_FROM: process.env.EMAIL_FROM,
@@ -29,5 +42,5 @@ export const env = envSchema.parse({
   SMTP_PORT: process.env.SMTP_PORT,
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASS: process.env.SMTP_PASS,
-  SMTP_SECURE: process.env.SMTP_SECURE
+  SMTP_SECURE: process.env.SMTP_SECURE,
 });

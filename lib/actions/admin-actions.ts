@@ -4,6 +4,7 @@ import { Prisma } from "prisma-generated-client-v2";
 import { revalidatePath } from "next/cache";
 
 import { ActionResponse } from "@/lib/actions/action-response";
+import { STORE_SETTINGS_SINGLETON_ID } from "@/lib/commerce/constants";
 import { requireAdmin } from "@/lib/auth-helpers";
 import {
   getGalleryImageValidationError,
@@ -17,6 +18,16 @@ import {
 import { summarizeActiveProductVariants } from "@/lib/product-variants";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
+import {
+  paymentMethodSettingSchema,
+  shippingMethodSchema,
+  shippingZoneSchema,
+  storeSettingsSchema,
+  type PaymentMethodSettingInput,
+  type ShippingMethodInput,
+  type ShippingZoneInput,
+  type StoreSettingsInput,
+} from "@/lib/validations/admin-commerce";
 import {
   categorySchema,
   orderStatusSchema,
@@ -427,3 +438,327 @@ export async function updateOrderStatusAction(input: {
     message: "Order status updated.",
   };
 }
+
+
+function splitTextareaValues(value?: string | null) {
+  return (value ?? "")
+    .split(/[\n,]+/)
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+}
+
+function normalizeAdminOptionalText(value?: string | null) {
+  const normalized = value?.trim()
+  return normalized ? normalized : null
+}
+
+export async function upsertStoreSettingsAction(
+  input: StoreSettingsInput,
+): Promise<ActionResponse> {
+  await requireAdmin();
+
+  const parsed = storeSettingsSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Please review the store settings and try again.",
+      fieldErrors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  await prisma.storeSettings.upsert({
+    where: { id: STORE_SETTINGS_SINGLETON_ID },
+    update: {
+      deliveryNotes: normalizeAdminOptionalText(parsed.data.deliveryNotes),
+      defaultHandlingFee: parsed.data.defaultHandlingFee,
+      weightUnit: parsed.data.weightUnit,
+      dimensionUnit: parsed.data.dimensionUnit,
+      mapsEnabled: parsed.data.mapsEnabled,
+      googleMapsApiKey: normalizeAdminOptionalText(parsed.data.googleMapsApiKey),
+      defaultMapLatitude: parsed.data.defaultMapLatitude ?? null,
+      defaultMapLongitude: parsed.data.defaultMapLongitude ?? null,
+      defaultMapZoom: parsed.data.defaultMapZoom,
+      storeLocationName: normalizeAdminOptionalText(parsed.data.storeLocationName),
+      storeAddress: normalizeAdminOptionalText(parsed.data.storeAddress),
+      storeLatitude: parsed.data.storeLatitude ?? null,
+      storeLongitude: parsed.data.storeLongitude ?? null,
+      serviceAreaCountries: splitTextareaValues(parsed.data.serviceAreaCountriesText),
+    },
+    create: {
+      id: STORE_SETTINGS_SINGLETON_ID,
+      deliveryNotes: normalizeAdminOptionalText(parsed.data.deliveryNotes),
+      defaultHandlingFee: parsed.data.defaultHandlingFee,
+      weightUnit: parsed.data.weightUnit,
+      dimensionUnit: parsed.data.dimensionUnit,
+      mapsEnabled: parsed.data.mapsEnabled,
+      googleMapsApiKey: normalizeAdminOptionalText(parsed.data.googleMapsApiKey),
+      defaultMapLatitude: parsed.data.defaultMapLatitude ?? null,
+      defaultMapLongitude: parsed.data.defaultMapLongitude ?? null,
+      defaultMapZoom: parsed.data.defaultMapZoom,
+      storeLocationName: normalizeAdminOptionalText(parsed.data.storeLocationName),
+      storeAddress: normalizeAdminOptionalText(parsed.data.storeAddress),
+      storeLatitude: parsed.data.storeLatitude ?? null,
+      storeLongitude: parsed.data.storeLongitude ?? null,
+      serviceAreaCountries: splitTextareaValues(parsed.data.serviceAreaCountriesText),
+    },
+  });
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/checkout");
+
+  return {
+    success: true,
+    message: "Store settings updated.",
+  };
+}
+
+export async function upsertShippingZoneAction(
+  input: ShippingZoneInput,
+): Promise<ActionResponse<{ id: string }>> {
+  await requireAdmin();
+
+  const parsed = shippingZoneSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Please review the shipping zone details and try again.",
+      fieldErrors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const zone = await prisma.$transaction(async (tx) => {
+    const savedZone = parsed.data.id
+      ? await tx.shippingZone.update({
+          where: { id: parsed.data.id },
+          data: {
+            name: parsed.data.name,
+            description: normalizeAdminOptionalText(parsed.data.description),
+            isEnabled: parsed.data.isEnabled,
+            sortOrder: parsed.data.sortOrder,
+          },
+        })
+      : await tx.shippingZone.create({
+          data: {
+            name: parsed.data.name,
+            description: normalizeAdminOptionalText(parsed.data.description),
+            isEnabled: parsed.data.isEnabled,
+            sortOrder: parsed.data.sortOrder,
+          },
+        });
+
+    await tx.shippingZoneRegion.deleteMany({
+      where: {
+        shippingZoneId: savedZone.id,
+      },
+    });
+
+    if (parsed.data.regions.length) {
+      await tx.shippingZoneRegion.createMany({
+        data: parsed.data.regions.map((region, index) => ({
+          shippingZoneId: savedZone.id,
+          country: normalizeAdminOptionalText(region.country),
+          state: normalizeAdminOptionalText(region.state),
+          city: normalizeAdminOptionalText(region.city),
+          postalCodePattern: normalizeAdminOptionalText(region.postalCodePattern),
+          sortOrder: region.sortOrder ?? index,
+        })),
+      });
+    }
+
+    return savedZone;
+  });
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/checkout");
+
+  return {
+    success: true,
+    data: { id: zone.id },
+    message: parsed.data.id ? "Shipping zone updated." : "Shipping zone created.",
+  };
+}
+
+export async function deleteShippingZoneAction(id: string): Promise<ActionResponse> {
+  await requireAdmin();
+
+  await prisma.shippingZone.delete({
+    where: { id },
+  });
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/checkout");
+
+  return {
+    success: true,
+    message: "Shipping zone deleted.",
+  };
+}
+
+export async function upsertShippingMethodAction(
+  input: ShippingMethodInput,
+): Promise<ActionResponse<{ id: string }>> {
+  await requireAdmin();
+
+  const parsed = shippingMethodSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Please review the shipping method and try again.",
+      fieldErrors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const method = await prisma.$transaction(async (tx) => {
+    const savedMethod = parsed.data.id
+      ? await tx.shippingMethod.update({
+          where: { id: parsed.data.id },
+          data: {
+            shippingZoneId: parsed.data.shippingZoneId,
+            name: parsed.data.name,
+            description: normalizeAdminOptionalText(parsed.data.description),
+            type: parsed.data.type,
+            baseCost: parsed.data.baseCost,
+            minimumOrderAmount: parsed.data.minimumOrderAmount ?? null,
+            maximumOrderAmount: parsed.data.maximumOrderAmount ?? null,
+            minimumWeight: parsed.data.minimumWeight ?? null,
+            maximumWeight: parsed.data.maximumWeight ?? null,
+            freeShippingMinimum: parsed.data.freeShippingMinimum ?? null,
+            maximumDistanceKm: parsed.data.maximumDistanceKm ?? null,
+            sortOrder: parsed.data.sortOrder,
+            estimatedMinDays: parsed.data.estimatedMinDays ?? null,
+            estimatedMaxDays: parsed.data.estimatedMaxDays ?? null,
+            instructions: normalizeAdminOptionalText(parsed.data.instructions),
+            isEnabled: parsed.data.isEnabled,
+            codAllowed: parsed.data.codAllowed,
+          },
+        })
+      : await tx.shippingMethod.create({
+          data: {
+            shippingZoneId: parsed.data.shippingZoneId,
+            name: parsed.data.name,
+            description: normalizeAdminOptionalText(parsed.data.description),
+            type: parsed.data.type,
+            baseCost: parsed.data.baseCost,
+            minimumOrderAmount: parsed.data.minimumOrderAmount ?? null,
+            maximumOrderAmount: parsed.data.maximumOrderAmount ?? null,
+            minimumWeight: parsed.data.minimumWeight ?? null,
+            maximumWeight: parsed.data.maximumWeight ?? null,
+            freeShippingMinimum: parsed.data.freeShippingMinimum ?? null,
+            maximumDistanceKm: parsed.data.maximumDistanceKm ?? null,
+            sortOrder: parsed.data.sortOrder,
+            estimatedMinDays: parsed.data.estimatedMinDays ?? null,
+            estimatedMaxDays: parsed.data.estimatedMaxDays ?? null,
+            instructions: normalizeAdminOptionalText(parsed.data.instructions),
+            isEnabled: parsed.data.isEnabled,
+            codAllowed: parsed.data.codAllowed,
+          },
+        });
+
+    await tx.shippingRateTier.deleteMany({
+      where: {
+        shippingMethodId: savedMethod.id,
+      },
+    });
+
+    if (parsed.data.tiers.length) {
+      await tx.shippingRateTier.createMany({
+        data: parsed.data.tiers.map((tier, index) => ({
+          shippingMethodId: savedMethod.id,
+          label: normalizeAdminOptionalText(tier.label),
+          minimumValue: tier.minimumValue ?? null,
+          maximumValue: tier.maximumValue ?? null,
+          cost: tier.cost,
+          sortOrder: tier.sortOrder ?? index,
+        })),
+      });
+    }
+
+    return savedMethod;
+  });
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/checkout");
+
+  return {
+    success: true,
+    data: { id: method.id },
+    message: parsed.data.id ? "Shipping method updated." : "Shipping method created.",
+  };
+}
+
+export async function deleteShippingMethodAction(id: string): Promise<ActionResponse> {
+  await requireAdmin();
+
+  await prisma.shippingMethod.delete({
+    where: { id },
+  });
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/checkout");
+
+  return {
+    success: true,
+    message: "Shipping method deleted.",
+  };
+}
+
+export async function upsertPaymentMethodSettingAction(
+  input: PaymentMethodSettingInput,
+): Promise<ActionResponse> {
+  await requireAdmin();
+
+  const parsed = paymentMethodSettingSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Please review the payment method settings and try again.",
+      fieldErrors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  await prisma.paymentMethodSetting.upsert({
+    where: { gateway: parsed.data.gateway },
+    update: {
+      displayName: parsed.data.displayName,
+      instructions: normalizeAdminOptionalText(parsed.data.instructions),
+      isEnabled: parsed.data.isEnabled,
+      mode: parsed.data.mode,
+      publicKey: normalizeAdminOptionalText(parsed.data.publicKey),
+      secretKey: normalizeAdminOptionalText(parsed.data.secretKey),
+      webhookSecret: normalizeAdminOptionalText(parsed.data.webhookSecret),
+      extraFee: parsed.data.extraFee,
+      minimumOrderAmount: parsed.data.minimumOrderAmount ?? null,
+      maximumOrderAmount: parsed.data.maximumOrderAmount ?? null,
+      allowedShippingMethodTypes: parsed.data.allowedShippingMethodTypes,
+      allowedZoneIds: parsed.data.allowedZoneIds,
+    },
+    create: {
+      gateway: parsed.data.gateway,
+      displayName: parsed.data.displayName,
+      instructions: normalizeAdminOptionalText(parsed.data.instructions),
+      isEnabled: parsed.data.isEnabled,
+      mode: parsed.data.mode,
+      publicKey: normalizeAdminOptionalText(parsed.data.publicKey),
+      secretKey: normalizeAdminOptionalText(parsed.data.secretKey),
+      webhookSecret: normalizeAdminOptionalText(parsed.data.webhookSecret),
+      extraFee: parsed.data.extraFee,
+      minimumOrderAmount: parsed.data.minimumOrderAmount ?? null,
+      maximumOrderAmount: parsed.data.maximumOrderAmount ?? null,
+      allowedShippingMethodTypes: parsed.data.allowedShippingMethodTypes,
+      allowedZoneIds: parsed.data.allowedZoneIds,
+    },
+  });
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/checkout");
+
+  return {
+    success: true,
+    message: `${parsed.data.displayName} settings updated.`,
+  };
+}
+

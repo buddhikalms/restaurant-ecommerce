@@ -15,6 +15,9 @@ export function AccountNav({
   const items = [
     { href: basePath, label: mode === "wholesale" ? "Dashboard" : "Overview" },
     { href: `${basePath}/orders`, label: "Orders" },
+    ...(mode === "customer"
+      ? [{ href: `${basePath}/food-orders`, label: "Food orders" }]
+      : []),
     { href: `${basePath}/settings`, label: "Settings" },
   ];
 
