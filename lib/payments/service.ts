@@ -1,6 +1,6 @@
 import crypto from "node:crypto"
 
-import { PaymentGateway, type PaymentMethodSetting } from "prisma-generated-client-v2"
+import { PaymentGateway, type PaymentMethodSetting } from "@/generated/prisma"
 
 import {
   DEFAULT_CURRENCY,

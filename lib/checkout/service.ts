@@ -7,7 +7,7 @@ import {
   type Order,
   Prisma,
   type User,
-} from "prisma-generated-client-v2"
+} from "@/generated/prisma"
 
 import { sendOrderEmails } from "@/lib/email"
 import { decrementInventoryForCheckoutItems, normalizeCheckoutCartItems, type CheckoutItemInput, type NormalizedCheckoutCart } from "@/lib/checkout/cart"

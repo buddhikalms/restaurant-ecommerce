@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { PaymentGateway } from "prisma-generated-client-v2"
+import { PaymentGateway } from "@/generated/prisma"
 
 import { finalizePaidOrder } from "@/lib/checkout/service"
 import {

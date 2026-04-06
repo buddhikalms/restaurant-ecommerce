@@ -1,4 +1,4 @@
-import { Prisma } from "prisma-generated-client-v2"
+import { Prisma } from "@/generated/prisma"
 
 import { calculatePriceWithVat } from "@/lib/product-pricing"
 import { prisma } from "@/lib/prisma"

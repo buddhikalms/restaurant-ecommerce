@@ -1,7 +1,7 @@
 "use server";
 
 import { hash } from "bcryptjs";
-import { Prisma } from "prisma-generated-client-v2";
+import { Prisma } from "@/generated/prisma";
 
 import { ActionResponse } from "@/lib/actions/action-response";
 import { prisma } from "@/lib/prisma";

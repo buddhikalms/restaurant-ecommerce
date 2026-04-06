@@ -4,7 +4,7 @@ import {
   type PaymentMethodSetting,
   type Prisma,
   type StoreSettings,
-} from "prisma-generated-client-v2"
+} from "@/generated/prisma"
 
 import {
   PAYMENT_GATEWAY_LABELS,

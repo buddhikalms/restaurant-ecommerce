@@ -21,11 +21,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.19.2
+ * Prisma Client JS version: 6.19.3
  * Query Engine version: c2990dca591cba766e3b7ef5d9e8a84796e47ab7
  */
 Prisma.prismaVersion = {
-  client: "6.19.2",
+  client: "6.19.3",
   engine: "c2990dca591cba766e3b7ef5d9e8a84796e47ab7"
 }
 
@@ -150,11 +150,22 @@ exports.Prisma.ProductScalarFieldEnum = {
   slug: 'slug',
   sku: 'sku',
   description: 'description',
+  information: 'information',
+  ingredients: 'ingredients',
+  nutritional: 'nutritional',
+  faq: 'faq',
   imageUrl: 'imageUrl',
+  galleryImageUrls: 'galleryImageUrls',
   productType: 'productType',
   variantLabel: 'variantLabel',
+  vatMode: 'vatMode',
+  vatRate: 'vatRate',
   normalPrice: 'normalPrice',
   wholesalePrice: 'wholesalePrice',
+  weight: 'weight',
+  requiresShipping: 'requiresShipping',
+  allowStorePickup: 'allowStorePickup',
+  allowLocalDelivery: 'allowLocalDelivery',
   stockQuantity: 'stockQuantity',
   minOrderQuantity: 'minOrderQuantity',
   isActive: 'isActive',
@@ -191,6 +202,134 @@ exports.Prisma.AddressScalarFieldEnum = {
   postalCode: 'postalCode',
   country: 'country',
   phone: 'phone',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  placeId: 'placeId',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WholesaleProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  mobileNumber: 'mobileNumber',
+  telephoneNumber: 'telephoneNumber',
+  tradingName: 'tradingName',
+  deliveryAddressLine1: 'deliveryAddressLine1',
+  deliveryAddressLine2: 'deliveryAddressLine2',
+  deliveryAddressLine3: 'deliveryAddressLine3',
+  deliveryTown: 'deliveryTown',
+  deliveryPostcode: 'deliveryPostcode',
+  differentInvoiceAddress: 'differentInvoiceAddress',
+  invoiceAddressLine1: 'invoiceAddressLine1',
+  invoiceAddressLine2: 'invoiceAddressLine2',
+  invoiceAddressLine3: 'invoiceAddressLine3',
+  invoiceTown: 'invoiceTown',
+  invoicePostcode: 'invoicePostcode',
+  companyType: 'companyType',
+  companyNumber: 'companyNumber',
+  directorName: 'directorName',
+  businessType: 'businessType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.KitchenScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  phone: 'phone',
+  email: 'email',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  maxDeliveryDistanceKm: 'maxDeliveryDistanceKm',
+  minimumOrderAmount: 'minimumOrderAmount',
+  deliveryFee: 'deliveryFee',
+  freeDeliveryMinimum: 'freeDeliveryMinimum',
+  preparationTimeMins: 'preparationTimeMins',
+  isActive: 'isActive',
+  acceptsOrders: 'acceptsOrders',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FoodCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FoodItemScalarFieldEnum = {
+  id: 'id',
+  kitchenId: 'kitchenId',
+  foodCategoryId: 'foodCategoryId',
+  name: 'name',
+  slug: 'slug',
+  shortDescription: 'shortDescription',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  price: 'price',
+  compareAtPrice: 'compareAtPrice',
+  isAvailable: 'isAvailable',
+  isFeatured: 'isFeatured',
+  sortOrder: 'sortOrder',
+  preparationTimeMins: 'preparationTimeMins',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeliveryZoneScalarFieldEnum = {
+  id: 'id',
+  kitchenId: 'kitchenId',
+  name: 'name',
+  description: 'description',
+  zoneType: 'zoneType',
+  centerLatitude: 'centerLatitude',
+  centerLongitude: 'centerLongitude',
+  radiusKm: 'radiusKm',
+  polygonCoordinates: 'polygonCoordinates',
+  deliveryFee: 'deliveryFee',
+  minimumOrderAmount: 'minimumOrderAmount',
+  freeDeliveryMinimum: 'freeDeliveryMinimum',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeliveryAddressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  recipientName: 'recipientName',
+  phone: 'phone',
+  line1: 'line1',
+  line2: 'line2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  formattedAddress: 'formattedAddress',
+  placeId: 'placeId',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  deliveryInstructions: 'deliveryInstructions',
   isDefault: 'isDefault',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -203,9 +342,48 @@ exports.Prisma.OrderScalarFieldEnum = {
   status: 'status',
   notes: 'notes',
   subtotal: 'subtotal',
+  shippingCost: 'shippingCost',
+  handlingFee: 'handlingFee',
+  codFee: 'codFee',
   total: 'total',
   itemCount: 'itemCount',
   shippingAddressId: 'shippingAddressId',
+  shippingZoneId: 'shippingZoneId',
+  shippingMethodId: 'shippingMethodId',
+  shippingMethodName: 'shippingMethodName',
+  shippingMethodType: 'shippingMethodType',
+  estimatedDeliveryMinDays: 'estimatedDeliveryMinDays',
+  estimatedDeliveryMaxDays: 'estimatedDeliveryMaxDays',
+  deliveryMethodDescription: 'deliveryMethodDescription',
+  deliveryInstructions: 'deliveryInstructions',
+  paymentGateway: 'paymentGateway',
+  paymentMethodName: 'paymentMethodName',
+  paymentStatus: 'paymentStatus',
+  paymentReference: 'paymentReference',
+  transactionId: 'transactionId',
+  gatewayResponseSummary: 'gatewayResponseSummary',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FoodOrderScalarFieldEnum = {
+  id: 'id',
+  orderNumber: 'orderNumber',
+  userId: 'userId',
+  kitchenId: 'kitchenId',
+  deliveryAddressId: 'deliveryAddressId',
+  deliveryZoneId: 'deliveryZoneId',
+  status: 'status',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  notes: 'notes',
+  subtotal: 'subtotal',
+  deliveryFee: 'deliveryFee',
+  total: 'total',
+  itemCount: 'itemCount',
+  distanceKm: 'distanceKm',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -222,9 +400,176 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.FoodOrderItemScalarFieldEnum = {
+  id: 'id',
+  foodOrderId: 'foodOrderId',
+  foodItemId: 'foodItemId',
+  foodItemName: 'foodItemName',
+  foodItemSlug: 'foodItemSlug',
+  foodCategoryName: 'foodCategoryName',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  lineTotal: 'lineTotal',
+  selectedOptions: 'selectedOptions',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StoreSettingsScalarFieldEnum = {
+  id: 'id',
+  deliveryNotes: 'deliveryNotes',
+  defaultHandlingFee: 'defaultHandlingFee',
+  weightUnit: 'weightUnit',
+  dimensionUnit: 'dimensionUnit',
+  mapsEnabled: 'mapsEnabled',
+  googleMapsApiKey: 'googleMapsApiKey',
+  defaultMapLatitude: 'defaultMapLatitude',
+  defaultMapLongitude: 'defaultMapLongitude',
+  defaultMapZoom: 'defaultMapZoom',
+  storeLocationName: 'storeLocationName',
+  storeAddress: 'storeAddress',
+  storeLatitude: 'storeLatitude',
+  storeLongitude: 'storeLongitude',
+  serviceAreaCountries: 'serviceAreaCountries',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingZoneScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingZoneRegionScalarFieldEnum = {
+  id: 'id',
+  shippingZoneId: 'shippingZoneId',
+  country: 'country',
+  state: 'state',
+  city: 'city',
+  postalCodePattern: 'postalCodePattern',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingMethodScalarFieldEnum = {
+  id: 'id',
+  shippingZoneId: 'shippingZoneId',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  baseCost: 'baseCost',
+  minimumOrderAmount: 'minimumOrderAmount',
+  maximumOrderAmount: 'maximumOrderAmount',
+  minimumWeight: 'minimumWeight',
+  maximumWeight: 'maximumWeight',
+  freeShippingMinimum: 'freeShippingMinimum',
+  maximumDistanceKm: 'maximumDistanceKm',
+  sortOrder: 'sortOrder',
+  estimatedMinDays: 'estimatedMinDays',
+  estimatedMaxDays: 'estimatedMaxDays',
+  instructions: 'instructions',
+  isEnabled: 'isEnabled',
+  codAllowed: 'codAllowed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingRateTierScalarFieldEnum = {
+  id: 'id',
+  shippingMethodId: 'shippingMethodId',
+  label: 'label',
+  minimumValue: 'minimumValue',
+  maximumValue: 'maximumValue',
+  cost: 'cost',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaymentMethodSettingScalarFieldEnum = {
+  id: 'id',
+  gateway: 'gateway',
+  displayName: 'displayName',
+  instructions: 'instructions',
+  isEnabled: 'isEnabled',
+  mode: 'mode',
+  publicKey: 'publicKey',
+  secretKey: 'secretKey',
+  webhookSecret: 'webhookSecret',
+  extraFee: 'extraFee',
+  minimumOrderAmount: 'minimumOrderAmount',
+  maximumOrderAmount: 'maximumOrderAmount',
+  allowedShippingMethodTypes: 'allowedShippingMethodTypes',
+  allowedZoneIds: 'allowedZoneIds',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CheckoutSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  status: 'status',
+  paymentGateway: 'paymentGateway',
+  externalReference: 'externalReference',
+  checkoutPayload: 'checkoutPayload',
+  gatewayResponseSummary: 'gatewayResponseSummary',
+  subtotal: 'subtotal',
+  shippingCost: 'shippingCost',
+  handlingFee: 'handlingFee',
+  paymentFee: 'paymentFee',
+  total: 'total',
+  shippingZoneId: 'shippingZoneId',
+  shippingMethodId: 'shippingMethodId',
+  orderId: 'orderId',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  passwordHash: 'passwordHash',
+  phone: 'phone',
+  businessName: 'businessName'
+};
+
+exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 
 exports.Prisma.QueryMode = {
@@ -232,9 +577,226 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
+exports.Prisma.ProductOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  sku: 'sku',
+  description: 'description',
+  information: 'information',
+  ingredients: 'ingredients',
+  nutritional: 'nutritional',
+  faq: 'faq',
+  imageUrl: 'imageUrl',
+  variantLabel: 'variantLabel',
+  categoryId: 'categoryId'
+};
+
+exports.Prisma.ProductVariantOrderByRelevanceFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  name: 'name',
+  sku: 'sku'
+};
+
+exports.Prisma.AddressOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  contactName: 'contactName',
+  businessName: 'businessName',
+  line1: 'line1',
+  line2: 'line2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  phone: 'phone',
+  placeId: 'placeId'
+};
+
+exports.Prisma.WholesaleProfileOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  mobileNumber: 'mobileNumber',
+  telephoneNumber: 'telephoneNumber',
+  tradingName: 'tradingName',
+  deliveryAddressLine1: 'deliveryAddressLine1',
+  deliveryAddressLine2: 'deliveryAddressLine2',
+  deliveryAddressLine3: 'deliveryAddressLine3',
+  deliveryTown: 'deliveryTown',
+  deliveryPostcode: 'deliveryPostcode',
+  invoiceAddressLine1: 'invoiceAddressLine1',
+  invoiceAddressLine2: 'invoiceAddressLine2',
+  invoiceAddressLine3: 'invoiceAddressLine3',
+  invoiceTown: 'invoiceTown',
+  invoicePostcode: 'invoicePostcode',
+  companyType: 'companyType',
+  companyNumber: 'companyNumber',
+  directorName: 'directorName',
+  businessType: 'businessType'
+};
+
+exports.Prisma.KitchenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  phone: 'phone',
+  email: 'email',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country'
+};
+
+exports.Prisma.FoodCategoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description'
+};
+
+exports.Prisma.FoodItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  kitchenId: 'kitchenId',
+  foodCategoryId: 'foodCategoryId',
+  name: 'name',
+  slug: 'slug',
+  shortDescription: 'shortDescription',
+  description: 'description',
+  imageUrl: 'imageUrl'
+};
+
+exports.Prisma.DeliveryZoneOrderByRelevanceFieldEnum = {
+  id: 'id',
+  kitchenId: 'kitchenId',
+  name: 'name',
+  description: 'description'
+};
+
+exports.Prisma.DeliveryAddressOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  recipientName: 'recipientName',
+  phone: 'phone',
+  line1: 'line1',
+  line2: 'line2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  formattedAddress: 'formattedAddress',
+  placeId: 'placeId',
+  deliveryInstructions: 'deliveryInstructions'
+};
+
+exports.Prisma.OrderOrderByRelevanceFieldEnum = {
+  id: 'id',
+  orderNumber: 'orderNumber',
+  userId: 'userId',
+  notes: 'notes',
+  shippingAddressId: 'shippingAddressId',
+  shippingZoneId: 'shippingZoneId',
+  shippingMethodId: 'shippingMethodId',
+  shippingMethodName: 'shippingMethodName',
+  deliveryMethodDescription: 'deliveryMethodDescription',
+  deliveryInstructions: 'deliveryInstructions',
+  paymentMethodName: 'paymentMethodName',
+  paymentReference: 'paymentReference',
+  transactionId: 'transactionId'
+};
+
+exports.Prisma.FoodOrderOrderByRelevanceFieldEnum = {
+  id: 'id',
+  orderNumber: 'orderNumber',
+  userId: 'userId',
+  kitchenId: 'kitchenId',
+  deliveryAddressId: 'deliveryAddressId',
+  deliveryZoneId: 'deliveryZoneId',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  notes: 'notes'
+};
+
+exports.Prisma.OrderItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  productName: 'productName',
+  productSku: 'productSku'
+};
+
+exports.Prisma.FoodOrderItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  foodOrderId: 'foodOrderId',
+  foodItemId: 'foodItemId',
+  foodItemName: 'foodItemName',
+  foodItemSlug: 'foodItemSlug',
+  foodCategoryName: 'foodCategoryName'
+};
+
+exports.Prisma.StoreSettingsOrderByRelevanceFieldEnum = {
+  id: 'id',
+  deliveryNotes: 'deliveryNotes',
+  weightUnit: 'weightUnit',
+  dimensionUnit: 'dimensionUnit',
+  googleMapsApiKey: 'googleMapsApiKey',
+  storeLocationName: 'storeLocationName',
+  storeAddress: 'storeAddress'
+};
+
+exports.Prisma.ShippingZoneOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description'
+};
+
+exports.Prisma.ShippingZoneRegionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  shippingZoneId: 'shippingZoneId',
+  country: 'country',
+  state: 'state',
+  city: 'city',
+  postalCodePattern: 'postalCodePattern'
+};
+
+exports.Prisma.ShippingMethodOrderByRelevanceFieldEnum = {
+  id: 'id',
+  shippingZoneId: 'shippingZoneId',
+  name: 'name',
+  description: 'description',
+  instructions: 'instructions'
+};
+
+exports.Prisma.ShippingRateTierOrderByRelevanceFieldEnum = {
+  id: 'id',
+  shippingMethodId: 'shippingMethodId',
+  label: 'label'
+};
+
+exports.Prisma.PaymentMethodSettingOrderByRelevanceFieldEnum = {
+  id: 'id',
+  displayName: 'displayName',
+  instructions: 'instructions',
+  publicKey: 'publicKey',
+  secretKey: 'secretKey',
+  webhookSecret: 'webhookSecret'
+};
+
+exports.Prisma.CheckoutSessionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  externalReference: 'externalReference',
+  shippingZoneId: 'shippingZoneId',
+  shippingMethodId: 'shippingMethodId',
+  orderId: 'orderId'
 };
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
@@ -247,6 +809,16 @@ exports.ProductType = exports.$Enums.ProductType = {
   VARIABLE: 'VARIABLE'
 };
 
+exports.VatMode = exports.$Enums.VatMode = {
+  INCLUDED: 'INCLUDED',
+  EXCLUDED: 'EXCLUDED'
+};
+
+exports.DeliveryZoneType = exports.$Enums.DeliveryZoneType = {
+  RADIUS: 'RADIUS',
+  POLYGON: 'POLYGON'
+};
+
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
@@ -256,14 +828,75 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.ShippingMethodType = exports.$Enums.ShippingMethodType = {
+  FLAT_RATE: 'FLAT_RATE',
+  FREE_SHIPPING: 'FREE_SHIPPING',
+  LOCAL_DELIVERY: 'LOCAL_DELIVERY',
+  STORE_PICKUP: 'STORE_PICKUP',
+  WEIGHT_BASED: 'WEIGHT_BASED',
+  PRICE_BASED: 'PRICE_BASED'
+};
+
+exports.PaymentGateway = exports.$Enums.PaymentGateway = {
+  STRIPE: 'STRIPE',
+  PAYPAL: 'PAYPAL',
+  CASH_ON_DELIVERY: 'CASH_ON_DELIVERY'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  UNPAID: 'UNPAID',
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.FoodOrderStatus = exports.$Enums.FoodOrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PREPARING: 'PREPARING',
+  READY_FOR_DISPATCH: 'READY_FOR_DISPATCH',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.GatewayMode = exports.$Enums.GatewayMode = {
+  SANDBOX: 'SANDBOX',
+  LIVE: 'LIVE'
+};
+
+exports.CheckoutSessionStatus = exports.$Enums.CheckoutSessionStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Category: 'Category',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
   Address: 'Address',
+  WholesaleProfile: 'WholesaleProfile',
+  Kitchen: 'Kitchen',
+  FoodCategory: 'FoodCategory',
+  FoodItem: 'FoodItem',
+  DeliveryZone: 'DeliveryZone',
+  DeliveryAddress: 'DeliveryAddress',
   Order: 'Order',
-  OrderItem: 'OrderItem'
+  FoodOrder: 'FoodOrder',
+  OrderItem: 'OrderItem',
+  FoodOrderItem: 'FoodOrderItem',
+  StoreSettings: 'StoreSettings',
+  ShippingZone: 'ShippingZone',
+  ShippingZoneRegion: 'ShippingZoneRegion',
+  ShippingMethod: 'ShippingMethod',
+  ShippingRateTier: 'ShippingRateTier',
+  PaymentMethodSetting: 'PaymentMethodSetting',
+  CheckoutSession: 'CheckoutSession'
 };
 
 /**

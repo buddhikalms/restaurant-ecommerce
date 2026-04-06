@@ -36,11 +36,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.19.2
+ * Prisma Client JS version: 6.19.3
  * Query Engine version: c2990dca591cba766e3b7ef5d9e8a84796e47ab7
  */
 Prisma.prismaVersion = {
-  client: "6.19.2",
+  client: "6.19.3",
   engine: "c2990dca591cba766e3b7ef5d9e8a84796e47ab7"
 }
 
@@ -122,11 +122,22 @@ exports.Prisma.ProductScalarFieldEnum = {
   slug: 'slug',
   sku: 'sku',
   description: 'description',
+  information: 'information',
+  ingredients: 'ingredients',
+  nutritional: 'nutritional',
+  faq: 'faq',
   imageUrl: 'imageUrl',
+  galleryImageUrls: 'galleryImageUrls',
   productType: 'productType',
   variantLabel: 'variantLabel',
+  vatMode: 'vatMode',
+  vatRate: 'vatRate',
   normalPrice: 'normalPrice',
   wholesalePrice: 'wholesalePrice',
+  weight: 'weight',
+  requiresShipping: 'requiresShipping',
+  allowStorePickup: 'allowStorePickup',
+  allowLocalDelivery: 'allowLocalDelivery',
   stockQuantity: 'stockQuantity',
   minOrderQuantity: 'minOrderQuantity',
   isActive: 'isActive',
@@ -163,6 +174,134 @@ exports.Prisma.AddressScalarFieldEnum = {
   postalCode: 'postalCode',
   country: 'country',
   phone: 'phone',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  placeId: 'placeId',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WholesaleProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  mobileNumber: 'mobileNumber',
+  telephoneNumber: 'telephoneNumber',
+  tradingName: 'tradingName',
+  deliveryAddressLine1: 'deliveryAddressLine1',
+  deliveryAddressLine2: 'deliveryAddressLine2',
+  deliveryAddressLine3: 'deliveryAddressLine3',
+  deliveryTown: 'deliveryTown',
+  deliveryPostcode: 'deliveryPostcode',
+  differentInvoiceAddress: 'differentInvoiceAddress',
+  invoiceAddressLine1: 'invoiceAddressLine1',
+  invoiceAddressLine2: 'invoiceAddressLine2',
+  invoiceAddressLine3: 'invoiceAddressLine3',
+  invoiceTown: 'invoiceTown',
+  invoicePostcode: 'invoicePostcode',
+  companyType: 'companyType',
+  companyNumber: 'companyNumber',
+  directorName: 'directorName',
+  businessType: 'businessType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.KitchenScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  phone: 'phone',
+  email: 'email',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  maxDeliveryDistanceKm: 'maxDeliveryDistanceKm',
+  minimumOrderAmount: 'minimumOrderAmount',
+  deliveryFee: 'deliveryFee',
+  freeDeliveryMinimum: 'freeDeliveryMinimum',
+  preparationTimeMins: 'preparationTimeMins',
+  isActive: 'isActive',
+  acceptsOrders: 'acceptsOrders',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FoodCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FoodItemScalarFieldEnum = {
+  id: 'id',
+  kitchenId: 'kitchenId',
+  foodCategoryId: 'foodCategoryId',
+  name: 'name',
+  slug: 'slug',
+  shortDescription: 'shortDescription',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  price: 'price',
+  compareAtPrice: 'compareAtPrice',
+  isAvailable: 'isAvailable',
+  isFeatured: 'isFeatured',
+  sortOrder: 'sortOrder',
+  preparationTimeMins: 'preparationTimeMins',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeliveryZoneScalarFieldEnum = {
+  id: 'id',
+  kitchenId: 'kitchenId',
+  name: 'name',
+  description: 'description',
+  zoneType: 'zoneType',
+  centerLatitude: 'centerLatitude',
+  centerLongitude: 'centerLongitude',
+  radiusKm: 'radiusKm',
+  polygonCoordinates: 'polygonCoordinates',
+  deliveryFee: 'deliveryFee',
+  minimumOrderAmount: 'minimumOrderAmount',
+  freeDeliveryMinimum: 'freeDeliveryMinimum',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeliveryAddressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  recipientName: 'recipientName',
+  phone: 'phone',
+  line1: 'line1',
+  line2: 'line2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  formattedAddress: 'formattedAddress',
+  placeId: 'placeId',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  deliveryInstructions: 'deliveryInstructions',
   isDefault: 'isDefault',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -175,9 +314,48 @@ exports.Prisma.OrderScalarFieldEnum = {
   status: 'status',
   notes: 'notes',
   subtotal: 'subtotal',
+  shippingCost: 'shippingCost',
+  handlingFee: 'handlingFee',
+  codFee: 'codFee',
   total: 'total',
   itemCount: 'itemCount',
   shippingAddressId: 'shippingAddressId',
+  shippingZoneId: 'shippingZoneId',
+  shippingMethodId: 'shippingMethodId',
+  shippingMethodName: 'shippingMethodName',
+  shippingMethodType: 'shippingMethodType',
+  estimatedDeliveryMinDays: 'estimatedDeliveryMinDays',
+  estimatedDeliveryMaxDays: 'estimatedDeliveryMaxDays',
+  deliveryMethodDescription: 'deliveryMethodDescription',
+  deliveryInstructions: 'deliveryInstructions',
+  paymentGateway: 'paymentGateway',
+  paymentMethodName: 'paymentMethodName',
+  paymentStatus: 'paymentStatus',
+  paymentReference: 'paymentReference',
+  transactionId: 'transactionId',
+  gatewayResponseSummary: 'gatewayResponseSummary',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FoodOrderScalarFieldEnum = {
+  id: 'id',
+  orderNumber: 'orderNumber',
+  userId: 'userId',
+  kitchenId: 'kitchenId',
+  deliveryAddressId: 'deliveryAddressId',
+  deliveryZoneId: 'deliveryZoneId',
+  status: 'status',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  notes: 'notes',
+  subtotal: 'subtotal',
+  deliveryFee: 'deliveryFee',
+  total: 'total',
+  itemCount: 'itemCount',
+  distanceKm: 'distanceKm',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -194,9 +372,176 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.FoodOrderItemScalarFieldEnum = {
+  id: 'id',
+  foodOrderId: 'foodOrderId',
+  foodItemId: 'foodItemId',
+  foodItemName: 'foodItemName',
+  foodItemSlug: 'foodItemSlug',
+  foodCategoryName: 'foodCategoryName',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  lineTotal: 'lineTotal',
+  selectedOptions: 'selectedOptions',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StoreSettingsScalarFieldEnum = {
+  id: 'id',
+  deliveryNotes: 'deliveryNotes',
+  defaultHandlingFee: 'defaultHandlingFee',
+  weightUnit: 'weightUnit',
+  dimensionUnit: 'dimensionUnit',
+  mapsEnabled: 'mapsEnabled',
+  googleMapsApiKey: 'googleMapsApiKey',
+  defaultMapLatitude: 'defaultMapLatitude',
+  defaultMapLongitude: 'defaultMapLongitude',
+  defaultMapZoom: 'defaultMapZoom',
+  storeLocationName: 'storeLocationName',
+  storeAddress: 'storeAddress',
+  storeLatitude: 'storeLatitude',
+  storeLongitude: 'storeLongitude',
+  serviceAreaCountries: 'serviceAreaCountries',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingZoneScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingZoneRegionScalarFieldEnum = {
+  id: 'id',
+  shippingZoneId: 'shippingZoneId',
+  country: 'country',
+  state: 'state',
+  city: 'city',
+  postalCodePattern: 'postalCodePattern',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingMethodScalarFieldEnum = {
+  id: 'id',
+  shippingZoneId: 'shippingZoneId',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  baseCost: 'baseCost',
+  minimumOrderAmount: 'minimumOrderAmount',
+  maximumOrderAmount: 'maximumOrderAmount',
+  minimumWeight: 'minimumWeight',
+  maximumWeight: 'maximumWeight',
+  freeShippingMinimum: 'freeShippingMinimum',
+  maximumDistanceKm: 'maximumDistanceKm',
+  sortOrder: 'sortOrder',
+  estimatedMinDays: 'estimatedMinDays',
+  estimatedMaxDays: 'estimatedMaxDays',
+  instructions: 'instructions',
+  isEnabled: 'isEnabled',
+  codAllowed: 'codAllowed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingRateTierScalarFieldEnum = {
+  id: 'id',
+  shippingMethodId: 'shippingMethodId',
+  label: 'label',
+  minimumValue: 'minimumValue',
+  maximumValue: 'maximumValue',
+  cost: 'cost',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaymentMethodSettingScalarFieldEnum = {
+  id: 'id',
+  gateway: 'gateway',
+  displayName: 'displayName',
+  instructions: 'instructions',
+  isEnabled: 'isEnabled',
+  mode: 'mode',
+  publicKey: 'publicKey',
+  secretKey: 'secretKey',
+  webhookSecret: 'webhookSecret',
+  extraFee: 'extraFee',
+  minimumOrderAmount: 'minimumOrderAmount',
+  maximumOrderAmount: 'maximumOrderAmount',
+  allowedShippingMethodTypes: 'allowedShippingMethodTypes',
+  allowedZoneIds: 'allowedZoneIds',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CheckoutSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  status: 'status',
+  paymentGateway: 'paymentGateway',
+  externalReference: 'externalReference',
+  checkoutPayload: 'checkoutPayload',
+  gatewayResponseSummary: 'gatewayResponseSummary',
+  subtotal: 'subtotal',
+  shippingCost: 'shippingCost',
+  handlingFee: 'handlingFee',
+  paymentFee: 'paymentFee',
+  total: 'total',
+  shippingZoneId: 'shippingZoneId',
+  shippingMethodId: 'shippingMethodId',
+  orderId: 'orderId',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  passwordHash: 'passwordHash',
+  phone: 'phone',
+  businessName: 'businessName'
+};
+
+exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 
 exports.Prisma.QueryMode = {
@@ -204,9 +549,226 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
+exports.Prisma.ProductOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  sku: 'sku',
+  description: 'description',
+  information: 'information',
+  ingredients: 'ingredients',
+  nutritional: 'nutritional',
+  faq: 'faq',
+  imageUrl: 'imageUrl',
+  variantLabel: 'variantLabel',
+  categoryId: 'categoryId'
+};
+
+exports.Prisma.ProductVariantOrderByRelevanceFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  name: 'name',
+  sku: 'sku'
+};
+
+exports.Prisma.AddressOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  contactName: 'contactName',
+  businessName: 'businessName',
+  line1: 'line1',
+  line2: 'line2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  phone: 'phone',
+  placeId: 'placeId'
+};
+
+exports.Prisma.WholesaleProfileOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  mobileNumber: 'mobileNumber',
+  telephoneNumber: 'telephoneNumber',
+  tradingName: 'tradingName',
+  deliveryAddressLine1: 'deliveryAddressLine1',
+  deliveryAddressLine2: 'deliveryAddressLine2',
+  deliveryAddressLine3: 'deliveryAddressLine3',
+  deliveryTown: 'deliveryTown',
+  deliveryPostcode: 'deliveryPostcode',
+  invoiceAddressLine1: 'invoiceAddressLine1',
+  invoiceAddressLine2: 'invoiceAddressLine2',
+  invoiceAddressLine3: 'invoiceAddressLine3',
+  invoiceTown: 'invoiceTown',
+  invoicePostcode: 'invoicePostcode',
+  companyType: 'companyType',
+  companyNumber: 'companyNumber',
+  directorName: 'directorName',
+  businessType: 'businessType'
+};
+
+exports.Prisma.KitchenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  phone: 'phone',
+  email: 'email',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country'
+};
+
+exports.Prisma.FoodCategoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description'
+};
+
+exports.Prisma.FoodItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  kitchenId: 'kitchenId',
+  foodCategoryId: 'foodCategoryId',
+  name: 'name',
+  slug: 'slug',
+  shortDescription: 'shortDescription',
+  description: 'description',
+  imageUrl: 'imageUrl'
+};
+
+exports.Prisma.DeliveryZoneOrderByRelevanceFieldEnum = {
+  id: 'id',
+  kitchenId: 'kitchenId',
+  name: 'name',
+  description: 'description'
+};
+
+exports.Prisma.DeliveryAddressOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  recipientName: 'recipientName',
+  phone: 'phone',
+  line1: 'line1',
+  line2: 'line2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  formattedAddress: 'formattedAddress',
+  placeId: 'placeId',
+  deliveryInstructions: 'deliveryInstructions'
+};
+
+exports.Prisma.OrderOrderByRelevanceFieldEnum = {
+  id: 'id',
+  orderNumber: 'orderNumber',
+  userId: 'userId',
+  notes: 'notes',
+  shippingAddressId: 'shippingAddressId',
+  shippingZoneId: 'shippingZoneId',
+  shippingMethodId: 'shippingMethodId',
+  shippingMethodName: 'shippingMethodName',
+  deliveryMethodDescription: 'deliveryMethodDescription',
+  deliveryInstructions: 'deliveryInstructions',
+  paymentMethodName: 'paymentMethodName',
+  paymentReference: 'paymentReference',
+  transactionId: 'transactionId'
+};
+
+exports.Prisma.FoodOrderOrderByRelevanceFieldEnum = {
+  id: 'id',
+  orderNumber: 'orderNumber',
+  userId: 'userId',
+  kitchenId: 'kitchenId',
+  deliveryAddressId: 'deliveryAddressId',
+  deliveryZoneId: 'deliveryZoneId',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  notes: 'notes'
+};
+
+exports.Prisma.OrderItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  productName: 'productName',
+  productSku: 'productSku'
+};
+
+exports.Prisma.FoodOrderItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  foodOrderId: 'foodOrderId',
+  foodItemId: 'foodItemId',
+  foodItemName: 'foodItemName',
+  foodItemSlug: 'foodItemSlug',
+  foodCategoryName: 'foodCategoryName'
+};
+
+exports.Prisma.StoreSettingsOrderByRelevanceFieldEnum = {
+  id: 'id',
+  deliveryNotes: 'deliveryNotes',
+  weightUnit: 'weightUnit',
+  dimensionUnit: 'dimensionUnit',
+  googleMapsApiKey: 'googleMapsApiKey',
+  storeLocationName: 'storeLocationName',
+  storeAddress: 'storeAddress'
+};
+
+exports.Prisma.ShippingZoneOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description'
+};
+
+exports.Prisma.ShippingZoneRegionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  shippingZoneId: 'shippingZoneId',
+  country: 'country',
+  state: 'state',
+  city: 'city',
+  postalCodePattern: 'postalCodePattern'
+};
+
+exports.Prisma.ShippingMethodOrderByRelevanceFieldEnum = {
+  id: 'id',
+  shippingZoneId: 'shippingZoneId',
+  name: 'name',
+  description: 'description',
+  instructions: 'instructions'
+};
+
+exports.Prisma.ShippingRateTierOrderByRelevanceFieldEnum = {
+  id: 'id',
+  shippingMethodId: 'shippingMethodId',
+  label: 'label'
+};
+
+exports.Prisma.PaymentMethodSettingOrderByRelevanceFieldEnum = {
+  id: 'id',
+  displayName: 'displayName',
+  instructions: 'instructions',
+  publicKey: 'publicKey',
+  secretKey: 'secretKey',
+  webhookSecret: 'webhookSecret'
+};
+
+exports.Prisma.CheckoutSessionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  externalReference: 'externalReference',
+  shippingZoneId: 'shippingZoneId',
+  shippingMethodId: 'shippingMethodId',
+  orderId: 'orderId'
 };
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
@@ -228,14 +790,85 @@ exports.ProductType = exports.$Enums.ProductType = {
   VARIABLE: 'VARIABLE'
 };
 
+exports.VatMode = exports.$Enums.VatMode = {
+  INCLUDED: 'INCLUDED',
+  EXCLUDED: 'EXCLUDED'
+};
+
+exports.ShippingMethodType = exports.$Enums.ShippingMethodType = {
+  FLAT_RATE: 'FLAT_RATE',
+  FREE_SHIPPING: 'FREE_SHIPPING',
+  LOCAL_DELIVERY: 'LOCAL_DELIVERY',
+  STORE_PICKUP: 'STORE_PICKUP',
+  WEIGHT_BASED: 'WEIGHT_BASED',
+  PRICE_BASED: 'PRICE_BASED'
+};
+
+exports.PaymentGateway = exports.$Enums.PaymentGateway = {
+  STRIPE: 'STRIPE',
+  PAYPAL: 'PAYPAL',
+  CASH_ON_DELIVERY: 'CASH_ON_DELIVERY'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  UNPAID: 'UNPAID',
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.CheckoutSessionStatus = exports.$Enums.CheckoutSessionStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED'
+};
+
+exports.GatewayMode = exports.$Enums.GatewayMode = {
+  SANDBOX: 'SANDBOX',
+  LIVE: 'LIVE'
+};
+
+exports.FoodOrderStatus = exports.$Enums.FoodOrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PREPARING: 'PREPARING',
+  READY_FOR_DISPATCH: 'READY_FOR_DISPATCH',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.DeliveryZoneType = exports.$Enums.DeliveryZoneType = {
+  RADIUS: 'RADIUS',
+  POLYGON: 'POLYGON'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Category: 'Category',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
   Address: 'Address',
+  WholesaleProfile: 'WholesaleProfile',
+  Kitchen: 'Kitchen',
+  FoodCategory: 'FoodCategory',
+  FoodItem: 'FoodItem',
+  DeliveryZone: 'DeliveryZone',
+  DeliveryAddress: 'DeliveryAddress',
   Order: 'Order',
-  OrderItem: 'OrderItem'
+  FoodOrder: 'FoodOrder',
+  OrderItem: 'OrderItem',
+  FoodOrderItem: 'FoodOrderItem',
+  StoreSettings: 'StoreSettings',
+  ShippingZone: 'ShippingZone',
+  ShippingZoneRegion: 'ShippingZoneRegion',
+  ShippingMethod: 'ShippingMethod',
+  ShippingRateTier: 'ShippingRateTier',
+  PaymentMethodSetting: 'PaymentMethodSetting',
+  CheckoutSession: 'CheckoutSession'
 };
 /**
  * Create the Client
@@ -266,16 +899,16 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
-  "clientVersion": "6.19.2",
+  "clientVersion": "6.19.3",
   "engineVersion": "c2990dca591cba766e3b7ef5d9e8a84796e47ab7",
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "postgresql",
+  "activeProvider": "mysql",
   "postinstall": false,
   "inlineDatasources": {
     "db": {
@@ -285,13 +918,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  ADMIN\n  CUSTOMER\n  WHOLESALE_CUSTOMER\n}\n\nenum OrderStatus {\n  PENDING\n  CONFIRMED\n  PROCESSING\n  SHIPPED\n  COMPLETED\n  CANCELLED\n}\n\nenum ProductType {\n  SIMPLE\n  VARIABLE\n}\n\nmodel User {\n  id           String    @id @default(cuid())\n  name         String\n  email        String    @unique\n  passwordHash String\n  phone        String?\n  businessName String?\n  role         Role      @default(CUSTOMER)\n  isActive     Boolean   @default(true)\n  createdAt    DateTime  @default(now())\n  updatedAt    DateTime  @updatedAt\n  orders       Order[]\n  addresses    Address[]\n}\n\nmodel Category {\n  id          String    @id @default(cuid())\n  name        String    @unique\n  slug        String    @unique\n  description String?\n  isActive    Boolean   @default(true)\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n  products    Product[]\n}\n\nmodel Product {\n  id               String           @id @default(cuid())\n  name             String\n  slug             String           @unique\n  sku              String           @unique\n  description      String\n  imageUrl         String\n  productType      ProductType      @default(SIMPLE)\n  variantLabel     String?\n  normalPrice      Decimal          @default(0) @db.Decimal(10, 2)\n  wholesalePrice   Decimal          @db.Decimal(10, 2)\n  stockQuantity    Int\n  minOrderQuantity Int\n  isActive         Boolean          @default(true)\n  createdAt        DateTime         @default(now())\n  updatedAt        DateTime         @updatedAt\n  categoryId       String\n  category         Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)\n  orderItems       OrderItem[]\n  variants         ProductVariant[]\n\n  @@index([categoryId])\n  @@index([name, sku])\n}\n\nmodel ProductVariant {\n  id               String   @id @default(cuid())\n  productId        String\n  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)\n  name             String\n  sku              String   @unique\n  normalPrice      Decimal  @default(0) @db.Decimal(10, 2)\n  wholesalePrice   Decimal  @db.Decimal(10, 2)\n  stockQuantity    Int\n  minOrderQuantity Int\n  isActive         Boolean  @default(true)\n  position         Int      @default(0)\n  createdAt        DateTime @default(now())\n  updatedAt        DateTime @updatedAt\n\n  @@index([productId, position])\n  @@index([productId, isActive])\n}\n\nmodel Address {\n  id           String   @id @default(cuid())\n  userId       String?\n  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)\n  label        String?\n  contactName  String\n  businessName String?\n  line1        String\n  line2        String?\n  city         String\n  state        String\n  postalCode   String\n  country      String\n  phone        String\n  isDefault    Boolean  @default(false)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n  orders       Order[]\n\n  @@index([userId])\n}\n\nmodel Order {\n  id                String      @id @default(cuid())\n  orderNumber       String      @unique\n  userId            String\n  user              User        @relation(fields: [userId], references: [id], onDelete: Restrict)\n  status            OrderStatus @default(PENDING)\n  notes             String?\n  subtotal          Decimal     @db.Decimal(10, 2)\n  total             Decimal     @db.Decimal(10, 2)\n  itemCount         Int\n  shippingAddressId String\n  shippingAddress   Address     @relation(fields: [shippingAddressId], references: [id], onDelete: Restrict)\n  createdAt         DateTime    @default(now())\n  updatedAt         DateTime    @updatedAt\n  items             OrderItem[]\n\n  @@index([userId, createdAt])\n  @@index([status, createdAt])\n}\n\nmodel OrderItem {\n  id          String   @id @default(cuid())\n  orderId     String\n  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)\n  productId   String\n  product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)\n  productName String\n  productSku  String\n  quantity    Int\n  unitPrice   Decimal  @db.Decimal(10, 2)\n  lineTotal   Decimal  @db.Decimal(10, 2)\n  createdAt   DateTime @default(now())\n\n  @@index([orderId])\n  @@index([productId])\n}\n",
-  "inlineSchemaHash": "72d3057901331a3c4890948a6db0240ebc57a54b90d6bf34714f4995298848e4",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  ADMIN\n  CUSTOMER\n  WHOLESALE_CUSTOMER\n}\n\nenum OrderStatus {\n  PENDING\n  CONFIRMED\n  PROCESSING\n  SHIPPED\n  COMPLETED\n  CANCELLED\n}\n\nenum ProductType {\n  SIMPLE\n  VARIABLE\n}\n\nenum VatMode {\n  INCLUDED\n  EXCLUDED\n}\n\nenum ShippingMethodType {\n  FLAT_RATE\n  FREE_SHIPPING\n  LOCAL_DELIVERY\n  STORE_PICKUP\n  WEIGHT_BASED\n  PRICE_BASED\n}\n\nenum PaymentGateway {\n  STRIPE\n  PAYPAL\n  CASH_ON_DELIVERY\n}\n\nenum PaymentStatus {\n  UNPAID\n  PENDING\n  PAID\n  FAILED\n  REFUNDED\n  CANCELLED\n}\n\nenum CheckoutSessionStatus {\n  PENDING\n  COMPLETED\n  FAILED\n  EXPIRED\n}\n\nenum GatewayMode {\n  SANDBOX\n  LIVE\n}\n\nenum FoodOrderStatus {\n  PENDING\n  CONFIRMED\n  PREPARING\n  READY_FOR_DISPATCH\n  OUT_FOR_DELIVERY\n  DELIVERED\n  CANCELLED\n}\n\nenum DeliveryZoneType {\n  RADIUS\n  POLYGON\n}\n\nmodel User {\n  id                String            @id @default(cuid())\n  name              String\n  email             String            @unique\n  passwordHash      String\n  phone             String?\n  businessName      String?\n  role              Role              @default(CUSTOMER)\n  isActive          Boolean           @default(true)\n  createdAt         DateTime          @default(now())\n  updatedAt         DateTime          @updatedAt\n  orders            Order[]\n  addresses         Address[]\n  deliveryAddresses DeliveryAddress[]\n  checkoutSessions  CheckoutSession[]\n  foodOrders        FoodOrder[]\n  wholesaleProfile  WholesaleProfile?\n}\n\nmodel Category {\n  id          String    @id @default(cuid())\n  name        String    @unique\n  slug        String    @unique\n  description String?   @db.Text\n  isActive    Boolean   @default(true)\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n  products    Product[]\n}\n\nmodel Product {\n  id                 String           @id @default(cuid())\n  name               String\n  slug               String           @unique\n  sku                String           @unique\n  description        String           @db.Text\n  information        String?          @db.Text\n  ingredients        String?          @db.Text\n  nutritional        String?          @db.Text\n  faq                String?          @db.Text\n  imageUrl           String           @db.Text\n  galleryImageUrls   Json             @default(\"[]\")\n  productType        ProductType      @default(SIMPLE)\n  variantLabel       String?\n  vatMode            VatMode          @default(INCLUDED)\n  vatRate            Decimal          @default(20) @db.Decimal(5, 2)\n  normalPrice        Decimal          @default(0) @db.Decimal(10, 2)\n  wholesalePrice     Decimal          @db.Decimal(10, 2)\n  weight             Decimal          @default(0) @db.Decimal(10, 2)\n  requiresShipping   Boolean          @default(true)\n  allowStorePickup   Boolean          @default(true)\n  allowLocalDelivery Boolean          @default(true)\n  stockQuantity      Int\n  minOrderQuantity   Int\n  isActive           Boolean          @default(true)\n  createdAt          DateTime         @default(now())\n  updatedAt          DateTime         @updatedAt\n  categoryId         String\n  category           Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)\n  orderItems         OrderItem[]\n  variants           ProductVariant[]\n\n  @@index([categoryId])\n  @@index([name, sku])\n}\n\nmodel ProductVariant {\n  id               String   @id @default(cuid())\n  productId        String\n  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)\n  name             String\n  sku              String   @unique\n  normalPrice      Decimal  @default(0) @db.Decimal(10, 2)\n  wholesalePrice   Decimal  @db.Decimal(10, 2)\n  stockQuantity    Int\n  minOrderQuantity Int\n  isActive         Boolean  @default(true)\n  position         Int      @default(0)\n  createdAt        DateTime @default(now())\n  updatedAt        DateTime @updatedAt\n\n  @@index([productId, position])\n  @@index([productId, isActive])\n}\n\nmodel Address {\n  id           String   @id @default(cuid())\n  userId       String?\n  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)\n  label        String?\n  contactName  String\n  businessName String?\n  line1        String\n  line2        String?\n  city         String\n  state        String\n  postalCode   String\n  country      String\n  phone        String\n  latitude     Decimal? @db.Decimal(10, 7)\n  longitude    Decimal? @db.Decimal(10, 7)\n  placeId      String?\n  isDefault    Boolean  @default(false)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n  orders       Order[]\n\n  @@index([userId])\n}\n\nmodel WholesaleProfile {\n  id                      String   @id @default(cuid())\n  userId                  String   @unique\n  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  firstName               String\n  lastName                String\n  mobileNumber            String\n  telephoneNumber         String\n  tradingName             String?\n  deliveryAddressLine1    String\n  deliveryAddressLine2    String?\n  deliveryAddressLine3    String?\n  deliveryTown            String\n  deliveryPostcode        String\n  differentInvoiceAddress Boolean  @default(false)\n  invoiceAddressLine1     String?\n  invoiceAddressLine2     String?\n  invoiceAddressLine3     String?\n  invoiceTown             String?\n  invoicePostcode         String?\n  companyType             String\n  companyNumber           String?\n  directorName            String?\n  businessType            String\n  createdAt               DateTime @default(now())\n  updatedAt               DateTime @updatedAt\n}\n\nmodel Kitchen {\n  id                    String         @id @default(cuid())\n  name                  String\n  slug                  String         @unique\n  description           String?        @db.Text\n  phone                 String?\n  email                 String?\n  addressLine1          String\n  addressLine2          String?\n  city                  String\n  state                 String\n  postalCode            String\n  country               String\n  latitude              Decimal        @db.Decimal(10, 7)\n  longitude             Decimal        @db.Decimal(10, 7)\n  maxDeliveryDistanceKm Decimal?       @db.Decimal(10, 2)\n  minimumOrderAmount    Decimal        @default(0) @db.Decimal(10, 2)\n  deliveryFee           Decimal        @default(0) @db.Decimal(10, 2)\n  freeDeliveryMinimum   Decimal?       @db.Decimal(10, 2)\n  preparationTimeMins   Int            @default(30)\n  isActive              Boolean        @default(true)\n  acceptsOrders         Boolean        @default(true)\n  sortOrder             Int            @default(0)\n  createdAt             DateTime       @default(now())\n  updatedAt             DateTime       @updatedAt\n  foodItems             FoodItem[]\n  deliveryZones         DeliveryZone[]\n  foodOrders            FoodOrder[]\n\n  @@index([isActive, acceptsOrders, sortOrder])\n}\n\nmodel FoodCategory {\n  id          String     @id @default(cuid())\n  name        String\n  slug        String     @unique\n  description String?    @db.Text\n  sortOrder   Int        @default(0)\n  isActive    Boolean    @default(true)\n  createdAt   DateTime   @default(now())\n  updatedAt   DateTime   @updatedAt\n  foodItems   FoodItem[]\n\n  @@unique([name])\n  @@index([isActive, sortOrder])\n}\n\nmodel FoodItem {\n  id                  String          @id @default(cuid())\n  kitchenId           String\n  kitchen             Kitchen         @relation(fields: [kitchenId], references: [id], onDelete: Cascade)\n  foodCategoryId      String\n  foodCategory        FoodCategory    @relation(fields: [foodCategoryId], references: [id], onDelete: Restrict)\n  name                String\n  slug                String          @unique\n  shortDescription    String?\n  description         String          @db.Text\n  imageUrl            String          @db.Text\n  price               Decimal         @db.Decimal(10, 2)\n  compareAtPrice      Decimal?        @db.Decimal(10, 2)\n  isAvailable         Boolean         @default(true)\n  isFeatured          Boolean         @default(false)\n  sortOrder           Int             @default(0)\n  preparationTimeMins Int?\n  createdAt           DateTime        @default(now())\n  updatedAt           DateTime        @updatedAt\n  orderItems          FoodOrderItem[]\n\n  @@index([kitchenId, isAvailable, sortOrder])\n  @@index([foodCategoryId, isAvailable, sortOrder])\n}\n\nmodel DeliveryZone {\n  id                  String           @id @default(cuid())\n  kitchenId           String\n  kitchen             Kitchen          @relation(fields: [kitchenId], references: [id], onDelete: Cascade)\n  name                String\n  description         String?          @db.Text\n  zoneType            DeliveryZoneType @default(RADIUS)\n  centerLatitude      Decimal?         @db.Decimal(10, 7)\n  centerLongitude     Decimal?         @db.Decimal(10, 7)\n  radiusKm            Decimal?         @db.Decimal(10, 2)\n  polygonCoordinates  Json             @default(\"[]\")\n  deliveryFee         Decimal?         @db.Decimal(10, 2)\n  minimumOrderAmount  Decimal?         @db.Decimal(10, 2)\n  freeDeliveryMinimum Decimal?         @db.Decimal(10, 2)\n  isActive            Boolean          @default(true)\n  sortOrder           Int              @default(0)\n  createdAt           DateTime         @default(now())\n  updatedAt           DateTime         @updatedAt\n  foodOrders          FoodOrder[]\n\n  @@index([kitchenId, isActive, sortOrder])\n  @@index([zoneType])\n}\n\nmodel DeliveryAddress {\n  id                   String      @id @default(cuid())\n  userId               String?\n  user                 User?       @relation(fields: [userId], references: [id], onDelete: SetNull)\n  label                String?\n  recipientName        String\n  phone                String\n  line1                String\n  line2                String?\n  city                 String\n  state                String\n  postalCode           String\n  country              String\n  formattedAddress     String      @db.Text\n  placeId              String?\n  latitude             Decimal     @db.Decimal(10, 7)\n  longitude            Decimal     @db.Decimal(10, 7)\n  deliveryInstructions String?     @db.Text\n  isDefault            Boolean     @default(false)\n  createdAt            DateTime    @default(now())\n  updatedAt            DateTime    @updatedAt\n  foodOrders           FoodOrder[]\n\n  @@index([userId, isDefault])\n}\n\nmodel Order {\n  id                        String              @id @default(cuid())\n  orderNumber               String              @unique\n  userId                    String\n  user                      User                @relation(fields: [userId], references: [id], onDelete: Restrict)\n  status                    OrderStatus         @default(PENDING)\n  notes                     String?             @db.Text\n  subtotal                  Decimal             @db.Decimal(10, 2)\n  shippingCost              Decimal             @default(0) @db.Decimal(10, 2)\n  handlingFee               Decimal             @default(0) @db.Decimal(10, 2)\n  codFee                    Decimal             @default(0) @db.Decimal(10, 2)\n  total                     Decimal             @db.Decimal(10, 2)\n  itemCount                 Int\n  shippingAddressId         String\n  shippingAddress           Address             @relation(fields: [shippingAddressId], references: [id], onDelete: Restrict)\n  shippingZoneId            String?\n  shippingZone              ShippingZone?       @relation(\"OrderShippingZone\", fields: [shippingZoneId], references: [id], onDelete: SetNull)\n  shippingMethodId          String?\n  shippingMethod            ShippingMethod?     @relation(\"OrderShippingMethod\", fields: [shippingMethodId], references: [id], onDelete: SetNull)\n  shippingMethodName        String?\n  shippingMethodType        ShippingMethodType?\n  estimatedDeliveryMinDays  Int?\n  estimatedDeliveryMaxDays  Int?\n  deliveryMethodDescription String?             @db.Text\n  deliveryInstructions      String?             @db.Text\n  paymentGateway            PaymentGateway?\n  paymentMethodName         String?\n  paymentStatus             PaymentStatus       @default(UNPAID)\n  paymentReference          String?\n  transactionId             String?\n  gatewayResponseSummary    Json?\n  paidAt                    DateTime?\n  createdAt                 DateTime            @default(now())\n  updatedAt                 DateTime            @updatedAt\n  items                     OrderItem[]\n  checkoutSession           CheckoutSession?\n\n  @@index([userId, createdAt])\n  @@index([status, createdAt])\n  @@index([paymentStatus, createdAt])\n  @@index([shippingZoneId])\n  @@index([shippingMethodId])\n}\n\nmodel FoodOrder {\n  id                String          @id @default(cuid())\n  orderNumber       String          @unique\n  userId            String\n  user              User            @relation(fields: [userId], references: [id], onDelete: Restrict)\n  kitchenId         String\n  kitchen           Kitchen         @relation(fields: [kitchenId], references: [id], onDelete: Restrict)\n  deliveryAddressId String\n  deliveryAddress   DeliveryAddress @relation(fields: [deliveryAddressId], references: [id], onDelete: Restrict)\n  deliveryZoneId    String?\n  deliveryZone      DeliveryZone?   @relation(fields: [deliveryZoneId], references: [id], onDelete: SetNull)\n  status            FoodOrderStatus @default(PENDING)\n  customerName      String\n  customerEmail     String\n  customerPhone     String\n  notes             String?         @db.Text\n  subtotal          Decimal         @db.Decimal(10, 2)\n  deliveryFee       Decimal         @default(0) @db.Decimal(10, 2)\n  total             Decimal         @db.Decimal(10, 2)\n  itemCount         Int\n  distanceKm        Decimal?        @db.Decimal(10, 2)\n  createdAt         DateTime        @default(now())\n  updatedAt         DateTime        @updatedAt\n  items             FoodOrderItem[]\n\n  @@index([userId, createdAt])\n  @@index([kitchenId, createdAt])\n  @@index([status, createdAt])\n  @@index([deliveryZoneId])\n}\n\nmodel OrderItem {\n  id          String   @id @default(cuid())\n  orderId     String\n  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)\n  productId   String\n  product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)\n  productName String   @db.Text\n  productSku  String\n  quantity    Int\n  unitPrice   Decimal  @db.Decimal(10, 2)\n  lineTotal   Decimal  @db.Decimal(10, 2)\n  createdAt   DateTime @default(now())\n\n  @@index([orderId])\n  @@index([productId])\n}\n\nmodel FoodOrderItem {\n  id               String    @id @default(cuid())\n  foodOrderId      String\n  foodOrder        FoodOrder @relation(fields: [foodOrderId], references: [id], onDelete: Cascade)\n  foodItemId       String?\n  foodItem         FoodItem? @relation(fields: [foodItemId], references: [id], onDelete: SetNull)\n  foodItemName     String\n  foodItemSlug     String\n  foodCategoryName String\n  quantity         Int\n  unitPrice        Decimal   @db.Decimal(10, 2)\n  lineTotal        Decimal   @db.Decimal(10, 2)\n  selectedOptions  Json      @default(\"[]\")\n  createdAt        DateTime  @default(now())\n\n  @@index([foodOrderId])\n  @@index([foodItemId])\n}\n\nmodel StoreSettings {\n  id                   String   @id @default(\"store-settings\")\n  deliveryNotes        String?  @db.Text\n  defaultHandlingFee   Decimal  @default(0) @db.Decimal(10, 2)\n  weightUnit           String   @default(\"kg\")\n  dimensionUnit        String   @default(\"cm\")\n  mapsEnabled          Boolean  @default(false)\n  googleMapsApiKey     String?  @db.Text\n  defaultMapLatitude   Decimal? @db.Decimal(10, 7)\n  defaultMapLongitude  Decimal? @db.Decimal(10, 7)\n  defaultMapZoom       Int      @default(12)\n  storeLocationName    String?\n  storeAddress         String?  @db.Text\n  storeLatitude        Decimal? @db.Decimal(10, 7)\n  storeLongitude       Decimal? @db.Decimal(10, 7)\n  serviceAreaCountries Json     @default(\"[]\")\n  createdAt            DateTime @default(now())\n  updatedAt            DateTime @updatedAt\n}\n\nmodel ShippingZone {\n  id               String               @id @default(cuid())\n  name             String\n  description      String?              @db.Text\n  isEnabled        Boolean              @default(true)\n  sortOrder        Int                  @default(0)\n  createdAt        DateTime             @default(now())\n  updatedAt        DateTime             @updatedAt\n  regions          ShippingZoneRegion[]\n  methods          ShippingMethod[]\n  orders           Order[]              @relation(\"OrderShippingZone\")\n  checkoutSessions CheckoutSession[]\n\n  @@index([isEnabled, sortOrder])\n}\n\nmodel ShippingZoneRegion {\n  id                String       @id @default(cuid())\n  shippingZoneId    String\n  shippingZone      ShippingZone @relation(fields: [shippingZoneId], references: [id], onDelete: Cascade)\n  country           String?\n  state             String?\n  city              String?\n  postalCodePattern String?\n  sortOrder         Int          @default(0)\n  createdAt         DateTime     @default(now())\n  updatedAt         DateTime     @updatedAt\n\n  @@index([shippingZoneId, sortOrder])\n}\n\nmodel ShippingMethod {\n  id                  String             @id @default(cuid())\n  shippingZoneId      String\n  shippingZone        ShippingZone       @relation(fields: [shippingZoneId], references: [id], onDelete: Cascade)\n  name                String\n  description         String?            @db.Text\n  type                ShippingMethodType\n  baseCost            Decimal            @default(0) @db.Decimal(10, 2)\n  minimumOrderAmount  Decimal?           @db.Decimal(10, 2)\n  maximumOrderAmount  Decimal?           @db.Decimal(10, 2)\n  minimumWeight       Decimal?           @db.Decimal(10, 2)\n  maximumWeight       Decimal?           @db.Decimal(10, 2)\n  freeShippingMinimum Decimal?           @db.Decimal(10, 2)\n  maximumDistanceKm   Decimal?           @db.Decimal(10, 2)\n  sortOrder           Int                @default(0)\n  estimatedMinDays    Int?\n  estimatedMaxDays    Int?\n  instructions        String?            @db.Text\n  isEnabled           Boolean            @default(true)\n  codAllowed          Boolean            @default(false)\n  createdAt           DateTime           @default(now())\n  updatedAt           DateTime           @updatedAt\n  tiers               ShippingRateTier[]\n  orders              Order[]            @relation(\"OrderShippingMethod\")\n  checkoutSessions    CheckoutSession[]\n\n  @@index([shippingZoneId, isEnabled, sortOrder])\n  @@index([type])\n}\n\nmodel ShippingRateTier {\n  id               String         @id @default(cuid())\n  shippingMethodId String\n  shippingMethod   ShippingMethod @relation(fields: [shippingMethodId], references: [id], onDelete: Cascade)\n  label            String?\n  minimumValue     Decimal?       @db.Decimal(10, 2)\n  maximumValue     Decimal?       @db.Decimal(10, 2)\n  cost             Decimal        @default(0) @db.Decimal(10, 2)\n  sortOrder        Int            @default(0)\n  createdAt        DateTime       @default(now())\n  updatedAt        DateTime       @updatedAt\n\n  @@index([shippingMethodId, sortOrder])\n}\n\nmodel PaymentMethodSetting {\n  id                         String         @id @default(cuid())\n  gateway                    PaymentGateway @unique\n  displayName                String\n  instructions               String?        @db.Text\n  isEnabled                  Boolean        @default(false)\n  mode                       GatewayMode    @default(SANDBOX)\n  publicKey                  String?        @db.Text\n  secretKey                  String?        @db.Text\n  webhookSecret              String?        @db.Text\n  extraFee                   Decimal        @default(0) @db.Decimal(10, 2)\n  minimumOrderAmount         Decimal?       @db.Decimal(10, 2)\n  maximumOrderAmount         Decimal?       @db.Decimal(10, 2)\n  allowedShippingMethodTypes Json           @default(\"[]\")\n  allowedZoneIds             Json           @default(\"[]\")\n  createdAt                  DateTime       @default(now())\n  updatedAt                  DateTime       @updatedAt\n}\n\nmodel CheckoutSession {\n  id                     String                @id @default(cuid())\n  userId                 String\n  user                   User                  @relation(fields: [userId], references: [id], onDelete: Cascade)\n  status                 CheckoutSessionStatus @default(PENDING)\n  paymentGateway         PaymentGateway\n  externalReference      String?               @unique\n  checkoutPayload        Json\n  gatewayResponseSummary Json?\n  subtotal               Decimal               @db.Decimal(10, 2)\n  shippingCost           Decimal               @default(0) @db.Decimal(10, 2)\n  handlingFee            Decimal               @default(0) @db.Decimal(10, 2)\n  paymentFee             Decimal               @default(0) @db.Decimal(10, 2)\n  total                  Decimal               @db.Decimal(10, 2)\n  shippingZoneId         String?\n  shippingZone           ShippingZone?         @relation(fields: [shippingZoneId], references: [id], onDelete: SetNull)\n  shippingMethodId       String?\n  shippingMethod         ShippingMethod?       @relation(fields: [shippingMethodId], references: [id], onDelete: SetNull)\n  orderId                String?               @unique\n  order                  Order?                @relation(fields: [orderId], references: [id], onDelete: SetNull)\n  expiresAt              DateTime\n  createdAt              DateTime              @default(now())\n  updatedAt              DateTime              @updatedAt\n\n  @@index([userId, status, createdAt])\n  @@index([shippingZoneId])\n  @@index([shippingMethodId])\n}\n",
+  "inlineSchemaHash": "de8e3a644afc747659f6bfc77241b2ad364149accda865da9f3b86ff0b815ff0",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"businessName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToUser\"},{\"name\":\"addresses\",\"kind\":\"object\",\"type\":\"Address\",\"relationName\":\"AddressToUser\"}],\"dbName\":null},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CategoryToProduct\"}],\"dbName\":null},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productType\",\"kind\":\"enum\",\"type\":\"ProductType\"},{\"name\":\"variantLabel\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"normalPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"wholesalePrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"stockQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"minOrderQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"orderItems\",\"kind\":\"object\",\"type\":\"OrderItem\",\"relationName\":\"OrderItemToProduct\"},{\"name\":\"variants\",\"kind\":\"object\",\"type\":\"ProductVariant\",\"relationName\":\"ProductToProductVariant\"}],\"dbName\":null},\"ProductVariant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToProductVariant\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"normalPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"wholesalePrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"stockQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"minOrderQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"position\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Address\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AddressToUser\"},{\"name\":\"label\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contactName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"businessName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"line1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"line2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postalCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isDefault\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"AddressToOrder\"}],\"dbName\":null},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"orderNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"OrderToUser\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"OrderStatus\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subtotal\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"total\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"itemCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"shippingAddressId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingAddress\",\"kind\":\"object\",\"type\":\"Address\",\"relationName\":\"AddressToOrder\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"OrderItem\",\"relationName\":\"OrderToOrderItem\"}],\"dbName\":null},\"OrderItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"orderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToOrderItem\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"OrderItemToProduct\"},{\"name\":\"productName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productSku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unitPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"lineTotal\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"businessName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToUser\"},{\"name\":\"addresses\",\"kind\":\"object\",\"type\":\"Address\",\"relationName\":\"AddressToUser\"},{\"name\":\"deliveryAddresses\",\"kind\":\"object\",\"type\":\"DeliveryAddress\",\"relationName\":\"DeliveryAddressToUser\"},{\"name\":\"checkoutSessions\",\"kind\":\"object\",\"type\":\"CheckoutSession\",\"relationName\":\"CheckoutSessionToUser\"},{\"name\":\"foodOrders\",\"kind\":\"object\",\"type\":\"FoodOrder\",\"relationName\":\"FoodOrderToUser\"},{\"name\":\"wholesaleProfile\",\"kind\":\"object\",\"type\":\"WholesaleProfile\",\"relationName\":\"UserToWholesaleProfile\"}],\"dbName\":null},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CategoryToProduct\"}],\"dbName\":null},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"information\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ingredients\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"nutritional\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"faq\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"galleryImageUrls\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"productType\",\"kind\":\"enum\",\"type\":\"ProductType\"},{\"name\":\"variantLabel\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"vatMode\",\"kind\":\"enum\",\"type\":\"VatMode\"},{\"name\":\"vatRate\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"normalPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"wholesalePrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"weight\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"requiresShipping\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"allowStorePickup\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"allowLocalDelivery\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"stockQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"minOrderQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"orderItems\",\"kind\":\"object\",\"type\":\"OrderItem\",\"relationName\":\"OrderItemToProduct\"},{\"name\":\"variants\",\"kind\":\"object\",\"type\":\"ProductVariant\",\"relationName\":\"ProductToProductVariant\"}],\"dbName\":null},\"ProductVariant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToProductVariant\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"normalPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"wholesalePrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"stockQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"minOrderQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"position\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Address\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AddressToUser\"},{\"name\":\"label\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contactName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"businessName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"line1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"line2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postalCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"latitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"longitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"placeId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isDefault\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"AddressToOrder\"}],\"dbName\":null},\"WholesaleProfile\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToWholesaleProfile\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"mobileNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"telephoneNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tradingName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryAddressLine1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryAddressLine2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryAddressLine3\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryTown\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryPostcode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"differentInvoiceAddress\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"invoiceAddressLine1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"invoiceAddressLine2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"invoiceAddressLine3\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"invoiceTown\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"invoicePostcode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"companyType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"companyNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"directorName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"businessType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Kitchen\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addressLine1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addressLine2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postalCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"latitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"longitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"maxDeliveryDistanceKm\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"minimumOrderAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"deliveryFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"freeDeliveryMinimum\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"preparationTimeMins\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"acceptsOrders\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"sortOrder\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"foodItems\",\"kind\":\"object\",\"type\":\"FoodItem\",\"relationName\":\"FoodItemToKitchen\"},{\"name\":\"deliveryZones\",\"kind\":\"object\",\"type\":\"DeliveryZone\",\"relationName\":\"DeliveryZoneToKitchen\"},{\"name\":\"foodOrders\",\"kind\":\"object\",\"type\":\"FoodOrder\",\"relationName\":\"FoodOrderToKitchen\"}],\"dbName\":null},\"FoodCategory\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sortOrder\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"foodItems\",\"kind\":\"object\",\"type\":\"FoodItem\",\"relationName\":\"FoodCategoryToFoodItem\"}],\"dbName\":null},\"FoodItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"kitchenId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"kitchen\",\"kind\":\"object\",\"type\":\"Kitchen\",\"relationName\":\"FoodItemToKitchen\"},{\"name\":\"foodCategoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"foodCategory\",\"kind\":\"object\",\"type\":\"FoodCategory\",\"relationName\":\"FoodCategoryToFoodItem\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shortDescription\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"compareAtPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"isAvailable\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isFeatured\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"sortOrder\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"preparationTimeMins\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"orderItems\",\"kind\":\"object\",\"type\":\"FoodOrderItem\",\"relationName\":\"FoodItemToFoodOrderItem\"}],\"dbName\":null},\"DeliveryZone\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"kitchenId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"kitchen\",\"kind\":\"object\",\"type\":\"Kitchen\",\"relationName\":\"DeliveryZoneToKitchen\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"zoneType\",\"kind\":\"enum\",\"type\":\"DeliveryZoneType\"},{\"name\":\"centerLatitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"centerLongitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"radiusKm\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"polygonCoordinates\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"deliveryFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"minimumOrderAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"freeDeliveryMinimum\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"sortOrder\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"foodOrders\",\"kind\":\"object\",\"type\":\"FoodOrder\",\"relationName\":\"DeliveryZoneToFoodOrder\"}],\"dbName\":null},\"DeliveryAddress\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"DeliveryAddressToUser\"},{\"name\":\"label\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"recipientName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"line1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"line2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postalCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"formattedAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"placeId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"latitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"longitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"deliveryInstructions\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isDefault\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"foodOrders\",\"kind\":\"object\",\"type\":\"FoodOrder\",\"relationName\":\"DeliveryAddressToFoodOrder\"}],\"dbName\":null},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"orderNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"OrderToUser\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"OrderStatus\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subtotal\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"shippingCost\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"handlingFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"codFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"total\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"itemCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"shippingAddressId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingAddress\",\"kind\":\"object\",\"type\":\"Address\",\"relationName\":\"AddressToOrder\"},{\"name\":\"shippingZoneId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingZone\",\"kind\":\"object\",\"type\":\"ShippingZone\",\"relationName\":\"OrderShippingZone\"},{\"name\":\"shippingMethodId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingMethod\",\"kind\":\"object\",\"type\":\"ShippingMethod\",\"relationName\":\"OrderShippingMethod\"},{\"name\":\"shippingMethodName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingMethodType\",\"kind\":\"enum\",\"type\":\"ShippingMethodType\"},{\"name\":\"estimatedDeliveryMinDays\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"estimatedDeliveryMaxDays\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"deliveryMethodDescription\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryInstructions\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"paymentGateway\",\"kind\":\"enum\",\"type\":\"PaymentGateway\"},{\"name\":\"paymentMethodName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"paymentStatus\",\"kind\":\"enum\",\"type\":\"PaymentStatus\"},{\"name\":\"paymentReference\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"transactionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"gatewayResponseSummary\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"paidAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"OrderItem\",\"relationName\":\"OrderToOrderItem\"},{\"name\":\"checkoutSession\",\"kind\":\"object\",\"type\":\"CheckoutSession\",\"relationName\":\"CheckoutSessionToOrder\"}],\"dbName\":null},\"FoodOrder\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"orderNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"FoodOrderToUser\"},{\"name\":\"kitchenId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"kitchen\",\"kind\":\"object\",\"type\":\"Kitchen\",\"relationName\":\"FoodOrderToKitchen\"},{\"name\":\"deliveryAddressId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryAddress\",\"kind\":\"object\",\"type\":\"DeliveryAddress\",\"relationName\":\"DeliveryAddressToFoodOrder\"},{\"name\":\"deliveryZoneId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryZone\",\"kind\":\"object\",\"type\":\"DeliveryZone\",\"relationName\":\"DeliveryZoneToFoodOrder\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"FoodOrderStatus\"},{\"name\":\"customerName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"customerEmail\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"customerPhone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subtotal\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"deliveryFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"total\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"itemCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"distanceKm\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"FoodOrderItem\",\"relationName\":\"FoodOrderToFoodOrderItem\"}],\"dbName\":null},\"OrderItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"orderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToOrderItem\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"OrderItemToProduct\"},{\"name\":\"productName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productSku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unitPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"lineTotal\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"FoodOrderItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"foodOrderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"foodOrder\",\"kind\":\"object\",\"type\":\"FoodOrder\",\"relationName\":\"FoodOrderToFoodOrderItem\"},{\"name\":\"foodItemId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"foodItem\",\"kind\":\"object\",\"type\":\"FoodItem\",\"relationName\":\"FoodItemToFoodOrderItem\"},{\"name\":\"foodItemName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"foodItemSlug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"foodCategoryName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unitPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"lineTotal\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"selectedOptions\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"StoreSettings\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deliveryNotes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"defaultHandlingFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"weightUnit\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dimensionUnit\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"mapsEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"googleMapsApiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"defaultMapLatitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"defaultMapLongitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"defaultMapZoom\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"storeLocationName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"storeAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"storeLatitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"storeLongitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"serviceAreaCountries\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"ShippingZone\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"sortOrder\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"regions\",\"kind\":\"object\",\"type\":\"ShippingZoneRegion\",\"relationName\":\"ShippingZoneToShippingZoneRegion\"},{\"name\":\"methods\",\"kind\":\"object\",\"type\":\"ShippingMethod\",\"relationName\":\"ShippingMethodToShippingZone\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderShippingZone\"},{\"name\":\"checkoutSessions\",\"kind\":\"object\",\"type\":\"CheckoutSession\",\"relationName\":\"CheckoutSessionToShippingZone\"}],\"dbName\":null},\"ShippingZoneRegion\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingZoneId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingZone\",\"kind\":\"object\",\"type\":\"ShippingZone\",\"relationName\":\"ShippingZoneToShippingZoneRegion\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postalCodePattern\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sortOrder\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"ShippingMethod\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingZoneId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingZone\",\"kind\":\"object\",\"type\":\"ShippingZone\",\"relationName\":\"ShippingMethodToShippingZone\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"ShippingMethodType\"},{\"name\":\"baseCost\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"minimumOrderAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"maximumOrderAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"minimumWeight\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"maximumWeight\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"freeShippingMinimum\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"maximumDistanceKm\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"sortOrder\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"estimatedMinDays\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"estimatedMaxDays\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"instructions\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"codAllowed\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"tiers\",\"kind\":\"object\",\"type\":\"ShippingRateTier\",\"relationName\":\"ShippingMethodToShippingRateTier\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderShippingMethod\"},{\"name\":\"checkoutSessions\",\"kind\":\"object\",\"type\":\"CheckoutSession\",\"relationName\":\"CheckoutSessionToShippingMethod\"}],\"dbName\":null},\"ShippingRateTier\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingMethodId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingMethod\",\"kind\":\"object\",\"type\":\"ShippingMethod\",\"relationName\":\"ShippingMethodToShippingRateTier\"},{\"name\":\"label\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"minimumValue\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"maximumValue\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"cost\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"sortOrder\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"PaymentMethodSetting\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"gateway\",\"kind\":\"enum\",\"type\":\"PaymentGateway\"},{\"name\":\"displayName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"instructions\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"mode\",\"kind\":\"enum\",\"type\":\"GatewayMode\"},{\"name\":\"publicKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"secretKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"webhookSecret\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"extraFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"minimumOrderAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"maximumOrderAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"allowedShippingMethodTypes\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"allowedZoneIds\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"CheckoutSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CheckoutSessionToUser\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"CheckoutSessionStatus\"},{\"name\":\"paymentGateway\",\"kind\":\"enum\",\"type\":\"PaymentGateway\"},{\"name\":\"externalReference\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"checkoutPayload\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"gatewayResponseSummary\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"subtotal\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"shippingCost\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"handlingFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"paymentFee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"total\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"shippingZoneId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingZone\",\"kind\":\"object\",\"type\":\"ShippingZone\",\"relationName\":\"CheckoutSessionToShippingZone\"},{\"name\":\"shippingMethodId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingMethod\",\"kind\":\"object\",\"type\":\"ShippingMethod\",\"relationName\":\"CheckoutSessionToShippingMethod\"},{\"name\":\"orderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"CheckoutSessionToOrder\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

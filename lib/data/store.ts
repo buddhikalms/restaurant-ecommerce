@@ -1,5 +1,5 @@
 import { unstable_noStore as noStore } from "next/cache";
-import { Prisma } from "prisma-generated-client-v2";
+import { Prisma } from "@/generated/prisma";
 
 import { PRODUCT_PAGE_SIZE } from "@/lib/constants";
 import { coerceGalleryImageUrls } from "@/lib/product-gallery";

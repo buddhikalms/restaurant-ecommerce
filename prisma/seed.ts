@@ -1,4 +1,4 @@
-import { PrismaClient, Role, OrderStatus, ProductType, VatMode, PaymentGateway, PaymentStatus, ShippingMethodType, GatewayMode } from "prisma-generated-client-v2";
+import { PrismaClient, Role, OrderStatus, ProductType, VatMode, PaymentGateway, PaymentStatus, ShippingMethodType, GatewayMode } from "../generated/prisma";
 import { hash } from "bcryptjs";
 
 import { summarizeActiveProductVariants } from "../lib/product-variants";

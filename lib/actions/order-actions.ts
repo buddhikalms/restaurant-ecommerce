@@ -1,6 +1,6 @@
 "use server"
 
-import { type PaymentGateway } from "prisma-generated-client-v2"
+import { type PaymentGateway } from "@/generated/prisma"
 
 import { type ActionResponse } from "@/lib/actions/action-response"
 import { requireCustomerUser } from "@/lib/auth-helpers"

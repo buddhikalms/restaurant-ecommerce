@@ -1,4 +1,4 @@
-import { ShippingMethodType, type Prisma } from "prisma-generated-client-v2"
+import { ShippingMethodType, type Prisma } from "@/generated/prisma"
 
 import { type NormalizedCheckoutCart } from "@/lib/checkout/cart"
 import { prisma } from "@/lib/prisma"

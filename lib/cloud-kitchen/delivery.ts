@@ -1,4 +1,4 @@
-﻿import { type DeliveryZoneType } from "prisma-generated-client-v2";
+import { type DeliveryZoneType } from "@/generated/prisma";
 
 export type GeoPoint = {
   latitude: number;

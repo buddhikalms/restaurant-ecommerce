@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { unstable_noStore as noStore } from "next/cache";
-import { type Prisma, type Role } from "prisma-generated-client-v2";
+import { type Prisma, type Role } from "@/generated/prisma";
 
 import { ADMIN_PAGE_SIZE, ORDER_STATUSES } from "@/lib/constants";
 import { coerceGalleryImageUrls } from "@/lib/product-gallery";
