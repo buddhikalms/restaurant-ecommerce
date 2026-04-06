@@ -15,7 +15,7 @@ export default async function AdminCloudKitchenDeliveryZonesPage() {
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
         title="Delivery zones"
-        description="Start with radius-based validation today and keep polygon support ready for future expansion."
+        description="The default kitchen radius already handles local delivery. Add zones only if you need advanced overrides later."
         actions={
           <Link href="/admin/cloud-kitchen/delivery-zones/new" className={getButtonClassName({})}>
             <span className="text-white">Add zone</span>
@@ -62,7 +62,7 @@ export default async function AdminCloudKitchenDeliveryZonesPage() {
       ) : (
         <EmptyState
           title="No delivery zones found"
-          description="Create radius or polygon rules for each kitchen branch."
+          description="You can skip zones entirely unless you need advanced delivery overrides beyond the default kitchen radius."
           actionLabel="Add zone"
           actionHref="/admin/cloud-kitchen/delivery-zones/new"
         />
@@ -70,5 +70,4 @@ export default async function AdminCloudKitchenDeliveryZonesPage() {
     </div>
   );
 }
-
 

@@ -29,16 +29,20 @@ export function AdminFoodItemForm({
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const { register, handleSubmit, formState: { errors } } = useForm<
-    FoodItemFormInput,
-    unknown,
-    FoodItemFormValues
-  >({
+  const hasSingleKitchen = kitchens.length === 1;
+  const hasSingleCategory = categories.length === 1;
+  const defaultKitchen = kitchens[0];
+  const defaultCategory = categories[0];
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FoodItemFormInput, unknown, FoodItemFormValues>({
     resolver: zodResolver(foodItemSchema),
     defaultValues: {
       id: item?.id,
-      kitchenId: item?.kitchenId ?? kitchens[0]?.id,
-      foodCategoryId: item?.foodCategoryId ?? categories[0]?.id,
+      kitchenId: item?.kitchenId ?? defaultKitchen?.id,
+      foodCategoryId: item?.foodCategoryId ?? defaultCategory?.id,
       name: item?.name ?? "",
       slug: item?.slug ?? "",
       shortDescription: item?.shortDescription ?? "",
@@ -69,29 +73,66 @@ export function AdminFoodItemForm({
       })}
     >
       <input type="hidden" {...register("id")} />
+      {hasSingleKitchen ? (
+        <input type="hidden" {...register("kitchenId")} value={defaultKitchen?.id ?? ""} />
+      ) : null}
+      {hasSingleCategory ? (
+        <input
+          type="hidden"
+          {...register("foodCategoryId")}
+          value={defaultCategory?.id ?? ""}
+        />
+      ) : null}
+
       <div className="grid gap-5 md:grid-cols-2">
-        <div>
-          <label className="admin-label">Kitchen</label>
-          <Select {...register("kitchenId")}>
-            {kitchens.map((kitchen) => (
-              <option key={kitchen.id} value={kitchen.id}>
-                {kitchen.name}
-              </option>
-            ))}
-          </Select>
-          <FieldError message={errors.kitchenId?.message} />
-        </div>
-        <div>
-          <label className="admin-label">Food category</label>
-          <Select {...register("foodCategoryId")}>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </Select>
-          <FieldError message={errors.foodCategoryId?.message} />
-        </div>
+        {hasSingleKitchen ? (
+          <div className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-4 md:col-span-2">
+            <p className="admin-label">Kitchen</p>
+            <p className="mt-1 text-sm font-semibold text-[var(--admin-foreground)]">
+              {defaultKitchen?.name ?? "Default cloud kitchen"}
+            </p>
+            <p className="mt-1 text-[0.78rem] text-[var(--admin-muted-foreground)]">
+              Meal items are assigned here automatically, so you can focus on adding dishes.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <label className="admin-label">Kitchen</label>
+            <Select {...register("kitchenId")}>
+              {kitchens.map((kitchen) => (
+                <option key={kitchen.id} value={kitchen.id}>
+                  {kitchen.name}
+                </option>
+              ))}
+            </Select>
+            <FieldError message={errors.kitchenId?.message} />
+          </div>
+        )}
+
+        {hasSingleCategory ? (
+          <div className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-4 md:col-span-2">
+            <p className="admin-label">Menu category</p>
+            <p className="mt-1 text-sm font-semibold text-[var(--admin-foreground)]">
+              {defaultCategory?.name ?? "Meals"}
+            </p>
+            <p className="mt-1 text-[0.78rem] text-[var(--admin-muted-foreground)]">
+              The default meals category is ready for you automatically.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <label className="admin-label">Food category</label>
+            <Select {...register("foodCategoryId")}>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </Select>
+            <FieldError message={errors.foodCategoryId?.message} />
+          </div>
+        )}
+
         <div>
           <label className="admin-label">Item name</label>
           <Input {...register("name")} />
@@ -124,12 +165,19 @@ export function AdminFoodItemForm({
         </div>
         <div>
           <label className="admin-label">Compare-at price</label>
-          <Input type="number" step="0.01" {...register("compareAtPrice", { valueAsNumber: true })} />
+          <Input
+            type="number"
+            step="0.01"
+            {...register("compareAtPrice", { valueAsNumber: true })}
+          />
           <FieldError message={errors.compareAtPrice?.message} />
         </div>
         <div>
           <label className="admin-label">Preparation time (mins)</label>
-          <Input type="number" {...register("preparationTimeMins", { valueAsNumber: true })} />
+          <Input
+            type="number"
+            {...register("preparationTimeMins", { valueAsNumber: true })}
+          />
           <FieldError message={errors.preparationTimeMins?.message} />
         </div>
         <div>
@@ -141,11 +189,19 @@ export function AdminFoodItemForm({
 
       <div className="flex flex-wrap gap-4 text-[0.8rem] font-medium text-[var(--admin-foreground)]">
         <label className="flex items-center gap-2">
-          <input type="checkbox" {...register("isAvailable")} className="h-4 w-4 rounded border-[var(--admin-border)]" />
+          <input
+            type="checkbox"
+            {...register("isAvailable")}
+            className="h-4 w-4 rounded border-[var(--admin-border)]"
+          />
           Available on menu
         </label>
         <label className="flex items-center gap-2">
-          <input type="checkbox" {...register("isFeatured")} className="h-4 w-4 rounded border-[var(--admin-border)]" />
+          <input
+            type="checkbox"
+            {...register("isFeatured")}
+            className="h-4 w-4 rounded border-[var(--admin-border)]"
+          />
           Featured item
         </label>
       </div>
@@ -158,7 +214,7 @@ export function AdminFoodItemForm({
 
       <div className="flex gap-3">
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Saving..." : item?.id ? "Save food item" : "Create food item"}
+          {isPending ? "Saving..." : item?.id ? "Save meal item" : "Create meal item"}
         </Button>
         <Button type="button" variant="secondary" onClick={() => router.push("/admin/cloud-kitchen/foods")}>
           Cancel

@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { deleteKitchenAction } from "@/lib/actions/cloud-kitchen-actions";
 import { getAdminKitchens } from "@/lib/data/cloud-kitchen";
+import { formatCurrency } from "@/lib/utils";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -22,17 +23,20 @@ export default async function AdminCloudKitchenKitchensPage({
   const params = await searchParams;
   const query = toValue(params.q);
   const kitchens = await getAdminKitchens(query);
+  const primaryKitchen = kitchens[0];
 
   return (
     <div className="space-y-6">
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
-        title="Kitchen and branch management"
-        description="Define each kitchen's location, readiness, and delivery defaults."
+        title="Kitchen delivery settings"
+        description="A default cloud kitchen is created automatically. Use this screen when you need to review or adjust delivery settings."
         actions={
-          <Link href="/admin/cloud-kitchen/kitchens/new" className={getButtonClassName({})}>
-            <span className="text-white">Add kitchen</span>
-          </Link>
+          primaryKitchen ? (
+            <Link href={`/admin/cloud-kitchen/kitchens/${primaryKitchen.id}/edit`} className={getButtonClassName({})}>
+              <span className="text-white">Edit default kitchen</span>
+            </Link>
+          ) : null
         }
       />
 
@@ -64,15 +68,15 @@ export default async function AdminCloudKitchenKitchensPage({
               <div className="mt-4 grid gap-2 text-[0.78rem] text-[var(--admin-muted-foreground)] sm:grid-cols-2">
                 <p>Menu items: {kitchen._count?.foodItems ?? 0}</p>
                 <p>Delivery zones: {kitchen._count?.deliveryZones ?? 0}</p>
-                <p>Min order: {kitchen.minimumOrderAmount.toFixed(2)}</p>
-                <p>Delivery fee: {kitchen.deliveryFee.toFixed(2)}</p>
+                <p>Min order: {formatCurrency(kitchen.minimumOrderAmount)}</p>
+                <p>Delivery fee: {formatCurrency(kitchen.deliveryFee)}</p>
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
                 <Link
                   href={`/admin/cloud-kitchen/kitchens/${kitchen.id}/edit`}
                   className={getButtonClassName({ variant: "secondary", size: "sm" })}
                 >
-                  Edit
+                  Edit settings
                 </Link>
                 <DeleteButton
                   itemId={kitchen.id}
@@ -87,13 +91,12 @@ export default async function AdminCloudKitchenKitchensPage({
       ) : (
         <EmptyState
           title="No kitchens found"
-          description="Create your first kitchen or branch to start the delivery module."
-          actionLabel="Add kitchen"
-          actionHref="/admin/cloud-kitchen/kitchens/new"
+          description="The default cloud kitchen will appear here automatically once the module is initialized."
+          actionLabel="Open dashboard"
+          actionHref="/admin/cloud-kitchen"
         />
       )}
     </div>
   );
 }
-
 

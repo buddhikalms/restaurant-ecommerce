@@ -7,7 +7,11 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { deleteFoodItemAction } from "@/lib/actions/cloud-kitchen-actions";
-import { getAdminFoodItems, getFoodCategoryOptions, getKitchenOptions } from "@/lib/data/cloud-kitchen";
+import {
+  getAdminFoodItems,
+  getFoodCategoryOptions,
+  getKitchenOptions,
+} from "@/lib/data/cloud-kitchen";
 import { formatCurrency } from "@/lib/utils";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -26,31 +30,34 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
     getKitchenOptions(),
     getFoodCategoryOptions(),
   ]);
+  const showKitchenFilter = kitchens.length > 1;
 
   return (
     <div className="space-y-6">
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
-        title="Food items and availability"
-        description="Manage ready-to-eat menu items independently from the wholesale catalog."
+        title="Meal items and availability"
+        description="A default kitchen and meals category are created automatically, so you can focus on adding and updating dishes."
         actions={
           <Link href="/admin/cloud-kitchen/foods/new" className={getButtonClassName({})}>
-            <span className="text-white">Add food item</span>
+            <span className="text-white">Add meal item</span>
           </Link>
         }
       />
 
       <form className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-4" method="get">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px_220px_auto]">
-          <Input name="q" defaultValue={query} placeholder="Search food item or description" />
-          <Select name="kitchenId" defaultValue={kitchenId}>
-            <option value="">All kitchens</option>
-            {kitchens.map((kitchen: (typeof kitchens)[number]) => (
-              <option key={kitchen.id} value={kitchen.id}>
-                {kitchen.name}
-              </option>
-            ))}
-          </Select>
+        <div className={`grid gap-3 ${showKitchenFilter ? "lg:grid-cols-[minmax(0,1fr)_220px_220px_auto]" : "lg:grid-cols-[minmax(0,1fr)_220px_auto]"}`}>
+          <Input name="q" defaultValue={query} placeholder="Search meal item or description" />
+          {showKitchenFilter ? (
+            <Select name="kitchenId" defaultValue={kitchenId}>
+              <option value="">All kitchens</option>
+              {kitchens.map((kitchen: (typeof kitchens)[number]) => (
+                <option key={kitchen.id} value={kitchen.id}>
+                  {kitchen.name}
+                </option>
+              ))}
+            </Select>
+          ) : null}
           <Select name="categoryId" defaultValue={categoryId}>
             <option value="">All categories</option>
             {categories.map((category: (typeof categories)[number]) => (
@@ -71,7 +78,9 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
             <div key={item.id} className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="admin-kicker">{item.kitchen?.name} • {item.foodCategory?.name}</p>
+                  <p className="admin-kicker">
+                    {showKitchenFilter ? `${item.kitchen?.name} • ${item.foodCategory?.name}` : item.foodCategory?.name}
+                  </p>
                   <h2 className="mt-2 text-lg font-semibold text-[var(--admin-foreground)]">{item.name}</h2>
                   <p className="mt-2 text-[0.82rem] leading-6 text-[var(--admin-muted-foreground)]">
                     {item.shortDescription ?? item.description}
@@ -95,7 +104,7 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
                   itemId={item.id}
                   action={deleteFoodItemAction}
                   label="Delete"
-                  confirmMessage="Delete this food item? Existing food orders will block the delete."
+                  confirmMessage="Delete this meal item? Existing food orders will block the delete."
                 />
               </div>
             </div>
@@ -103,15 +112,13 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
         </div>
       ) : (
         <EmptyState
-          title="No food items found"
-          description="Add your first ready-to-eat item or broaden the current filters."
-          actionLabel="Add food item"
+          title="No meal items found"
+          description="Add your first meal item or broaden the current filters."
+          actionLabel="Add meal item"
           actionHref="/admin/cloud-kitchen/foods/new"
         />
       )}
     </div>
   );
 }
-
-
 

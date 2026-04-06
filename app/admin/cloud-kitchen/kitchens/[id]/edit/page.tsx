@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminKitchenForm } from "@/components/cloud-kitchen/admin-kitchen-form";
@@ -21,7 +21,7 @@ export default async function AdminCloudKitchenEditKitchenPage({
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
         title={`Edit ${kitchen.name}`}
-        description="Update branch location, fulfillment settings, and delivery defaults."
+        description="Update location, delivery fee, radius, and operating settings for the default cloud kitchen."
         backHref="/admin/cloud-kitchen/kitchens"
       />
       <AdminKitchenForm
@@ -36,3 +36,4 @@ export default async function AdminCloudKitchenEditKitchenPage({
     </div>
   );
 }
+

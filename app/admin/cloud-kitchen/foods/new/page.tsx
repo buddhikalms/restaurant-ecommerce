@@ -12,8 +12,8 @@ export default async function AdminCloudKitchenNewFoodPage() {
     <div className="space-y-6">
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
-        title="Create food item"
-        description="Add a ready-to-eat item to a specific kitchen and menu category."
+        title="Create meal item"
+        description="A default kitchen and meals category are created automatically, so you can just add dishes here."
         backHref="/admin/cloud-kitchen/foods"
       />
       <AdminFoodItemForm kitchens={kitchens} categories={categories} />

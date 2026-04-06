@@ -10,7 +10,7 @@ export default async function AdminCloudKitchenNewDeliveryZonePage() {
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
         title="Create delivery zone"
-        description="Define a radius now, or store polygon points for future branch expansion."
+        description="Optional advanced override for the default kitchen radius and fee settings."
         backHref="/admin/cloud-kitchen/delivery-zones"
       />
       <AdminDeliveryZoneForm kitchens={kitchens} />

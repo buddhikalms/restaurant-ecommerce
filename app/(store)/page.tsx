@@ -5,6 +5,7 @@ import { FoodCartProvider } from "@/components/providers/food-cart-provider";
 import { HomeHeroSlider } from "@/components/store/home-hero-slider";
 import { ProductCard } from "@/components/store/product-card";
 import { getCurrentUser } from "@/lib/auth-helpers";
+import { CLOUD_KITCHEN_SERVICE_DEFAULTS } from "@/lib/cloud-kitchen/defaults";
 import { getFoodLocationSession } from "@/lib/cloud-kitchen/location-session";
 import { getFoodLandingData } from "@/lib/data/cloud-kitchen";
 import { getHomepageContent } from "@/lib/data/store";
@@ -62,20 +63,20 @@ export default async function HomePage() {
       <section className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
           {
-            title: "Fresh deals",
-            copy: "Simple promotional space for featured lines and weekly offers.",
+            title: "Cloud kitchen meals",
+            copy: "Ready-to-eat dishes are surfaced on the home page so customers can order faster.",
           },
           {
-            title: "Bulk discounts",
-            copy: "Trade buyers can spot bulk pricing and minimums faster.",
+            title: `${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes`,
+            copy: "Fresh meals are prepared and dispatched quickly for nearby orders.",
           },
           {
-            title: "Recommended",
-            copy: "Compact card layouts keep browsing quick and focused.",
+            title: `£${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee} within ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusMiles} miles`,
+            copy: "Simple local delivery pricing keeps the checkout clear and predictable.",
           },
           {
-            title: "Categories",
-            copy: "Jump straight to produce, beverages, pantry, and more.",
+            title: "Pickup free",
+            copy: "Customers can browse meals online and collect without an extra fee.",
           },
         ].map((item) => (
           <div key={item.title} className="surface-card rounded-lg p-4">
@@ -93,14 +94,17 @@ export default async function HomePage() {
         <section className="mt-8 rounded-[2rem] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(121,56,31,0.08),rgba(39,63,49,0.1))] p-5 sm:p-6">
           <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="section-label">Cloud kitchen</p>
+              <p className="section-label">Cloud kitchen meals</p>
               <h2 className="section-subtitle mt-1">
-                Ready-to-eat meals before wholesale browsing
+                Fresh meal items ready from the home page
               </h2>
               <p className="mt-2 max-w-3xl text-[0.9rem] leading-7 text-[var(--muted-foreground)]">
-                These food items are created and managed by admins under the
-                cloud-kitchen module. Customers select a delivery location
-                first, then order from the eligible kitchen.
+                Browse ready-to-order dishes here first, then continue into the full menu.
+                Delivery is available in {" "}
+                {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to {" "}
+                {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes, costs £
+                {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee} within {" "}
+                {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusMiles} miles, and pickup is free.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -110,7 +114,7 @@ export default async function HomePage() {
               >
                 <span className="text-black">
                   {selectedFoodLocation
-                    ? "Browse food menu"
+                    ? "Browse meal menu"
                     : "Select delivery location"}
                 </span>
               </Link>
@@ -118,7 +122,7 @@ export default async function HomePage() {
                 href="/food"
                 className="inline-flex h-10 items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
               >
-                Explore cloud kitchen
+                View all meals
               </Link>
             </div>
           </div>
@@ -227,3 +231,4 @@ export default async function HomePage() {
     </div>
   );
 }
+

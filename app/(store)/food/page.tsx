@@ -2,6 +2,7 @@
 
 import { FoodItemCard } from "@/components/cloud-kitchen/food-item-card";
 import { FoodLocationSummary } from "@/components/cloud-kitchen/food-location-summary";
+import { CLOUD_KITCHEN_SERVICE_DEFAULTS } from "@/lib/cloud-kitchen/defaults";
 import { getFoodLocationSession } from "@/lib/cloud-kitchen/location-session";
 import { getFoodLandingData } from "@/lib/data/cloud-kitchen";
 
@@ -10,6 +11,24 @@ export default async function FoodLandingPage() {
     getFoodLocationSession(),
     getFoodLandingData(),
   ]);
+
+  const serviceHighlights = [
+    {
+      label: "Delivery time",
+      title: `${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes`,
+      copy: "Fresh meals are prepared fast for nearby addresses.",
+    },
+    {
+      label: "Local delivery",
+      title: `£${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee} within ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusMiles} miles`,
+      copy: "Simple pricing keeps the order flow easy to understand.",
+    },
+    {
+      label: "Pickup",
+      title: "Free collection",
+      copy: "Browse online, then collect without an added delivery fee.",
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -21,12 +40,15 @@ export default async function FoodLandingPage() {
             Ready-to-eat menu
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
-            Location-first food ordering for CeylonTaste.
+            Fresh cloud-kitchen meals with fast local delivery.
           </h2>
           <p className="mt-4 max-w-2xl text-[0.92rem] leading-7 text-white/76">
-            The menu only opens after the delivery point is validated. That
-            keeps kitchen routing, fees, and distance rules accurate from the
-            first click.
+            Validate the delivery point first, then browse the full meal menu with
+            the right kitchen routing, fee, and distance rules already in place.
+            Delivery is {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to {" "}
+            {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes and costs £
+            {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee} within {" "}
+            {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusMiles} miles.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
@@ -49,23 +71,17 @@ export default async function FoodLandingPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-          {landing.kitchens.map(
-            (kitchen: (typeof landing.kitchens)[number]) => (
-              <div key={kitchen.id} className="surface-card rounded-2xl p-5">
-                <p className="section-label">Kitchen</p>
-                <h3 className="mt-2 text-lg font-semibold text-[var(--foreground)]">
-                  {kitchen.name}
-                </h3>
-                <p className="mt-2 text-[0.82rem] leading-6 text-[var(--muted-foreground)]">
-                  {kitchen.description ?? `${kitchen.city}, ${kitchen.state}`}
-                </p>
-                <p className="mt-3 text-[0.76rem] text-[var(--muted-foreground)]">
-                  {kitchen._count?.foodItems ?? 0} menu items • delivery from{" "}
-                  {kitchen.deliveryFee.toFixed(2)}
-                </p>
-              </div>
-            ),
-          )}
+          {serviceHighlights.map((item) => (
+            <div key={item.title} className="surface-card rounded-2xl p-5">
+              <p className="section-label">{item.label}</p>
+              <h3 className="mt-2 text-lg font-semibold text-[var(--foreground)]">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-[0.82rem] leading-6 text-[var(--muted-foreground)]">
+                {item.copy}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -121,3 +137,4 @@ export default async function FoodLandingPage() {
     </div>
   );
 }
+

@@ -1,5 +1,6 @@
 ﻿import { FoodLocationForm } from "@/components/cloud-kitchen/food-location-form";
 import { getCloudKitchenMapsConfig } from "@/lib/cloud-kitchen/config";
+import { CLOUD_KITCHEN_SERVICE_DEFAULTS } from "@/lib/cloud-kitchen/defaults";
 import { getFoodLocationSession } from "@/lib/cloud-kitchen/location-session";
 
 export default async function FoodLocationPage() {
@@ -14,7 +15,10 @@ export default async function FoodLocationPage() {
         <p className="section-label">Step 1</p>
         <h1 className="section-title mt-2">Select your delivery location</h1>
         <p className="section-copy mt-2">
-          We validate the address against kitchen delivery coverage before the menu opens.
+          We validate addresses within {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusMiles} miles before the menu opens.
+          Delivery is £{CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee} and usually arrives in {" "}
+          {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to {" "}
+          {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes.
         </p>
         {selection ? (
           <p className="mt-4 text-[0.82rem] text-[var(--muted-foreground)]">

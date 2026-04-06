@@ -11,6 +11,7 @@ import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { validateDeliveryEligibilityAction } from "@/lib/actions/cloud-kitchen-actions";
+import { CLOUD_KITCHEN_SERVICE_DEFAULTS } from "@/lib/cloud-kitchen/defaults";
 import { foodLocationSchema } from "@/lib/validations/cloud-kitchen";
 
 type FoodLocationFormInput = z.input<typeof foodLocationSchema>;
@@ -259,7 +260,7 @@ export function FoodLocationForm({ mapsConfig }: { mapsConfig: MapsConfig }) {
           <div>
             <p className="section-label">Delivery address</p>
             <h2 className="section-subtitle mt-2">Choose where your meal should arrive</h2>
-            <p className="section-copy mt-2">Start with Google autocomplete, then fine-tune the map pin if needed.</p>
+            <p className="section-copy mt-2">Start with Google autocomplete, then fine-tune the map pin if needed. We use it to confirm you are inside the {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusMiles}-mile delivery radius.</p>
           </div>
 
           <div>
@@ -345,7 +346,7 @@ export function FoodLocationForm({ mapsConfig }: { mapsConfig: MapsConfig }) {
           <div>
             <p className="section-label">Map selection</p>
             <h2 className="section-subtitle mt-2">Confirm the delivery point</h2>
-            <p className="section-copy mt-2">Drag the marker if the autocomplete result needs a small adjustment.</p>
+            <p className="section-copy mt-2">Drag the marker if the autocomplete result needs a small adjustment before we check the delivery fee and timing.</p>
           </div>
           <div ref={mapRef} className="h-[360px] rounded-2xl border border-[var(--border)] bg-[linear-gradient(135deg,rgba(157,112,57,0.1),rgba(39,63,49,0.08))]" />
           <p className="text-[0.78rem] leading-6 text-[var(--muted-foreground)]">
@@ -359,4 +360,7 @@ export function FoodLocationForm({ mapsConfig }: { mapsConfig: MapsConfig }) {
     </form>
   );
 }
+
+
+
 

@@ -24,18 +24,19 @@ export default async function AdminCloudKitchenOrdersPage({ searchParams }: { se
     getAdminFoodOrders({ query, status, kitchenId }),
     getKitchenOptions(),
   ]);
+  const showKitchenFilter = kitchens.length > 1;
 
   return (
     <div className="space-y-6">
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
         title="Incoming food orders"
-        description="Track kitchen-specific delivery orders and update statuses independently from wholesale orders."
+        description="Track ready-to-eat delivery orders and update statuses without the extra kitchen-registration workflow."
       />
 
       <form className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-4" method="get">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px_220px_auto]">
-          <Input name="q" defaultValue={query} placeholder="Search order, customer, or kitchen" />
+        <div className={`grid gap-3 ${showKitchenFilter ? "lg:grid-cols-[minmax(0,1fr)_220px_220px_auto]" : "lg:grid-cols-[minmax(0,1fr)_220px_auto]"}`}>
+          <Input name="q" defaultValue={query} placeholder="Search order or customer" />
           <Select name="status" defaultValue={status}>
             <option value="">All statuses</option>
             {FOOD_ORDER_STATUSES.map((entry) => (
@@ -44,14 +45,16 @@ export default async function AdminCloudKitchenOrdersPage({ searchParams }: { se
               </option>
             ))}
           </Select>
-          <Select name="kitchenId" defaultValue={kitchenId}>
-            <option value="">All kitchens</option>
-            {kitchens.map((kitchen: (typeof kitchens)[number]) => (
-              <option key={kitchen.id} value={kitchen.id}>
-                {kitchen.name}
-              </option>
-            ))}
-          </Select>
+          {showKitchenFilter ? (
+            <Select name="kitchenId" defaultValue={kitchenId}>
+              <option value="">All kitchens</option>
+              {kitchens.map((kitchen: (typeof kitchens)[number]) => (
+                <option key={kitchen.id} value={kitchen.id}>
+                  {kitchen.name}
+                </option>
+              ))}
+            </Select>
+          ) : null}
           <button className="inline-flex h-9 items-center justify-center rounded-lg bg-[var(--brand)] px-4 text-[0.82rem] font-medium text-white">
             Filter
           </button>
@@ -85,7 +88,7 @@ export default async function AdminCloudKitchenOrdersPage({ searchParams }: { se
       ) : (
         <EmptyState
           title="No food orders found"
-          description="Food orders will appear here as soon as customers start using the cloud kitchen flow."
+          description="Food orders will appear here as soon as customers start using the meal ordering flow."
           actionLabel="Open dashboard"
           actionHref="/admin/cloud-kitchen"
         />
@@ -93,6 +96,4 @@ export default async function AdminCloudKitchenOrdersPage({ searchParams }: { se
     </div>
   );
 }
-
-
 

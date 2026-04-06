@@ -15,18 +15,18 @@ export default async function AdminCloudKitchenPage() {
     <div className="space-y-6">
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
-        title="Delivery-focused operations dashboard"
-        description="Manage kitchens, menus, coverage, and incoming ready-to-eat orders without touching the wholesale order flow."
+        title="Meals and delivery dashboard"
+        description="The default cloud kitchen is created automatically, so you can add meal items and manage delivery settings without registering branches first."
         actions={
           <>
-            <Link href="/admin/cloud-kitchen/kitchens/new" className={getButtonClassName({})}>
-              <span className="text-white">Add kitchen</span>
+            <Link href="/admin/cloud-kitchen/foods/new" className={getButtonClassName({})}>
+              <span className="text-white">Add meal item</span>
             </Link>
             <Link
-              href="/admin/cloud-kitchen/orders"
+              href="/admin/cloud-kitchen/kitchens"
               className={getButtonClassName({ variant: "secondary" })}
             >
-              View food orders
+              Delivery settings
             </Link>
           </>
         }
@@ -77,13 +77,16 @@ export default async function AdminCloudKitchenPage() {
           </CardHeader>
           <CardContent className="space-y-3 p-4 text-[0.82rem] text-[var(--admin-muted-foreground)]">
             <Link href="/admin/cloud-kitchen/foods" className="block rounded-xl border border-[var(--admin-border)] px-4 py-3 transition hover:bg-[var(--admin-surface-muted)]">
-              Manage food items and availability
+              Manage meal items and homepage visibility
+            </Link>
+            <Link href="/admin/cloud-kitchen/kitchens" className="block rounded-xl border border-[var(--admin-border)] px-4 py-3 transition hover:bg-[var(--admin-surface-muted)]">
+              Edit default kitchen delivery settings
             </Link>
             <Link href="/admin/cloud-kitchen/delivery-zones" className="block rounded-xl border border-[var(--admin-border)] px-4 py-3 transition hover:bg-[var(--admin-surface-muted)]">
-              Configure radius and polygon delivery zones
+              Optional delivery-zone overrides
             </Link>
             <Link href="/admin/cloud-kitchen/categories" className="block rounded-xl border border-[var(--admin-border)] px-4 py-3 transition hover:bg-[var(--admin-surface-muted)]">
-              Organize the menu taxonomy
+              Organize the meal taxonomy
             </Link>
           </CardContent>
         </Card>
@@ -91,6 +94,4 @@ export default async function AdminCloudKitchenPage() {
     </div>
   );
 }
-
-
 

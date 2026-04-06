@@ -6,8 +6,8 @@ export default function AdminCloudKitchenNewKitchenPage() {
     <div className="space-y-6">
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
-        title="Create kitchen"
-        description="Add a new branch with its location, default delivery fee, and operating state."
+        title="Create additional kitchen"
+        description="The default cloud kitchen is already created automatically. Only use this page if you need another branch later."
         backHref="/admin/cloud-kitchen/kitchens"
       />
       <AdminKitchenForm />

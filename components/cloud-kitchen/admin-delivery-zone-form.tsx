@@ -17,7 +17,11 @@ import { Textarea } from "@/components/ui/textarea";
 type DeliveryZoneFormInput = z.input<typeof deliveryZoneSchema>;
 type DeliveryZoneFormValues = z.output<typeof deliveryZoneSchema>;
 
-function serializePolygon(points?: Array<{ latitude: number; longitude: number }> | Array<{ latitude: unknown; longitude: unknown }>) {
+function serializePolygon(
+  points?:
+    | Array<{ latitude: number; longitude: number }>
+    | Array<{ latitude: unknown; longitude: unknown }>,
+) {
   return (points ?? []).map((point) => `${point.latitude},${point.longitude}`).join("\n");
 }
 
@@ -44,15 +48,18 @@ export function AdminDeliveryZoneForm({
   const [message, setMessage] = useState<string | null>(null);
   const [polygonText, setPolygonText] = useState(serializePolygon(zone?.polygonCoordinates));
   const [isPending, startTransition] = useTransition();
-  const { register, handleSubmit, control, formState: { errors } } = useForm<
-    DeliveryZoneFormInput,
-    unknown,
-    DeliveryZoneFormValues
-  >({
+  const hasSingleKitchen = kitchens.length === 1;
+  const defaultKitchen = kitchens[0];
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<DeliveryZoneFormInput, unknown, DeliveryZoneFormValues>({
     resolver: zodResolver(deliveryZoneSchema),
     defaultValues: {
       id: zone?.id,
-      kitchenId: zone?.kitchenId ?? kitchens[0]?.id,
+      kitchenId: zone?.kitchenId ?? defaultKitchen?.id,
       name: zone?.name ?? "",
       description: zone?.description ?? "",
       zoneType: zone?.zoneType ?? "RADIUS",
@@ -89,18 +96,34 @@ export function AdminDeliveryZoneForm({
       })}
     >
       <input type="hidden" {...register("id")} />
+      {hasSingleKitchen ? (
+        <input type="hidden" {...register("kitchenId")} value={defaultKitchen?.id ?? ""} />
+      ) : null}
+
       <div className="grid gap-5 md:grid-cols-2">
-        <div>
-          <label className="admin-label">Kitchen</label>
-          <Select {...register("kitchenId")}>
-            {kitchens.map((kitchen) => (
-              <option key={kitchen.id} value={kitchen.id}>
-                {kitchen.name}
-              </option>
-            ))}
-          </Select>
-          <FieldError message={errors.kitchenId?.message} />
-        </div>
+        {hasSingleKitchen ? (
+          <div className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-4 md:col-span-2">
+            <p className="admin-label">Kitchen</p>
+            <p className="mt-1 text-sm font-semibold text-[var(--admin-foreground)]">
+              {defaultKitchen?.name ?? "Default cloud kitchen"}
+            </p>
+            <p className="mt-1 text-[0.78rem] text-[var(--admin-muted-foreground)]">
+              Delivery zones apply to the default kitchen automatically.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <label className="admin-label">Kitchen</label>
+            <Select {...register("kitchenId")}>
+              {kitchens.map((kitchen) => (
+                <option key={kitchen.id} value={kitchen.id}>
+                  {kitchen.name}
+                </option>
+              ))}
+            </Select>
+            <FieldError message={errors.kitchenId?.message} />
+          </div>
+        )}
         <div>
           <label className="admin-label">Zone name</label>
           <Input {...register("name")} />
@@ -128,12 +151,20 @@ export function AdminDeliveryZoneForm({
           <>
             <div>
               <label className="admin-label">Center latitude</label>
-              <Input type="number" step="0.0000001" {...register("centerLatitude", { valueAsNumber: true })} />
+              <Input
+                type="number"
+                step="0.0000001"
+                {...register("centerLatitude", { valueAsNumber: true })}
+              />
               <FieldError message={errors.centerLatitude?.message} />
             </div>
             <div>
               <label className="admin-label">Center longitude</label>
-              <Input type="number" step="0.0000001" {...register("centerLongitude", { valueAsNumber: true })} />
+              <Input
+                type="number"
+                step="0.0000001"
+                {...register("centerLongitude", { valueAsNumber: true })}
+              />
               <FieldError message={errors.centerLongitude?.message} />
             </div>
             <div>
@@ -164,18 +195,30 @@ export function AdminDeliveryZoneForm({
         </div>
         <div>
           <label className="admin-label">Minimum order override</label>
-          <Input type="number" step="0.01" {...register("minimumOrderAmount", { valueAsNumber: true })} />
+          <Input
+            type="number"
+            step="0.01"
+            {...register("minimumOrderAmount", { valueAsNumber: true })}
+          />
           <FieldError message={errors.minimumOrderAmount?.message} />
         </div>
         <div>
           <label className="admin-label">Free delivery threshold</label>
-          <Input type="number" step="0.01" {...register("freeDeliveryMinimum", { valueAsNumber: true })} />
+          <Input
+            type="number"
+            step="0.01"
+            {...register("freeDeliveryMinimum", { valueAsNumber: true })}
+          />
           <FieldError message={errors.freeDeliveryMinimum?.message} />
         </div>
       </div>
 
       <label className="flex items-center gap-2 text-[0.8rem] font-medium text-[var(--admin-foreground)]">
-        <input type="checkbox" {...register("isActive")} className="h-4 w-4 rounded border-[var(--admin-border)]" />
+        <input
+          type="checkbox"
+          {...register("isActive")}
+          className="h-4 w-4 rounded border-[var(--admin-border)]"
+        />
         Zone is active
       </label>
 
@@ -196,5 +239,4 @@ export function AdminDeliveryZoneForm({
     </form>
   );
 }
-
 

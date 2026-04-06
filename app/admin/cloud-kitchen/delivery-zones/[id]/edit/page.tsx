@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminDeliveryZoneForm } from "@/components/cloud-kitchen/admin-delivery-zone-form";
@@ -24,7 +24,7 @@ export default async function AdminCloudKitchenEditDeliveryZonePage({
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
         title={`Edit ${zone.name}`}
-        description="Update fee overrides, radius rules, or polygon points for this delivery area."
+        description="Update this optional delivery-zone override for the cloud kitchen."
         backHref="/admin/cloud-kitchen/delivery-zones"
       />
       <AdminDeliveryZoneForm
@@ -37,3 +37,4 @@ export default async function AdminCloudKitchenEditDeliveryZonePage({
     </div>
   );
 }
+

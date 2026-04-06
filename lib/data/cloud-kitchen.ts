@@ -1,9 +1,148 @@
-import { unstable_noStore as noStore } from "next/cache";
+﻿import { unstable_noStore as noStore } from "next/cache";
 
+import {
+  CLOUD_KITCHEN_SERVICE_DEFAULTS,
+  DEFAULT_CLOUD_KITCHEN_LOCATION,
+  DEFAULT_CLOUD_KITCHEN_NAME,
+  DEFAULT_CLOUD_KITCHEN_SLUG,
+  DEFAULT_FOOD_CATEGORY_NAME,
+  DEFAULT_FOOD_CATEGORY_SLUG,
+} from "@/lib/cloud-kitchen/defaults";
 import { prisma } from "@/lib/prisma";
 
 function toNumber(value: unknown) {
   return Number(value ?? 0);
+}
+
+export async function ensureDefaultKitchen() {
+  return prisma.kitchen.upsert({
+    where: {
+      slug: DEFAULT_CLOUD_KITCHEN_SLUG,
+    },
+    update: {
+      name: DEFAULT_CLOUD_KITCHEN_NAME,
+      description: `Freshly prepared meals delivered in ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes.`,
+      addressLine1: DEFAULT_CLOUD_KITCHEN_LOCATION.addressLine1,
+      city: DEFAULT_CLOUD_KITCHEN_LOCATION.city,
+      state: DEFAULT_CLOUD_KITCHEN_LOCATION.state,
+      postalCode: DEFAULT_CLOUD_KITCHEN_LOCATION.postalCode,
+      country: DEFAULT_CLOUD_KITCHEN_LOCATION.country,
+      latitude: DEFAULT_CLOUD_KITCHEN_LOCATION.latitude,
+      longitude: DEFAULT_CLOUD_KITCHEN_LOCATION.longitude,
+      maxDeliveryDistanceKm: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusKm,
+      minimumOrderAmount: 0,
+      deliveryFee: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee,
+      freeDeliveryMinimum: null,
+      preparationTimeMins: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins,
+      isActive: true,
+      acceptsOrders: true,
+      sortOrder: 0,
+    },
+    create: {
+      name: DEFAULT_CLOUD_KITCHEN_NAME,
+      slug: DEFAULT_CLOUD_KITCHEN_SLUG,
+      description: `Freshly prepared meals delivered in ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes.`,
+      phone: null,
+      email: null,
+      addressLine1: DEFAULT_CLOUD_KITCHEN_LOCATION.addressLine1,
+      addressLine2: null,
+      city: DEFAULT_CLOUD_KITCHEN_LOCATION.city,
+      state: DEFAULT_CLOUD_KITCHEN_LOCATION.state,
+      postalCode: DEFAULT_CLOUD_KITCHEN_LOCATION.postalCode,
+      country: DEFAULT_CLOUD_KITCHEN_LOCATION.country,
+      latitude: DEFAULT_CLOUD_KITCHEN_LOCATION.latitude,
+      longitude: DEFAULT_CLOUD_KITCHEN_LOCATION.longitude,
+      maxDeliveryDistanceKm: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusKm,
+      minimumOrderAmount: 0,
+      deliveryFee: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee,
+      freeDeliveryMinimum: null,
+      preparationTimeMins: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins,
+      isActive: true,
+      acceptsOrders: true,
+      sortOrder: 0,
+    },
+  });
+}
+
+export async function ensureDefaultFoodCategory() {
+  return prisma.foodCategory.upsert({
+    where: {
+      slug: DEFAULT_FOOD_CATEGORY_SLUG,
+    },
+    update: {
+      name: DEFAULT_FOOD_CATEGORY_NAME,
+      description: "Freshly prepared meals from the cloud kitchen menu.",
+      sortOrder: 0,
+      isActive: true,
+    },
+    create: {
+      name: DEFAULT_FOOD_CATEGORY_NAME,
+      slug: DEFAULT_FOOD_CATEGORY_SLUG,
+      description: "Freshly prepared meals from the cloud kitchen menu.",
+      sortOrder: 0,
+      isActive: true,
+    },
+  });
+}
+
+async function ensureCloudKitchenDefaults() {
+  await Promise.all([ensureDefaultKitchen(), ensureDefaultFoodCategory()]);
+}
+
+async function getHomepageFoodItems() {
+  const sharedQuery = {
+    include: {
+      kitchen: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+      foodCategory: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+    orderBy: [{ sortOrder: "asc" as const }, { createdAt: "desc" as const }],
+    take: 8,
+  };
+
+  const featuredItems = await prisma.foodItem.findMany({
+    ...sharedQuery,
+    where: {
+      isFeatured: true,
+      isAvailable: true,
+      kitchen: {
+        isActive: true,
+        acceptsOrders: true,
+      },
+      foodCategory: {
+        isActive: true,
+      },
+    },
+  });
+
+  if (featuredItems.length) {
+    return featuredItems;
+  }
+
+  return prisma.foodItem.findMany({
+    ...sharedQuery,
+    where: {
+      isAvailable: true,
+      kitchen: {
+        isActive: true,
+        acceptsOrders: true,
+      },
+      foodCategory: {
+        isActive: true,
+      },
+    },
+  });
 }
 
 function mapKitchen(kitchen: {
@@ -208,6 +347,7 @@ function mapFoodOrder(order: {
 
 export async function getFoodLandingData() {
   noStore();
+  await ensureCloudKitchenDefaults();
 
   const [kitchens, categories, featuredItems] = await Promise.all([
     prisma.kitchen.findMany({
@@ -245,37 +385,7 @@ export async function getFoodLandingData() {
       },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
-    prisma.foodItem.findMany({
-      where: {
-        isFeatured: true,
-        isAvailable: true,
-        kitchen: {
-          isActive: true,
-          acceptsOrders: true,
-        },
-        foodCategory: {
-          isActive: true,
-        },
-      },
-      include: {
-        kitchen: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        foodCategory: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-      },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      take: 8,
-    }),
+    getHomepageFoodItems(),
   ]);
 
   return {
@@ -367,6 +477,7 @@ export async function getFoodItemBySlug(slug: string, kitchenId: string) {
 
 export async function getKitchenDeliveryCoverage() {
   noStore();
+  await ensureDefaultKitchen();
 
   const kitchens = await prisma.kitchen.findMany({
     where: {
@@ -466,6 +577,7 @@ export async function getCustomerFoodOrderById(userId: string, orderId: string) 
 
 export async function getKitchenOptions() {
   noStore();
+  await ensureDefaultKitchen();
 
   return prisma.kitchen.findMany({
     select: {
@@ -479,6 +591,7 @@ export async function getKitchenOptions() {
 
 export async function getFoodCategoryOptions() {
   noStore();
+  await ensureDefaultFoodCategory();
 
   return prisma.foodCategory.findMany({
     select: {
@@ -492,6 +605,7 @@ export async function getFoodCategoryOptions() {
 
 export async function getAdminCloudKitchenDashboard() {
   noStore();
+  await ensureCloudKitchenDefaults();
 
   const [kitchens, categories, foods, orders, revenue, recentOrders] = await Promise.all([
     prisma.kitchen.count(),
@@ -541,6 +655,7 @@ export async function getAdminCloudKitchenDashboard() {
 
 export async function getAdminKitchens(query?: string) {
   noStore();
+  await ensureDefaultKitchen();
 
   const kitchens = await prisma.kitchen.findMany({
     where: query
@@ -579,6 +694,7 @@ export async function getAdminKitchenById(id: string) {
 
 export async function getAdminFoodCategories() {
   noStore();
+  await ensureDefaultFoodCategory();
 
   const categories = await prisma.foodCategory.findMany({
     include: {
@@ -801,4 +917,9 @@ export async function getAdminFoodOrderById(id: string) {
     deliveryAddress: mapDeliveryAddress(order.deliveryAddress),
   });
 }
+
+
+
+
+
 

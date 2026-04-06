@@ -10,6 +10,7 @@ import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { placeFoodOrderAction } from "@/lib/actions/cloud-kitchen-actions";
+import { CLOUD_KITCHEN_SERVICE_DEFAULTS } from "@/lib/cloud-kitchen/defaults";
 import { formatCurrency, formatDistanceKm } from "@/lib/utils";
 
 type DeliveryAddressOption = {
@@ -134,7 +135,7 @@ export function FoodCheckoutForm({
             <p className="section-label">Checkout</p>
             <h2 className="section-subtitle mt-2">Confirm your delivery details</h2>
             <p className="section-copy mt-2">
-              Your order will be prepared by {kitchenName} once the server confirms the mapped address and delivery rules.
+              Your order will be prepared by {kitchenName} once the server confirms the mapped address and delivery rules. Expected delivery is {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes for nearby orders.
             </p>
           </div>
 
@@ -232,7 +233,7 @@ export function FoodCheckoutForm({
             <span>{formatCurrency(subtotal + preview.deliveryFee)}</span>
           </div>
           <p className="pt-2 text-[0.72rem] leading-5">
-            Minimum order for this area: {formatCurrency(preview.minimumOrderAmount)}
+            Minimum order for this area: {formatCurrency(preview.minimumOrderAmount)}. Typical delivery time is {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes.
           </p>
           {preview.freeDeliveryMinimum !== null ? (
             <p className="text-[0.72rem] leading-5">
@@ -244,4 +245,7 @@ export function FoodCheckoutForm({
     </div>
   );
 }
+
+
+
 
