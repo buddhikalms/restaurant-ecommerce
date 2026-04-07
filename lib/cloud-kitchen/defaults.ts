@@ -44,7 +44,7 @@ export const DEFAULT_CLOUD_KITCHEN_LOCATION = {
 export const CLOUD_KITCHEN_SERVICE_DEFAULTS = {
   deliveryTimeMinMins: 40,
   deliveryTimeMaxMins: 60,
-  deliveryFee: 10,
+  deliveryFee: 2,
   deliveryRadiusMiles: 3,
   deliveryRadiusKm: Number((3 * 1.60934).toFixed(2)),
   pickupFee: 0,
