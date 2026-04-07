@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AccountNav } from "@/components/layout/account-nav";
@@ -19,6 +19,8 @@ export default async function AccountFoodOrderDetailPage({
   if (!order) {
     notFound();
   }
+
+  const isPickup = order.fulfillmentType === "PICKUP";
 
   return (
     <div className="page-shell py-6 sm:py-8">
@@ -50,7 +52,7 @@ export default async function AccountFoodOrderDetailPage({
                   <div>
                     <p className="font-medium text-[var(--foreground)]">{item.foodItemName}</p>
                     <p className="mt-1 text-[0.76rem] text-[var(--muted-foreground)]">
-                      {item.foodCategoryName} � {item.quantity} x {formatCurrency(item.unitPrice)}
+                      {item.foodCategoryName} • {item.quantity} x {formatCurrency(item.unitPrice)}
                     </p>
                   </div>
                   <p className="font-semibold text-[var(--foreground)]">{formatCurrency(item.lineTotal)}</p>
@@ -67,22 +69,28 @@ export default async function AccountFoodOrderDetailPage({
 
         <aside className="space-y-4">
           <section className="surface-card rounded-2xl p-5">
-            <p className="section-label">Delivery</p>
-            <h2 className="section-subtitle mt-2">Address and progress</h2>
+            <p className="section-label">{isPickup ? "Pickup" : "Delivery"}</p>
+            <h2 className="section-subtitle mt-2">{isPickup ? "Collection details" : "Address and progress"}</h2>
             <dl className="mt-4 space-y-3 text-[0.82rem] text-[var(--muted-foreground)]">
               <div>
                 <dt className="font-medium text-[var(--foreground)]">Kitchen</dt>
                 <dd className="mt-1">{order.kitchen?.name}</dd>
               </div>
               <div>
-                <dt className="font-medium text-[var(--foreground)]">Address</dt>
-                <dd className="mt-1">{order.deliveryAddress?.formattedAddress}</dd>
+                <dt className="font-medium text-[var(--foreground)]">Method</dt>
+                <dd className="mt-1">{isPickup ? "Pickup" : "Delivery"}</dd>
               </div>
               <div>
-                <dt className="font-medium text-[var(--foreground)]">Delivery area</dt>
-                <dd className="mt-1">{order.deliveryZone?.name ?? "Kitchen radius"}</dd>
+                <dt className="font-medium text-[var(--foreground)]">{isPickup ? "Pickup location" : "Address"}</dt>
+                <dd className="mt-1">{order.deliveryAddress?.formattedAddress}</dd>
               </div>
-              {order.distanceKm !== null ? (
+              {!isPickup ? (
+                <div>
+                  <dt className="font-medium text-[var(--foreground)]">Delivery area</dt>
+                  <dd className="mt-1">{order.deliveryZone?.name ?? "Kitchen radius"}</dd>
+                </div>
+              ) : null}
+              {!isPickup && order.distanceKm !== null ? (
                 <div>
                   <dt className="font-medium text-[var(--foreground)]">Distance</dt>
                   <dd className="mt-1">{formatDistanceKm(order.distanceKm)}</dd>
@@ -90,7 +98,7 @@ export default async function AccountFoodOrderDetailPage({
               ) : null}
               {order.deliveryAddress?.deliveryInstructions ? (
                 <div>
-                  <dt className="font-medium text-[var(--foreground)]">Instructions</dt>
+                  <dt className="font-medium text-[var(--foreground)]">{isPickup ? "Pickup instructions" : "Instructions"}</dt>
                   <dd className="mt-1">{order.deliveryAddress.deliveryInstructions}</dd>
                 </div>
               ) : null}
@@ -111,7 +119,7 @@ export default async function AccountFoodOrderDetailPage({
                 <span>{formatCurrency(order.subtotal)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Delivery fee</span>
+                <span>{isPickup ? "Pickup fee" : "Delivery fee"}</span>
                 <span>{formatCurrency(order.deliveryFee)}</span>
               </div>
               <div className="flex items-center justify-between border-t border-[var(--border)] pt-2 text-sm font-semibold text-[var(--foreground)]">

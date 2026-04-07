@@ -12,6 +12,8 @@ type FoodCartItem = {
   price: number;
   quantity: number;
   categoryName: string;
+  itemType: "SINGLE" | "COMBO";
+  offerTitle: string | null;
 };
 
 type FoodCartInput = Omit<FoodCartItem, "itemId" | "quantity"> & {
@@ -77,6 +79,8 @@ function normalizeStoredItems(raw: string | null): FoodCartItem[] {
               ? Math.max(1, Math.trunc(item.quantity))
               : 1,
           categoryName: item.categoryName,
+          itemType: item.itemType === "COMBO" ? "COMBO" : "SINGLE",
+          offerTitle: typeof item.offerTitle === "string" ? item.offerTitle : null,
         },
       ];
     });

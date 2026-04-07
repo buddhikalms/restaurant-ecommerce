@@ -1,8 +1,7 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { FoodItemCard } from "@/components/cloud-kitchen/food-item-card";
 import { FoodLocationSummary } from "@/components/cloud-kitchen/food-location-summary";
-import { CLOUD_KITCHEN_SERVICE_DEFAULTS } from "@/lib/cloud-kitchen/defaults";
 import { getFoodLocationSession } from "@/lib/cloud-kitchen/location-session";
 import { getFoodLandingData } from "@/lib/data/cloud-kitchen";
 
@@ -12,78 +11,39 @@ export default async function FoodLandingPage() {
     getFoodLandingData(),
   ]);
 
-  const serviceHighlights = [
-    {
-      label: "Delivery time",
-      title: `${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes`,
-      copy: "Fresh meals are prepared fast for nearby addresses.",
-    },
-    {
-      label: "Local delivery",
-      title: `£${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee} within ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusMiles} miles`,
-      copy: "Simple pricing keeps the order flow easy to understand.",
-    },
-    {
-      label: "Pickup",
-      title: "Free collection",
-      copy: "Browse online, then collect without an added delivery fee.",
-    },
-  ];
-
   return (
     <div className="space-y-6">
       <FoodLocationSummary selection={selection} />
 
-      <section className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)]">
-        <div className="rounded-[2rem] bg-[linear-gradient(135deg,#24150f_0%,#3b2415_48%,#1f2f28_100%)] p-6 text-white shadow-[0_30px_70px_rgba(28,18,12,0.18)]">
-          <p className="text-[0.74rem] uppercase tracking-[0.22em] text-[#f4d5a0]">
-            Ready-to-eat menu
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
-            Fresh cloud-kitchen meals with fast local delivery.
-          </h2>
-          <p className="mt-4 max-w-2xl text-[0.92rem] leading-7 text-white/76">
-            Validate the delivery point first, then browse the full meal menu with
-            the right kitchen routing, fee, and distance rules already in place.
-            Delivery is {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to {" "}
-            {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes and costs £
-            {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee} within {" "}
-            {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusMiles} miles.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+      {landing.comboPacks.length ? (
+        <section>
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div>
+              <p className="section-label">Combo offers</p>
+              <h2 className="section-subtitle mt-2">Popular combo packs</h2>
+            </div>
             <Link
-              href="/food/location"
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-white px-5 text-[0.86rem] font-semibold text-[#1b120d] transition hover:brightness-95"
+              href={selection ? "/food/menu?category=combo-packs" : "/food/location"}
+              className="warm-link text-[0.82rem]"
             >
-              <span className="text-black">
-                {selection
-                  ? "Update delivery location"
-                  : "Select delivery location"}
-              </span>
-            </Link>
-            <Link
-              href={selection ? "/food/menu" : "/food/location"}
-              className="inline-flex h-11 items-center justify-center rounded-xl border border-white/15 bg-white/10 px-5 text-[0.86rem] font-medium text-white transition hover:bg-white/14"
-            >
-              Browse menu
+              View combo packs
             </Link>
           </div>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-          {serviceHighlights.map((item) => (
-            <div key={item.title} className="surface-card rounded-2xl p-5">
-              <p className="section-label">{item.label}</p>
-              <h3 className="mt-2 text-lg font-semibold text-[var(--foreground)]">
-                {item.title}
-              </h3>
-              <p className="mt-2 text-[0.82rem] leading-6 text-[var(--muted-foreground)]">
-                {item.copy}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {landing.comboPacks.map((item: (typeof landing.comboPacks)[number]) => (
+              <FoodItemCard
+                key={item.id}
+                item={{
+                  ...item,
+                  foodCategory: {
+                    name: item.foodCategory?.name ?? "Combo pack",
+                  },
+                }}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section>
         <div className="mb-4 flex items-end justify-between gap-3">
@@ -118,7 +78,11 @@ export default async function FoodLandingPage() {
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {landing.categories.map(
           (category: (typeof landing.categories)[number]) => (
-            <div key={category.id} className="surface-card rounded-2xl p-5">
+            <Link
+              key={category.id}
+              href={selection ? `/food/menu?category=${category.slug}` : "/food/location"}
+              className="surface-card rounded-2xl p-5 transition hover:-translate-y-0.5"
+            >
               <p className="section-label">Category</p>
               <h3 className="mt-2 text-lg font-semibold text-[var(--foreground)]">
                 {category.name}
@@ -130,11 +94,10 @@ export default async function FoodLandingPage() {
               <p className="mt-3 text-[0.76rem] text-[var(--muted-foreground)]">
                 {category._count.foodItems} available items
               </p>
-            </div>
+            </Link>
           ),
         )}
       </section>
     </div>
   );
 }
-

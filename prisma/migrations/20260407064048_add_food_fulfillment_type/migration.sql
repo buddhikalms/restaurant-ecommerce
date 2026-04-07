@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `foodorder` ADD COLUMN `fulfillmentType` ENUM('DELIVERY', 'PICKUP') NOT NULL DEFAULT 'DELIVERY';

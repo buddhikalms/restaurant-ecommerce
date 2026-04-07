@@ -1,4 +1,4 @@
-﻿import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 import { z } from "zod";
 
 export const FOOD_LOCATION_COOKIE_NAME = "ceylontaste-food-location";
@@ -6,6 +6,7 @@ export const FOOD_LOCATION_COOKIE_NAME = "ceylontaste-food-location";
 const foodLocationSessionSchema = z.object({
   kitchenId: z.string(),
   kitchenName: z.string(),
+  fulfillmentType: z.enum(["DELIVERY", "PICKUP"]),
   deliveryZoneId: z.string().nullable(),
   deliveryZoneName: z.string().nullable(),
   distanceKm: z.number().nullable(),
@@ -58,4 +59,3 @@ export async function clearFoodLocationSession() {
   const cookieStore = await cookies();
   cookieStore.delete(FOOD_LOCATION_COOKIE_NAME);
 }
-

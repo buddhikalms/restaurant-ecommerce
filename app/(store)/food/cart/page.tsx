@@ -1,4 +1,4 @@
-﻿import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { FoodCartTable } from "@/components/cloud-kitchen/food-cart-table";
 import { FoodLocationSummary } from "@/components/cloud-kitchen/food-location-summary";
@@ -19,7 +19,7 @@ export default async function FoodCartPage() {
         <p className="section-label">Step 3</p>
         <h1 className="section-title mt-2">Review your food cart</h1>
         <p className="section-copy mt-2">
-          Quantities stay locked to the kitchen serving your selected delivery address.
+          Quantities stay locked to the kitchen serving your selected delivery or pickup order.
         </p>
       </section>
 
@@ -27,4 +27,5 @@ export default async function FoodCartPage() {
     </div>
   );
 }
+
 

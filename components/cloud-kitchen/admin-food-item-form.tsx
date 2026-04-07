@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -33,6 +33,7 @@ export function AdminFoodItemForm({
   const hasSingleCategory = categories.length === 1;
   const defaultKitchen = kitchens[0];
   const defaultCategory = categories[0];
+  const initialItemType = item?.itemType ?? "SINGLE";
   const {
     register,
     handleSubmit,
@@ -50,12 +51,19 @@ export function AdminFoodItemForm({
       imageUrl: item?.imageUrl ?? "",
       price: item?.price ?? 0,
       compareAtPrice: item?.compareAtPrice ?? null,
+      itemType: initialItemType,
+      offerTitle: item?.offerTitle ?? "",
+      offerDescription: item?.offerDescription ?? "",
+      includedItemsSummary: item?.includedItemsSummary ?? "",
       isAvailable: item?.isAvailable ?? true,
       isFeatured: item?.isFeatured ?? false,
       sortOrder: item?.sortOrder ?? 0,
       preparationTimeMins: item?.preparationTimeMins ?? null,
     },
   });
+  const [itemType, setItemType] = useState<FoodItemFormInput["itemType"]>(initialItemType);
+  const itemTypeField = register("itemType");
+  const isComboPack = itemType === "COMBO";
 
   return (
     <form
@@ -134,6 +142,21 @@ export function AdminFoodItemForm({
         )}
 
         <div>
+          <label className="admin-label">Item type</label>
+          <Select
+            {...itemTypeField}
+            onChange={(event) => {
+              itemTypeField.onChange(event);
+              setItemType(event.target.value as FoodItemFormInput["itemType"]);
+            }}
+          >
+            <option value="SINGLE">Standard item</option>
+            <option value="COMBO">Combo pack</option>
+          </Select>
+          <FieldError message={errors.itemType?.message} />
+        </div>
+
+        <div>
           <label className="admin-label">Item name</label>
           <Input {...register("name")} />
           <FieldError message={errors.name?.message} />
@@ -186,6 +209,41 @@ export function AdminFoodItemForm({
           <FieldError message={errors.sortOrder?.message} />
         </div>
       </div>
+
+      {isComboPack ? (
+        <div className="space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-4">
+          <div>
+            <p className="admin-label">Combo pack offer details</p>
+            <p className="mt-1 text-[0.78rem] leading-6 text-[var(--admin-muted-foreground)]">
+              Use this section to highlight the value offer and explain exactly what the combo includes on the menu page.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="admin-label">Offer title</label>
+              <Input {...register("offerTitle")} placeholder="Family feast offer" />
+              <FieldError message={errors.offerTitle?.message} />
+            </div>
+            <div>
+              <label className="admin-label">Included items summary</label>
+              <Input
+                {...register("includedItemsSummary")}
+                placeholder="2 mains, 2 sides, and 2 drinks"
+              />
+              <FieldError message={errors.includedItemsSummary?.message} />
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Offer description</label>
+            <Textarea
+              {...register("offerDescription")}
+              className="min-h-24"
+              placeholder="Describe the savings, bundle value, or who the combo is best for."
+            />
+            <FieldError message={errors.offerDescription?.message} />
+          </div>
+        </div>
+      ) : null}
 
       <div className="flex flex-wrap gap-4 text-[0.8rem] font-medium text-[var(--admin-foreground)]">
         <label className="flex items-center gap-2">

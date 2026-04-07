@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 
@@ -7,14 +7,18 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 
 export function FoodCartTable({ kitchenName }: { kitchenName: string | null }) {
-  const { items, subtotal, updateQuantity, removeItem, clearCart } = useFoodCart();
+  const { items, subtotal, updateQuantity, removeItem, clearCart } =
+    useFoodCart();
 
   if (!items.length) {
     return (
       <div className="surface-card rounded-2xl p-6">
-        <h2 className="text-lg font-semibold text-[var(--foreground)]">Your food cart is empty</h2>
+        <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          Your food cart is empty
+        </h2>
         <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
-          Choose a delivery location and add ready-to-eat items to start your order.
+          Choose a delivery location and add ready-to-eat items to start your
+          order.
         </p>
         <Link
           href="/food/location"
@@ -43,27 +47,51 @@ export function FoodCartTable({ kitchenName }: { kitchenName: string | null }) {
             <tbody className="divide-y divide-[var(--border)]">
               {items.map((item) => (
                 <tr key={item.itemId}>
-                  <td className="px-4 py-4">
+                  <td className="px-4 py-4 align-top">
                     <div>
-                      <p className="text-sm font-medium text-[var(--foreground)]">{item.name}</p>
-                      <p className="mt-1 text-[0.72rem] text-[var(--muted-foreground)]">{item.categoryName}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-medium text-[var(--foreground)]">
+                          {item.name}
+                        </p>
+                        {item.itemType === "COMBO" ? (
+                          <span className="inline-flex rounded-full bg-[rgba(184,107,87,0.12)] px-2.5 py-1 text-[0.66rem] font-semibold uppercase tracking-[0.08em] text-[var(--brand-dark)]">
+                            Combo
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="mt-1 text-[0.72rem] text-[var(--muted-foreground)]">
+                        {item.categoryName}
+                      </p>
+                      {item.itemType === "COMBO" && item.offerTitle ? (
+                        <p className="mt-1 text-[0.72rem] text-[var(--muted-foreground)]">
+                          {item.offerTitle}
+                        </p>
+                      ) : null}
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-sm text-[var(--foreground)]">{formatCurrency(item.price)}</td>
+                  <td className="px-4 py-4 text-sm text-[var(--foreground)]">
+                    {formatCurrency(item.price)}
+                  </td>
                   <td className="px-4 py-4">
                     <div className="flex h-9 items-center rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-1">
                       <button
                         type="button"
                         className="inline-flex h-7 w-7 items-center justify-center rounded text-sm text-[var(--muted-foreground)]"
-                        onClick={() => updateQuantity(item.itemId, item.quantity - 1)}
+                        onClick={() =>
+                          updateQuantity(item.itemId, item.quantity - 1)
+                        }
                       >
                         -
                       </button>
-                      <span className="w-8 text-center text-[0.82rem] text-[var(--foreground)]">{item.quantity}</span>
+                      <span className="w-8 text-center text-[0.82rem] text-[var(--foreground)]">
+                        {item.quantity}
+                      </span>
                       <button
                         type="button"
                         className="inline-flex h-7 w-7 items-center justify-center rounded text-sm text-[var(--muted-foreground)]"
-                        onClick={() => updateQuantity(item.itemId, item.quantity + 1)}
+                        onClick={() =>
+                          updateQuantity(item.itemId, item.quantity + 1)
+                        }
                       >
                         +
                       </button>
@@ -73,7 +101,11 @@ export function FoodCartTable({ kitchenName }: { kitchenName: string | null }) {
                     {formatCurrency(item.price * item.quantity)}
                   </td>
                   <td className="px-4 py-4">
-                    <button type="button" className="text-[0.8rem] text-[var(--danger)]" onClick={() => removeItem(item.itemId)}>
+                    <button
+                      type="button"
+                      className="text-[0.8rem] text-[var(--danger)]"
+                      onClick={() => removeItem(item.itemId)}
+                    >
                       Remove
                     </button>
                   </td>
@@ -91,8 +123,18 @@ export function FoodCartTable({ kitchenName }: { kitchenName: string | null }) {
         </p>
         <div className="mt-4 space-y-2 text-[0.82rem] text-[var(--muted-foreground)]">
           {items.map((item) => (
-            <div key={item.itemId} className="flex items-center justify-between gap-3">
-              <span className="line-clamp-1">{item.name} x {item.quantity}</span>
+            <div
+              key={item.itemId}
+              className="flex items-start justify-between gap-3"
+            >
+              <div>
+                <span className="line-clamp-1">
+                  {item.name} x {item.quantity}
+                </span>
+                {item.itemType === "COMBO" && item.offerTitle ? (
+                  <p className="mt-1 text-[0.7rem]">{item.offerTitle}</p>
+                ) : null}
+              </div>
               <span>{formatCurrency(item.price * item.quantity)}</span>
             </div>
           ))}
@@ -103,15 +145,21 @@ export function FoodCartTable({ kitchenName }: { kitchenName: string | null }) {
             <span className="font-medium">{formatCurrency(subtotal)}</span>
           </div>
           <p className="mt-2 text-[0.72rem] leading-5 text-[var(--muted-foreground)]">
-            Delivery fees and minimum order checks are confirmed securely on checkout.
+            Delivery fees and minimum order checks are confirmed securely on
+            checkout.
           </p>
           <Link
             href="/food/checkout"
             className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-xl bg-[var(--brand)] px-4 text-[0.84rem] font-medium text-white transition hover:bg-[var(--brand-dark)]"
           >
-            Continue to checkout
+            <span className="text-white"> Continue to checkout</span>
           </Link>
-          <Button type="button" variant="secondary" className="mt-2 w-full" onClick={clearCart}>
+          <Button
+            type="button"
+            variant="secondary"
+            className="mt-2 w-full"
+            onClick={clearCart}
+          >
             Clear cart
           </Button>
         </div>
@@ -119,4 +167,3 @@ export function FoodCartTable({ kitchenName }: { kitchenName: string | null }) {
     </div>
   );
 }
-

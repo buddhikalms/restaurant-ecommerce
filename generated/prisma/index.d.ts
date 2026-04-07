@@ -236,6 +236,22 @@ export const DeliveryZoneType: {
 
 export type DeliveryZoneType = (typeof DeliveryZoneType)[keyof typeof DeliveryZoneType]
 
+
+export const FoodItemType: {
+  SINGLE: 'SINGLE',
+  COMBO: 'COMBO'
+};
+
+export type FoodItemType = (typeof FoodItemType)[keyof typeof FoodItemType]
+
+
+export const FoodFulfillmentType: {
+  DELIVERY: 'DELIVERY',
+  PICKUP: 'PICKUP'
+};
+
+export type FoodFulfillmentType = (typeof FoodFulfillmentType)[keyof typeof FoodFulfillmentType]
+
 }
 
 export type Role = $Enums.Role
@@ -281,6 +297,14 @@ export const FoodOrderStatus: typeof $Enums.FoodOrderStatus
 export type DeliveryZoneType = $Enums.DeliveryZoneType
 
 export const DeliveryZoneType: typeof $Enums.DeliveryZoneType
+
+export type FoodItemType = $Enums.FoodItemType
+
+export const FoodItemType: typeof $Enums.FoodItemType
+
+export type FoodFulfillmentType = $Enums.FoodFulfillmentType
+
+export const FoodFulfillmentType: typeof $Enums.FoodFulfillmentType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -12359,6 +12383,10 @@ export namespace Prisma {
     imageUrl: string | null
     price: Decimal | null
     compareAtPrice: Decimal | null
+    itemType: $Enums.FoodItemType | null
+    offerTitle: string | null
+    offerDescription: string | null
+    includedItemsSummary: string | null
     isAvailable: boolean | null
     isFeatured: boolean | null
     sortOrder: number | null
@@ -12378,6 +12406,10 @@ export namespace Prisma {
     imageUrl: string | null
     price: Decimal | null
     compareAtPrice: Decimal | null
+    itemType: $Enums.FoodItemType | null
+    offerTitle: string | null
+    offerDescription: string | null
+    includedItemsSummary: string | null
     isAvailable: boolean | null
     isFeatured: boolean | null
     sortOrder: number | null
@@ -12397,6 +12429,10 @@ export namespace Prisma {
     imageUrl: number
     price: number
     compareAtPrice: number
+    itemType: number
+    offerTitle: number
+    offerDescription: number
+    includedItemsSummary: number
     isAvailable: number
     isFeatured: number
     sortOrder: number
@@ -12432,6 +12468,10 @@ export namespace Prisma {
     imageUrl?: true
     price?: true
     compareAtPrice?: true
+    itemType?: true
+    offerTitle?: true
+    offerDescription?: true
+    includedItemsSummary?: true
     isAvailable?: true
     isFeatured?: true
     sortOrder?: true
@@ -12451,6 +12491,10 @@ export namespace Prisma {
     imageUrl?: true
     price?: true
     compareAtPrice?: true
+    itemType?: true
+    offerTitle?: true
+    offerDescription?: true
+    includedItemsSummary?: true
     isAvailable?: true
     isFeatured?: true
     sortOrder?: true
@@ -12470,6 +12514,10 @@ export namespace Prisma {
     imageUrl?: true
     price?: true
     compareAtPrice?: true
+    itemType?: true
+    offerTitle?: true
+    offerDescription?: true
+    includedItemsSummary?: true
     isAvailable?: true
     isFeatured?: true
     sortOrder?: true
@@ -12576,6 +12624,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal
     compareAtPrice: Decimal | null
+    itemType: $Enums.FoodItemType
+    offerTitle: string | null
+    offerDescription: string | null
+    includedItemsSummary: string | null
     isAvailable: boolean
     isFeatured: boolean
     sortOrder: number
@@ -12614,6 +12666,10 @@ export namespace Prisma {
     imageUrl?: boolean
     price?: boolean
     compareAtPrice?: boolean
+    itemType?: boolean
+    offerTitle?: boolean
+    offerDescription?: boolean
+    includedItemsSummary?: boolean
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: boolean
@@ -12639,6 +12695,10 @@ export namespace Prisma {
     imageUrl?: boolean
     price?: boolean
     compareAtPrice?: boolean
+    itemType?: boolean
+    offerTitle?: boolean
+    offerDescription?: boolean
+    includedItemsSummary?: boolean
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: boolean
@@ -12647,7 +12707,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type FoodItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "kitchenId" | "foodCategoryId" | "name" | "slug" | "shortDescription" | "description" | "imageUrl" | "price" | "compareAtPrice" | "isAvailable" | "isFeatured" | "sortOrder" | "preparationTimeMins" | "createdAt" | "updatedAt", ExtArgs["result"]["foodItem"]>
+  export type FoodItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "kitchenId" | "foodCategoryId" | "name" | "slug" | "shortDescription" | "description" | "imageUrl" | "price" | "compareAtPrice" | "itemType" | "offerTitle" | "offerDescription" | "includedItemsSummary" | "isAvailable" | "isFeatured" | "sortOrder" | "preparationTimeMins" | "createdAt" | "updatedAt", ExtArgs["result"]["foodItem"]>
   export type FoodItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     kitchen?: boolean | KitchenDefaultArgs<ExtArgs>
     foodCategory?: boolean | FoodCategoryDefaultArgs<ExtArgs>
@@ -12673,6 +12733,10 @@ export namespace Prisma {
       imageUrl: string
       price: Prisma.Decimal
       compareAtPrice: Prisma.Decimal | null
+      itemType: $Enums.FoodItemType
+      offerTitle: string | null
+      offerDescription: string | null
+      includedItemsSummary: string | null
       isAvailable: boolean
       isFeatured: boolean
       sortOrder: number
@@ -13061,6 +13125,10 @@ export namespace Prisma {
     readonly imageUrl: FieldRef<"FoodItem", 'String'>
     readonly price: FieldRef<"FoodItem", 'Decimal'>
     readonly compareAtPrice: FieldRef<"FoodItem", 'Decimal'>
+    readonly itemType: FieldRef<"FoodItem", 'FoodItemType'>
+    readonly offerTitle: FieldRef<"FoodItem", 'String'>
+    readonly offerDescription: FieldRef<"FoodItem", 'String'>
+    readonly includedItemsSummary: FieldRef<"FoodItem", 'String'>
     readonly isAvailable: FieldRef<"FoodItem", 'Boolean'>
     readonly isFeatured: FieldRef<"FoodItem", 'Boolean'>
     readonly sortOrder: FieldRef<"FoodItem", 'Int'>
@@ -17143,6 +17211,7 @@ export namespace Prisma {
     orderNumber: string | null
     userId: string | null
     kitchenId: string | null
+    fulfillmentType: $Enums.FoodFulfillmentType | null
     deliveryAddressId: string | null
     deliveryZoneId: string | null
     status: $Enums.FoodOrderStatus | null
@@ -17164,6 +17233,7 @@ export namespace Prisma {
     orderNumber: string | null
     userId: string | null
     kitchenId: string | null
+    fulfillmentType: $Enums.FoodFulfillmentType | null
     deliveryAddressId: string | null
     deliveryZoneId: string | null
     status: $Enums.FoodOrderStatus | null
@@ -17185,6 +17255,7 @@ export namespace Prisma {
     orderNumber: number
     userId: number
     kitchenId: number
+    fulfillmentType: number
     deliveryAddressId: number
     deliveryZoneId: number
     status: number
@@ -17224,6 +17295,7 @@ export namespace Prisma {
     orderNumber?: true
     userId?: true
     kitchenId?: true
+    fulfillmentType?: true
     deliveryAddressId?: true
     deliveryZoneId?: true
     status?: true
@@ -17245,6 +17317,7 @@ export namespace Prisma {
     orderNumber?: true
     userId?: true
     kitchenId?: true
+    fulfillmentType?: true
     deliveryAddressId?: true
     deliveryZoneId?: true
     status?: true
@@ -17266,6 +17339,7 @@ export namespace Prisma {
     orderNumber?: true
     userId?: true
     kitchenId?: true
+    fulfillmentType?: true
     deliveryAddressId?: true
     deliveryZoneId?: true
     status?: true
@@ -17374,6 +17448,7 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     kitchenId: string
+    fulfillmentType: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     deliveryZoneId: string | null
     status: $Enums.FoodOrderStatus
@@ -17414,6 +17489,7 @@ export namespace Prisma {
     orderNumber?: boolean
     userId?: boolean
     kitchenId?: boolean
+    fulfillmentType?: boolean
     deliveryAddressId?: boolean
     deliveryZoneId?: boolean
     status?: boolean
@@ -17443,6 +17519,7 @@ export namespace Prisma {
     orderNumber?: boolean
     userId?: boolean
     kitchenId?: boolean
+    fulfillmentType?: boolean
     deliveryAddressId?: boolean
     deliveryZoneId?: boolean
     status?: boolean
@@ -17459,7 +17536,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type FoodOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "userId" | "kitchenId" | "deliveryAddressId" | "deliveryZoneId" | "status" | "customerName" | "customerEmail" | "customerPhone" | "notes" | "subtotal" | "deliveryFee" | "total" | "itemCount" | "distanceKm" | "createdAt" | "updatedAt", ExtArgs["result"]["foodOrder"]>
+  export type FoodOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "userId" | "kitchenId" | "fulfillmentType" | "deliveryAddressId" | "deliveryZoneId" | "status" | "customerName" | "customerEmail" | "customerPhone" | "notes" | "subtotal" | "deliveryFee" | "total" | "itemCount" | "distanceKm" | "createdAt" | "updatedAt", ExtArgs["result"]["foodOrder"]>
   export type FoodOrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     kitchen?: boolean | KitchenDefaultArgs<ExtArgs>
@@ -17483,6 +17560,7 @@ export namespace Prisma {
       orderNumber: string
       userId: string
       kitchenId: string
+      fulfillmentType: $Enums.FoodFulfillmentType
       deliveryAddressId: string
       deliveryZoneId: string | null
       status: $Enums.FoodOrderStatus
@@ -17875,6 +17953,7 @@ export namespace Prisma {
     readonly orderNumber: FieldRef<"FoodOrder", 'String'>
     readonly userId: FieldRef<"FoodOrder", 'String'>
     readonly kitchenId: FieldRef<"FoodOrder", 'String'>
+    readonly fulfillmentType: FieldRef<"FoodOrder", 'FoodFulfillmentType'>
     readonly deliveryAddressId: FieldRef<"FoodOrder", 'String'>
     readonly deliveryZoneId: FieldRef<"FoodOrder", 'String'>
     readonly status: FieldRef<"FoodOrder", 'FoodOrderStatus'>
@@ -28226,6 +28305,10 @@ export namespace Prisma {
     imageUrl: 'imageUrl',
     price: 'price',
     compareAtPrice: 'compareAtPrice',
+    itemType: 'itemType',
+    offerTitle: 'offerTitle',
+    offerDescription: 'offerDescription',
+    includedItemsSummary: 'includedItemsSummary',
     isAvailable: 'isAvailable',
     isFeatured: 'isFeatured',
     sortOrder: 'sortOrder',
@@ -28324,6 +28407,7 @@ export namespace Prisma {
     orderNumber: 'orderNumber',
     userId: 'userId',
     kitchenId: 'kitchenId',
+    fulfillmentType: 'fulfillmentType',
     deliveryAddressId: 'deliveryAddressId',
     deliveryZoneId: 'deliveryZoneId',
     status: 'status',
@@ -28693,7 +28777,10 @@ export namespace Prisma {
     slug: 'slug',
     shortDescription: 'shortDescription',
     description: 'description',
-    imageUrl: 'imageUrl'
+    imageUrl: 'imageUrl',
+    offerTitle: 'offerTitle',
+    offerDescription: 'offerDescription',
+    includedItemsSummary: 'includedItemsSummary'
   };
 
   export type FoodItemOrderByRelevanceFieldEnum = (typeof FoodItemOrderByRelevanceFieldEnum)[keyof typeof FoodItemOrderByRelevanceFieldEnum]
@@ -28941,6 +29028,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'FoodItemType'
+   */
+  export type EnumFoodItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FoodItemType'>
+    
+
+
+  /**
    * Reference to a field of type 'DeliveryZoneType'
    */
   export type EnumDeliveryZoneTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryZoneType'>
@@ -28972,6 +29066,13 @@ export namespace Prisma {
    * Reference to a field of type 'PaymentStatus'
    */
   export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'FoodFulfillmentType'
+   */
+  export type EnumFoodFulfillmentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FoodFulfillmentType'>
     
 
 
@@ -29958,6 +30059,10 @@ export namespace Prisma {
     imageUrl?: StringFilter<"FoodItem"> | string
     price?: DecimalFilter<"FoodItem"> | Decimal | DecimalJsLike | number | string
     compareAtPrice?: DecimalNullableFilter<"FoodItem"> | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFilter<"FoodItem"> | $Enums.FoodItemType
+    offerTitle?: StringNullableFilter<"FoodItem"> | string | null
+    offerDescription?: StringNullableFilter<"FoodItem"> | string | null
+    includedItemsSummary?: StringNullableFilter<"FoodItem"> | string | null
     isAvailable?: BoolFilter<"FoodItem"> | boolean
     isFeatured?: BoolFilter<"FoodItem"> | boolean
     sortOrder?: IntFilter<"FoodItem"> | number
@@ -29980,6 +30085,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     price?: SortOrder
     compareAtPrice?: SortOrderInput | SortOrder
+    itemType?: SortOrder
+    offerTitle?: SortOrderInput | SortOrder
+    offerDescription?: SortOrderInput | SortOrder
+    includedItemsSummary?: SortOrderInput | SortOrder
     isAvailable?: SortOrder
     isFeatured?: SortOrder
     sortOrder?: SortOrder
@@ -30006,6 +30115,10 @@ export namespace Prisma {
     imageUrl?: StringFilter<"FoodItem"> | string
     price?: DecimalFilter<"FoodItem"> | Decimal | DecimalJsLike | number | string
     compareAtPrice?: DecimalNullableFilter<"FoodItem"> | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFilter<"FoodItem"> | $Enums.FoodItemType
+    offerTitle?: StringNullableFilter<"FoodItem"> | string | null
+    offerDescription?: StringNullableFilter<"FoodItem"> | string | null
+    includedItemsSummary?: StringNullableFilter<"FoodItem"> | string | null
     isAvailable?: BoolFilter<"FoodItem"> | boolean
     isFeatured?: BoolFilter<"FoodItem"> | boolean
     sortOrder?: IntFilter<"FoodItem"> | number
@@ -30028,6 +30141,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     price?: SortOrder
     compareAtPrice?: SortOrderInput | SortOrder
+    itemType?: SortOrder
+    offerTitle?: SortOrderInput | SortOrder
+    offerDescription?: SortOrderInput | SortOrder
+    includedItemsSummary?: SortOrderInput | SortOrder
     isAvailable?: SortOrder
     isFeatured?: SortOrder
     sortOrder?: SortOrder
@@ -30055,6 +30172,10 @@ export namespace Prisma {
     imageUrl?: StringWithAggregatesFilter<"FoodItem"> | string
     price?: DecimalWithAggregatesFilter<"FoodItem"> | Decimal | DecimalJsLike | number | string
     compareAtPrice?: DecimalNullableWithAggregatesFilter<"FoodItem"> | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeWithAggregatesFilter<"FoodItem"> | $Enums.FoodItemType
+    offerTitle?: StringNullableWithAggregatesFilter<"FoodItem"> | string | null
+    offerDescription?: StringNullableWithAggregatesFilter<"FoodItem"> | string | null
+    includedItemsSummary?: StringNullableWithAggregatesFilter<"FoodItem"> | string | null
     isAvailable?: BoolWithAggregatesFilter<"FoodItem"> | boolean
     isFeatured?: BoolWithAggregatesFilter<"FoodItem"> | boolean
     sortOrder?: IntWithAggregatesFilter<"FoodItem"> | number
@@ -30511,6 +30632,7 @@ export namespace Prisma {
     orderNumber?: StringFilter<"FoodOrder"> | string
     userId?: StringFilter<"FoodOrder"> | string
     kitchenId?: StringFilter<"FoodOrder"> | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFilter<"FoodOrder"> | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFilter<"FoodOrder"> | string
     deliveryZoneId?: StringNullableFilter<"FoodOrder"> | string | null
     status?: EnumFoodOrderStatusFilter<"FoodOrder"> | $Enums.FoodOrderStatus
@@ -30537,6 +30659,7 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     kitchenId?: SortOrder
+    fulfillmentType?: SortOrder
     deliveryAddressId?: SortOrder
     deliveryZoneId?: SortOrderInput | SortOrder
     status?: SortOrder
@@ -30567,6 +30690,7 @@ export namespace Prisma {
     NOT?: FoodOrderWhereInput | FoodOrderWhereInput[]
     userId?: StringFilter<"FoodOrder"> | string
     kitchenId?: StringFilter<"FoodOrder"> | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFilter<"FoodOrder"> | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFilter<"FoodOrder"> | string
     deliveryZoneId?: StringNullableFilter<"FoodOrder"> | string | null
     status?: EnumFoodOrderStatusFilter<"FoodOrder"> | $Enums.FoodOrderStatus
@@ -30593,6 +30717,7 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     kitchenId?: SortOrder
+    fulfillmentType?: SortOrder
     deliveryAddressId?: SortOrder
     deliveryZoneId?: SortOrderInput | SortOrder
     status?: SortOrder
@@ -30622,6 +30747,7 @@ export namespace Prisma {
     orderNumber?: StringWithAggregatesFilter<"FoodOrder"> | string
     userId?: StringWithAggregatesFilter<"FoodOrder"> | string
     kitchenId?: StringWithAggregatesFilter<"FoodOrder"> | string
+    fulfillmentType?: EnumFoodFulfillmentTypeWithAggregatesFilter<"FoodOrder"> | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringWithAggregatesFilter<"FoodOrder"> | string
     deliveryZoneId?: StringNullableWithAggregatesFilter<"FoodOrder"> | string | null
     status?: EnumFoodOrderStatusWithAggregatesFilter<"FoodOrder"> | $Enums.FoodOrderStatus
@@ -32681,6 +32807,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -32703,6 +32833,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -32721,6 +32855,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -32743,6 +32881,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -32763,6 +32905,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -32780,6 +32926,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -32799,6 +32949,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -33331,6 +33485,7 @@ export namespace Prisma {
   export type FoodOrderCreateInput = {
     id?: string
     orderNumber: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     status?: $Enums.FoodOrderStatus
     customerName: string
     customerEmail: string
@@ -33355,6 +33510,7 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
@@ -33375,6 +33531,7 @@ export namespace Prisma {
   export type FoodOrderUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
@@ -33399,6 +33556,7 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
@@ -33421,6 +33579,7 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
@@ -33440,6 +33599,7 @@ export namespace Prisma {
   export type FoodOrderUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
@@ -33459,6 +33619,7 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
@@ -35490,6 +35651,13 @@ export namespace Prisma {
     sortOrder?: SortOrder
   }
 
+  export type EnumFoodItemTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FoodItemType | EnumFoodItemTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FoodItemType[]
+    notIn?: $Enums.FoodItemType[]
+    not?: NestedEnumFoodItemTypeFilter<$PrismaModel> | $Enums.FoodItemType
+  }
+
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | null
@@ -35538,6 +35706,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     price?: SortOrder
     compareAtPrice?: SortOrder
+    itemType?: SortOrder
+    offerTitle?: SortOrder
+    offerDescription?: SortOrder
+    includedItemsSummary?: SortOrder
     isAvailable?: SortOrder
     isFeatured?: SortOrder
     sortOrder?: SortOrder
@@ -35564,6 +35736,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     price?: SortOrder
     compareAtPrice?: SortOrder
+    itemType?: SortOrder
+    offerTitle?: SortOrder
+    offerDescription?: SortOrder
+    includedItemsSummary?: SortOrder
     isAvailable?: SortOrder
     isFeatured?: SortOrder
     sortOrder?: SortOrder
@@ -35583,6 +35759,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     price?: SortOrder
     compareAtPrice?: SortOrder
+    itemType?: SortOrder
+    offerTitle?: SortOrder
+    offerDescription?: SortOrder
+    includedItemsSummary?: SortOrder
     isAvailable?: SortOrder
     isFeatured?: SortOrder
     sortOrder?: SortOrder
@@ -35596,6 +35776,16 @@ export namespace Prisma {
     compareAtPrice?: SortOrder
     sortOrder?: SortOrder
     preparationTimeMins?: SortOrder
+  }
+
+  export type EnumFoodItemTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FoodItemType | EnumFoodItemTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FoodItemType[]
+    notIn?: $Enums.FoodItemType[]
+    not?: NestedEnumFoodItemTypeWithAggregatesFilter<$PrismaModel> | $Enums.FoodItemType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFoodItemTypeFilter<$PrismaModel>
+    _max?: NestedEnumFoodItemTypeFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -36078,6 +36268,13 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type EnumFoodFulfillmentTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FoodFulfillmentType | EnumFoodFulfillmentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FoodFulfillmentType[]
+    notIn?: $Enums.FoodFulfillmentType[]
+    not?: NestedEnumFoodFulfillmentTypeFilter<$PrismaModel> | $Enums.FoodFulfillmentType
+  }
+
   export type EnumFoodOrderStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.FoodOrderStatus | EnumFoodOrderStatusFieldRefInput<$PrismaModel>
     in?: $Enums.FoodOrderStatus[]
@@ -36106,6 +36303,7 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     kitchenId?: SortOrder
+    fulfillmentType?: SortOrder
     deliveryAddressId?: SortOrder
     deliveryZoneId?: SortOrder
     status?: SortOrder
@@ -36135,6 +36333,7 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     kitchenId?: SortOrder
+    fulfillmentType?: SortOrder
     deliveryAddressId?: SortOrder
     deliveryZoneId?: SortOrder
     status?: SortOrder
@@ -36156,6 +36355,7 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     kitchenId?: SortOrder
+    fulfillmentType?: SortOrder
     deliveryAddressId?: SortOrder
     deliveryZoneId?: SortOrder
     status?: SortOrder
@@ -36178,6 +36378,16 @@ export namespace Prisma {
     total?: SortOrder
     itemCount?: SortOrder
     distanceKm?: SortOrder
+  }
+
+  export type EnumFoodFulfillmentTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FoodFulfillmentType | EnumFoodFulfillmentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FoodFulfillmentType[]
+    notIn?: $Enums.FoodFulfillmentType[]
+    not?: NestedEnumFoodFulfillmentTypeWithAggregatesFilter<$PrismaModel> | $Enums.FoodFulfillmentType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFoodFulfillmentTypeFilter<$PrismaModel>
+    _max?: NestedEnumFoodFulfillmentTypeFilter<$PrismaModel>
   }
 
   export type EnumFoodOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -37629,6 +37839,10 @@ export namespace Prisma {
     connect?: FoodOrderItemWhereUniqueInput | FoodOrderItemWhereUniqueInput[]
   }
 
+  export type EnumFoodItemTypeFieldUpdateOperationsInput = {
+    set?: $Enums.FoodItemType
+  }
+
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
@@ -37989,6 +38203,10 @@ export namespace Prisma {
     connectOrCreate?: FoodOrderItemCreateOrConnectWithoutFoodOrderInput | FoodOrderItemCreateOrConnectWithoutFoodOrderInput[]
     createMany?: FoodOrderItemCreateManyFoodOrderInputEnvelope
     connect?: FoodOrderItemWhereUniqueInput | FoodOrderItemWhereUniqueInput[]
+  }
+
+  export type EnumFoodFulfillmentTypeFieldUpdateOperationsInput = {
+    set?: $Enums.FoodFulfillmentType
   }
 
   export type EnumFoodOrderStatusFieldUpdateOperationsInput = {
@@ -38810,6 +39028,23 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumFoodItemTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FoodItemType | EnumFoodItemTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FoodItemType[]
+    notIn?: $Enums.FoodItemType[]
+    not?: NestedEnumFoodItemTypeFilter<$PrismaModel> | $Enums.FoodItemType
+  }
+
+  export type NestedEnumFoodItemTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FoodItemType | EnumFoodItemTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FoodItemType[]
+    notIn?: $Enums.FoodItemType[]
+    not?: NestedEnumFoodItemTypeWithAggregatesFilter<$PrismaModel> | $Enums.FoodItemType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFoodItemTypeFilter<$PrismaModel>
+    _max?: NestedEnumFoodItemTypeFilter<$PrismaModel>
+  }
+
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | null
@@ -38970,11 +39205,28 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumFoodFulfillmentTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FoodFulfillmentType | EnumFoodFulfillmentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FoodFulfillmentType[]
+    notIn?: $Enums.FoodFulfillmentType[]
+    not?: NestedEnumFoodFulfillmentTypeFilter<$PrismaModel> | $Enums.FoodFulfillmentType
+  }
+
   export type NestedEnumFoodOrderStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.FoodOrderStatus | EnumFoodOrderStatusFieldRefInput<$PrismaModel>
     in?: $Enums.FoodOrderStatus[]
     notIn?: $Enums.FoodOrderStatus[]
     not?: NestedEnumFoodOrderStatusFilter<$PrismaModel> | $Enums.FoodOrderStatus
+  }
+
+  export type NestedEnumFoodFulfillmentTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FoodFulfillmentType | EnumFoodFulfillmentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FoodFulfillmentType[]
+    notIn?: $Enums.FoodFulfillmentType[]
+    not?: NestedEnumFoodFulfillmentTypeWithAggregatesFilter<$PrismaModel> | $Enums.FoodFulfillmentType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFoodFulfillmentTypeFilter<$PrismaModel>
+    _max?: NestedEnumFoodFulfillmentTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumFoodOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -39290,6 +39542,7 @@ export namespace Prisma {
   export type FoodOrderCreateWithoutUserInput = {
     id?: string
     orderNumber: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     status?: $Enums.FoodOrderStatus
     customerName: string
     customerEmail: string
@@ -39312,6 +39565,7 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
@@ -39592,6 +39846,7 @@ export namespace Prisma {
     orderNumber?: StringFilter<"FoodOrder"> | string
     userId?: StringFilter<"FoodOrder"> | string
     kitchenId?: StringFilter<"FoodOrder"> | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFilter<"FoodOrder"> | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFilter<"FoodOrder"> | string
     deliveryZoneId?: StringNullableFilter<"FoodOrder"> | string | null
     status?: EnumFoodOrderStatusFilter<"FoodOrder"> | $Enums.FoodOrderStatus
@@ -40400,6 +40655,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -40420,6 +40679,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -40490,6 +40753,7 @@ export namespace Prisma {
   export type FoodOrderCreateWithoutKitchenInput = {
     id?: string
     orderNumber: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     status?: $Enums.FoodOrderStatus
     customerName: string
     customerEmail: string
@@ -40512,6 +40776,7 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     userId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
@@ -40569,6 +40834,10 @@ export namespace Prisma {
     imageUrl?: StringFilter<"FoodItem"> | string
     price?: DecimalFilter<"FoodItem"> | Decimal | DecimalJsLike | number | string
     compareAtPrice?: DecimalNullableFilter<"FoodItem"> | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFilter<"FoodItem"> | $Enums.FoodItemType
+    offerTitle?: StringNullableFilter<"FoodItem"> | string | null
+    offerDescription?: StringNullableFilter<"FoodItem"> | string | null
+    includedItemsSummary?: StringNullableFilter<"FoodItem"> | string | null
     isAvailable?: BoolFilter<"FoodItem"> | boolean
     isFeatured?: BoolFilter<"FoodItem"> | boolean
     sortOrder?: IntFilter<"FoodItem"> | number
@@ -40640,6 +40909,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -40660,6 +40933,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -41022,6 +41299,7 @@ export namespace Prisma {
   export type FoodOrderCreateWithoutDeliveryZoneInput = {
     id?: string
     orderNumber: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     status?: $Enums.FoodOrderStatus
     customerName: string
     customerEmail: string
@@ -41045,6 +41323,7 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     status?: $Enums.FoodOrderStatus
     customerName: string
@@ -41200,6 +41479,7 @@ export namespace Prisma {
   export type FoodOrderCreateWithoutDeliveryAddressInput = {
     id?: string
     orderNumber: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     status?: $Enums.FoodOrderStatus
     customerName: string
     customerEmail: string
@@ -41223,6 +41503,7 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
     customerName: string
@@ -42587,6 +42868,7 @@ export namespace Prisma {
   export type FoodOrderCreateWithoutItemsInput = {
     id?: string
     orderNumber: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     status?: $Enums.FoodOrderStatus
     customerName: string
     customerEmail: string
@@ -42610,6 +42892,7 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
@@ -42640,6 +42923,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -42661,6 +42948,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -42688,6 +42979,7 @@ export namespace Prisma {
   export type FoodOrderUpdateWithoutItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
@@ -42711,6 +43003,7 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
@@ -42747,6 +43040,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -42768,6 +43065,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -44088,6 +44389,7 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
@@ -44391,6 +44693,7 @@ export namespace Prisma {
   export type FoodOrderUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
@@ -44413,6 +44716,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
@@ -44434,6 +44738,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
@@ -44808,6 +45113,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -44838,6 +45147,7 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     userId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
@@ -44863,6 +45173,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -44883,6 +45197,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -44902,6 +45220,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -44969,6 +45291,7 @@ export namespace Prisma {
   export type FoodOrderUpdateWithoutKitchenInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
@@ -44991,6 +45314,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
@@ -45012,6 +45336,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
@@ -45038,6 +45363,10 @@ export namespace Prisma {
     imageUrl: string
     price: Decimal | DecimalJsLike | number | string
     compareAtPrice?: Decimal | DecimalJsLike | number | string | null
+    itemType?: $Enums.FoodItemType
+    offerTitle?: string | null
+    offerDescription?: string | null
+    includedItemsSummary?: string | null
     isAvailable?: boolean
     isFeatured?: boolean
     sortOrder?: number
@@ -45055,6 +45384,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -45075,6 +45408,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -45094,6 +45431,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     compareAtPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    itemType?: EnumFoodItemTypeFieldUpdateOperationsInput | $Enums.FoodItemType
+    offerTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    offerDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    includedItemsSummary?: NullableStringFieldUpdateOperationsInput | string | null
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -45159,6 +45500,7 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryAddressId: string
     status?: $Enums.FoodOrderStatus
     customerName: string
@@ -45177,6 +45519,7 @@ export namespace Prisma {
   export type FoodOrderUpdateWithoutDeliveryZoneInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
@@ -45200,6 +45543,7 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
@@ -45221,6 +45565,7 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryAddressId?: StringFieldUpdateOperationsInput | string
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
@@ -45241,6 +45586,7 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     kitchenId: string
+    fulfillmentType?: $Enums.FoodFulfillmentType
     deliveryZoneId?: string | null
     status?: $Enums.FoodOrderStatus
     customerName: string
@@ -45259,6 +45605,7 @@ export namespace Prisma {
   export type FoodOrderUpdateWithoutDeliveryAddressInput = {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
@@ -45282,6 +45629,7 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string
@@ -45303,6 +45651,7 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     kitchenId?: StringFieldUpdateOperationsInput | string
+    fulfillmentType?: EnumFoodFulfillmentTypeFieldUpdateOperationsInput | $Enums.FoodFulfillmentType
     deliveryZoneId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumFoodOrderStatusFieldUpdateOperationsInput | $Enums.FoodOrderStatus
     customerName?: StringFieldUpdateOperationsInput | string

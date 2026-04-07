@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminFoodItemForm } from "@/components/cloud-kitchen/admin-food-item-form";
@@ -29,7 +29,7 @@ export default async function AdminCloudKitchenEditFoodPage({
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
         title={`Edit ${item.name}`}
-        description="Update pricing, availability, and meal details without manually managing kitchen registration."
+        description="Update pricing, combo offers, availability, and menu details without manually managing kitchen registration."
         backHref="/admin/cloud-kitchen/foods"
       />
       <AdminFoodItemForm
@@ -37,6 +37,9 @@ export default async function AdminCloudKitchenEditFoodPage({
           ...item,
           shortDescription: item.shortDescription ?? undefined,
           compareAtPrice: item.compareAtPrice ?? undefined,
+          offerTitle: item.offerTitle ?? undefined,
+          offerDescription: item.offerDescription ?? undefined,
+          includedItemsSummary: item.includedItemsSummary ?? undefined,
           preparationTimeMins: item.preparationTimeMins ?? undefined,
         }}
         kitchens={kitchens}
@@ -45,4 +48,3 @@ export default async function AdminCloudKitchenEditFoodPage({
     </div>
   );
 }
-

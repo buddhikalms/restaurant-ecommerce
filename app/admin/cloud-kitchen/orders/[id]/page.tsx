@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminFoodOrderStatusForm } from "@/components/cloud-kitchen/admin-food-order-status-form";
@@ -18,12 +18,14 @@ export default async function AdminCloudKitchenOrderDetailPage({
     notFound();
   }
 
+  const isPickup = order.fulfillmentType === "PICKUP";
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
         title={order.orderNumber}
-        description={`Customer ${order.customerName} � ${order.kitchen?.name}`}
+        description={`Customer ${order.customerName} • ${order.kitchen?.name}`}
         backHref="/admin/cloud-kitchen/orders"
       />
 
@@ -43,7 +45,7 @@ export default async function AdminCloudKitchenOrderDetailPage({
                   <div>
                     <p className="font-medium text-[var(--admin-foreground)]">{item.foodItemName}</p>
                     <p className="mt-1 text-[0.76rem] text-[var(--admin-muted-foreground)]">
-                      {item.foodCategoryName} � {item.quantity} x {formatCurrency(item.unitPrice)}
+                      {item.foodCategoryName} • {item.quantity} x {formatCurrency(item.unitPrice)}
                     </p>
                   </div>
                   <p className="font-semibold text-[var(--admin-foreground)]">{formatCurrency(item.lineTotal)}</p>
@@ -63,7 +65,7 @@ export default async function AdminCloudKitchenOrderDetailPage({
           </section>
 
           <section className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-5">
-            <p className="admin-kicker">Delivery</p>
+            <p className="admin-kicker">{isPickup ? "Pickup" : "Delivery"}</p>
             <dl className="mt-4 space-y-3 text-[0.82rem] text-[var(--admin-muted-foreground)]">
               <div>
                 <dt className="font-medium text-[var(--admin-foreground)]">Placed</dt>
@@ -75,17 +77,23 @@ export default async function AdminCloudKitchenOrderDetailPage({
               </div>
               <div>
                 <dt className="font-medium text-[var(--admin-foreground)]">Customer</dt>
-                <dd className="mt-1">{order.customerName} � {order.customerPhone}</dd>
+                <dd className="mt-1">{order.customerName} • {order.customerPhone}</dd>
               </div>
               <div>
-                <dt className="font-medium text-[var(--admin-foreground)]">Address</dt>
+                <dt className="font-medium text-[var(--admin-foreground)]">Method</dt>
+                <dd className="mt-1">{isPickup ? "Pickup" : "Delivery"}</dd>
+              </div>
+              <div>
+                <dt className="font-medium text-[var(--admin-foreground)]">{isPickup ? "Pickup location" : "Address"}</dt>
                 <dd className="mt-1">{order.deliveryAddress?.formattedAddress}</dd>
               </div>
-              <div>
-                <dt className="font-medium text-[var(--admin-foreground)]">Zone</dt>
-                <dd className="mt-1">{order.deliveryZone?.name ?? "Kitchen radius"}</dd>
-              </div>
-              {order.distanceKm !== null ? (
+              {!isPickup ? (
+                <div>
+                  <dt className="font-medium text-[var(--admin-foreground)]">Zone</dt>
+                  <dd className="mt-1">{order.deliveryZone?.name ?? "Kitchen radius"}</dd>
+                </div>
+              ) : null}
+              {!isPickup && order.distanceKm !== null ? (
                 <div>
                   <dt className="font-medium text-[var(--admin-foreground)]">Distance</dt>
                   <dd className="mt-1">{formatDistanceKm(order.distanceKm)}</dd>
@@ -93,7 +101,7 @@ export default async function AdminCloudKitchenOrderDetailPage({
               ) : null}
               {order.deliveryAddress?.deliveryInstructions ? (
                 <div>
-                  <dt className="font-medium text-[var(--admin-foreground)]">Instructions</dt>
+                  <dt className="font-medium text-[var(--admin-foreground)]">{isPickup ? "Pickup instructions" : "Instructions"}</dt>
                   <dd className="mt-1">{order.deliveryAddress.deliveryInstructions}</dd>
                 </div>
               ) : null}
@@ -114,7 +122,7 @@ export default async function AdminCloudKitchenOrderDetailPage({
                 <span>{formatCurrency(order.subtotal)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Delivery fee</span>
+                <span>{isPickup ? "Pickup fee" : "Delivery fee"}</span>
                 <span>{formatCurrency(order.deliveryFee)}</span>
               </div>
               <div className="flex items-center justify-between border-t border-[var(--admin-border)] pt-2 text-sm font-semibold text-[var(--admin-foreground)]">

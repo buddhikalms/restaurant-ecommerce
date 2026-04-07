@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const foodFulfillmentTypeSchema = z.enum(["DELIVERY", "PICKUP"]);
+
 export const kitchenSchema = z.object({
   id: z.string().optional(),
   name: z.string().trim().min(2, "Kitchen name is required"),
@@ -46,29 +48,65 @@ export const foodCategorySchema = z.object({
   isActive: z.boolean(),
 });
 
-export const foodItemSchema = z.object({
-  id: z.string().optional(),
-  kitchenId: z.string().min(1, "Choose a kitchen"),
-  foodCategoryId: z.string().min(1, "Choose a food category"),
-  name: z.string().trim().min(2, "Food item name is required"),
-  slug: z.string().trim().optional(),
-  shortDescription: z
-    .string()
-    .trim()
-    .max(180, "Short description must be 180 characters or fewer")
-    .optional(),
-  description: z
-    .string()
-    .trim()
-    .min(10, "Description should be at least 10 characters"),
-  imageUrl: z.string().trim().url("Enter a valid image URL"),
-  price: z.coerce.number().positive("Price must be greater than zero"),
-  compareAtPrice: z.coerce.number().positive().nullable().optional(),
-  isAvailable: z.boolean(),
-  isFeatured: z.boolean(),
-  sortOrder: z.coerce.number().int().min(0),
-  preparationTimeMins: z.coerce.number().int().min(5).max(240).nullable().optional(),
-});
+export const foodItemSchema = z
+  .object({
+    id: z.string().optional(),
+    kitchenId: z.string().min(1, "Choose a kitchen"),
+    foodCategoryId: z.string().min(1, "Choose a food category"),
+    name: z.string().trim().min(2, "Food item name is required"),
+    slug: z.string().trim().optional(),
+    shortDescription: z
+      .string()
+      .trim()
+      .max(180, "Short description must be 180 characters or fewer")
+      .optional(),
+    description: z
+      .string()
+      .trim()
+      .min(10, "Description should be at least 10 characters"),
+    imageUrl: z.string().trim().url("Enter a valid image URL"),
+    price: z.coerce.number().positive("Price must be greater than zero"),
+    compareAtPrice: z.coerce.number().positive().nullable().optional(),
+    itemType: z.enum(["SINGLE", "COMBO"]),
+    offerTitle: z
+      .string()
+      .trim()
+      .max(120, "Offer title must be 120 characters or fewer")
+      .optional(),
+    offerDescription: z
+      .string()
+      .trim()
+      .max(500, "Offer description must be 500 characters or fewer")
+      .optional(),
+    includedItemsSummary: z
+      .string()
+      .trim()
+      .max(800, "Included items summary must be 800 characters or fewer")
+      .optional(),
+    isAvailable: z.boolean(),
+    isFeatured: z.boolean(),
+    sortOrder: z.coerce.number().int().min(0),
+    preparationTimeMins: z.coerce.number().int().min(5).max(240).nullable().optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.itemType === "COMBO") {
+      if (!value.offerTitle?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["offerTitle"],
+          message: "Offer title is required for combo packs",
+        });
+      }
+
+      if (!value.includedItemsSummary?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["includedItemsSummary"],
+          message: "Describe what is included in the combo pack",
+        });
+      }
+    }
+  });
 
 export const deliveryZoneSchema = z
   .object({
@@ -171,6 +209,7 @@ export const foodOrderItemSchema = z.object({
 
 export const foodOrderSchema = z.object({
   kitchenId: z.string().min(1),
+  fulfillmentType: foodFulfillmentTypeSchema,
   deliveryAddress: saveDeliveryAddressSchema,
   items: z.array(foodOrderItemSchema).min(1, "Add at least one food item"),
   notes: z
@@ -203,3 +242,4 @@ export type DeliveryEligibilityInput = z.infer<typeof deliveryEligibilitySchema>
 export type SaveDeliveryAddressInput = z.infer<typeof saveDeliveryAddressSchema>;
 export type FoodOrderInput = z.infer<typeof foodOrderSchema>;
 export type FoodOrderStatusInput = z.infer<typeof foodOrderStatusSchema>;
+export type FoodFulfillmentType = z.infer<typeof foodFulfillmentTypeSchema>;

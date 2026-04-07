@@ -34,11 +34,28 @@ export default async function FoodItemDetailPage({ params }: { params: Promise<{
           className="h-[420px] w-full rounded-[2rem] object-cover"
         />
         <div className="surface-card rounded-[2rem] p-6">
-          <p className="section-label">{item.foodCategory?.name}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="section-label">{item.foodCategory?.name}</p>
+            {item.itemType === "COMBO" ? (
+              <span className="inline-flex rounded-full bg-[rgba(184,107,87,0.12)] px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-[var(--brand-dark)]">
+                Combo pack
+              </span>
+            ) : null}
+          </div>
           <h1 className="section-title mt-2">{item.name}</h1>
+          {item.itemType === "COMBO" && item.offerTitle ? (
+            <p className="mt-3 text-sm font-semibold text-[var(--foreground)]">{item.offerTitle}</p>
+          ) : null}
           <p className="mt-3 text-[0.92rem] leading-7 text-[var(--muted-foreground)]">
             {item.description}
           </p>
+          {item.itemType === "COMBO" && item.includedItemsSummary ? (
+            <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4 text-[0.82rem] text-[var(--muted-foreground)]">
+              <p className="font-medium text-[var(--foreground)]">What&apos;s included</p>
+              <p className="mt-2">{item.includedItemsSummary}</p>
+              {item.offerDescription ? <p className="mt-2">{item.offerDescription}</p> : null}
+            </div>
+          ) : null}
           <div className="mt-5 flex items-end justify-between gap-4">
             <div>
               <p className="text-2xl font-semibold text-[var(--foreground)]">{formatCurrency(item.price)}</p>
@@ -62,6 +79,8 @@ export default async function FoodItemDetailPage({ params }: { params: Promise<{
                 imageUrl: item.imageUrl,
                 price: item.price,
                 categoryName: item.foodCategory?.name ?? "Menu item",
+                itemType: item.itemType,
+                offerTitle: item.offerTitle,
               }}
             />
           </div>

@@ -84,6 +84,16 @@ enum DeliveryZoneType {
   POLYGON
 }
 
+enum FoodItemType {
+  SINGLE
+  COMBO
+}
+
+enum FoodFulfillmentType {
+  DELIVERY
+  PICKUP
+}
+
 model User {
   id                String            @id @default(cuid())
   name              String
@@ -270,26 +280,29 @@ model FoodCategory {
 }
 
 model FoodItem {
-  id                  String       @id @default(cuid())
-  kitchenId           String
-  kitchen             Kitchen      @relation(fields: [kitchenId], references: [id], onDelete: Cascade)
-  foodCategoryId      String
-  foodCategory        FoodCategory @relation(fields: [foodCategoryId], references: [id], onDelete: Restrict)
-  name                String
-  slug                String       @unique
-  shortDescription    String?
-  description         String       @db.Text
-  imageUrl            String       @db.Text
-  price               Decimal      @db.Decimal(10, 2)
-  compareAtPrice      Decimal?     @db.Decimal(10, 2)
-  isAvailable         Boolean      @default(true)
-  isFeatured          Boolean      @default(false)
-  sortOrder           Int          @default(0)
-  preparationTimeMins Int?
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @updatedAt
-  orderItems          FoodOrderItem[]
-
+  id                   String       @id @default(cuid())
+  kitchenId            String
+  kitchen              Kitchen      @relation(fields: [kitchenId], references: [id], onDelete: Cascade)
+  foodCategoryId       String
+  foodCategory         FoodCategory @relation(fields: [foodCategoryId], references: [id], onDelete: Restrict)
+  name                 String
+  slug                 String       @unique
+  shortDescription     String?
+  description          String       @db.Text
+  imageUrl             String       @db.Text
+  price                Decimal      @db.Decimal(10, 2)
+  compareAtPrice       Decimal?     @db.Decimal(10, 2)
+  itemType             FoodItemType @default(SINGLE)
+  offerTitle           String?
+  offerDescription     String?      @db.Text
+  includedItemsSummary String?      @db.Text
+  isAvailable          Boolean      @default(true)
+  isFeatured           Boolean      @default(false)
+  sortOrder            Int          @default(0)
+  preparationTimeMins  Int?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  orderItems           FoodOrderItem[]
   @@index([kitchenId, isAvailable, sortOrder])
   @@index([foodCategoryId, isAvailable, sortOrder])
 }
@@ -389,12 +402,13 @@ model Order {
 }
 
 model FoodOrder {
-  id                String          @id @default(cuid())
-  orderNumber       String          @unique
+  id                String              @id @default(cuid())
+  orderNumber       String              @unique
   userId            String
-  user              User            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user              User                @relation(fields: [userId], references: [id], onDelete: Restrict)
   kitchenId         String
-  kitchen           Kitchen         @relation(fields: [kitchenId], references: [id], onDelete: Restrict)
+  kitchen           Kitchen             @relation(fields: [kitchenId], references: [id], onDelete: Restrict)
+  fulfillmentType   FoodFulfillmentType @default(DELIVERY)
   deliveryAddressId String
   deliveryAddress   DeliveryAddress @relation(fields: [deliveryAddressId], references: [id], onDelete: Restrict)
   deliveryZoneId    String?
@@ -598,3 +612,5 @@ model CheckoutSession {
   @@index([shippingZoneId])
   @@index([shippingMethodId])
 }
+
+

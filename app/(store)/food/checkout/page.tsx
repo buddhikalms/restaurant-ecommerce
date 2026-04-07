@@ -1,11 +1,14 @@
-﻿import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { FoodCheckoutForm } from "@/components/cloud-kitchen/food-checkout-form";
 import { FoodLocationSummary } from "@/components/cloud-kitchen/food-location-summary";
 import { requireRetailUser } from "@/lib/auth-helpers";
 import { getFoodLocationSession } from "@/lib/cloud-kitchen/location-session";
 import { resolveDeliveryEligibility } from "@/lib/cloud-kitchen/service";
-import { getCustomerDeliveryAddresses } from "@/lib/data/cloud-kitchen";
+import {
+  getCustomerDeliveryAddresses,
+  getKitchenDeliveryCoverage,
+} from "@/lib/data/cloud-kitchen";
 
 export default async function FoodCheckoutPage() {
   const user = await requireRetailUser();
@@ -15,16 +18,82 @@ export default async function FoodCheckoutPage() {
     redirect("/food/location");
   }
 
-  const [savedAddresses, preview] = await Promise.all([
+  const [savedAddresses, kitchens] = await Promise.all([
     getCustomerDeliveryAddresses(user.id),
-    resolveDeliveryEligibility({
-      location: {
-        latitude: selection.address.latitude,
-        longitude: selection.address.longitude,
-      },
-      subtotal: 0,
-    }),
+    getKitchenDeliveryCoverage(),
   ]);
+
+  const kitchen = kitchens.find((entry) => entry.id === selection.kitchenId);
+
+  if (!kitchen) {
+    redirect("/food/location");
+  }
+
+  if (selection.fulfillmentType === "PICKUP") {
+    const pickupAddress = {
+      label: "Pickup",
+      recipientName: user.name ?? "",
+      phone: "",
+      line1: kitchen.addressLine1,
+      line2: kitchen.addressLine2,
+      city: kitchen.city,
+      state: kitchen.state,
+      postalCode: kitchen.postalCode,
+      country: kitchen.country,
+      formattedAddress: [
+        kitchen.addressLine1,
+        kitchen.addressLine2,
+        kitchen.city,
+        kitchen.state,
+        kitchen.postalCode,
+        kitchen.country,
+      ]
+        .filter(Boolean)
+        .join(", "),
+      placeId: null,
+      latitude: kitchen.latitude,
+      longitude: kitchen.longitude,
+      deliveryInstructions: null,
+    };
+
+    return (
+      <div className="space-y-6">
+        <FoodLocationSummary selection={selection} />
+
+        <section className="surface-card rounded-2xl p-5">
+          <p className="section-label">Step 4</p>
+          <h1 className="section-title mt-2">Checkout and place your pickup order</h1>
+          <p className="section-copy mt-2">
+            Pickup orders are sent directly to the kitchen without delivery validation or delivery fees.
+          </p>
+        </section>
+
+        <FoodCheckoutForm
+          kitchenId={selection.kitchenId}
+          kitchenName={selection.kitchenName}
+          preview={{
+            fulfillmentType: "PICKUP",
+            kitchenId: kitchen.id,
+            kitchenName: kitchen.name,
+            deliveryZoneName: null,
+            distanceKm: null,
+            deliveryFee: 0,
+            minimumOrderAmount: 0,
+            freeDeliveryMinimum: null,
+          }}
+          address={pickupAddress}
+        />
+      </div>
+    );
+  }
+
+  const preview = await resolveDeliveryEligibility({
+    location: {
+      latitude: selection.address.latitude,
+      longitude: selection.address.longitude,
+    },
+    subtotal: 0,
+  });
 
   if (!preview.eligible || preview.kitchen.id !== selection.kitchenId) {
     redirect("/food/location");
@@ -70,6 +139,7 @@ export default async function FoodCheckoutPage() {
         kitchenId={selection.kitchenId}
         kitchenName={selection.kitchenName}
         preview={{
+          fulfillmentType: "DELIVERY",
           kitchenId: preview.kitchen.id,
           kitchenName: preview.kitchen.name,
           deliveryZoneName: preview.deliveryZone?.name ?? null,
@@ -83,4 +153,3 @@ export default async function FoodCheckoutPage() {
     </div>
   );
 }
-

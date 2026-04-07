@@ -1,11 +1,11 @@
-﻿import { unstable_noStore as noStore } from "next/cache";
+import { unstable_noStore as noStore } from "next/cache";
 
 import {
   CLOUD_KITCHEN_SERVICE_DEFAULTS,
   DEFAULT_CLOUD_KITCHEN_LOCATION,
   DEFAULT_CLOUD_KITCHEN_NAME,
   DEFAULT_CLOUD_KITCHEN_SLUG,
-  DEFAULT_FOOD_CATEGORY_NAME,
+  DEFAULT_FOOD_CATEGORIES,
   DEFAULT_FOOD_CATEGORY_SLUG,
 } from "@/lib/cloud-kitchen/defaults";
 import { prisma } from "@/lib/prisma";
@@ -65,24 +65,30 @@ export async function ensureDefaultKitchen() {
 }
 
 export async function ensureDefaultFoodCategory() {
-  return prisma.foodCategory.upsert({
-    where: {
-      slug: DEFAULT_FOOD_CATEGORY_SLUG,
-    },
-    update: {
-      name: DEFAULT_FOOD_CATEGORY_NAME,
-      description: "Freshly prepared meals from the cloud kitchen menu.",
-      sortOrder: 0,
-      isActive: true,
-    },
-    create: {
-      name: DEFAULT_FOOD_CATEGORY_NAME,
-      slug: DEFAULT_FOOD_CATEGORY_SLUG,
-      description: "Freshly prepared meals from the cloud kitchen menu.",
-      sortOrder: 0,
-      isActive: true,
-    },
-  });
+  const categories = await Promise.all(
+    DEFAULT_FOOD_CATEGORIES.map((category) =>
+      prisma.foodCategory.upsert({
+        where: {
+          slug: category.slug,
+        },
+        update: {
+          name: category.name,
+          description: category.description,
+          sortOrder: category.sortOrder,
+          isActive: true,
+        },
+        create: {
+          name: category.name,
+          slug: category.slug,
+          description: category.description,
+          sortOrder: category.sortOrder,
+          isActive: true,
+        },
+      }),
+    ),
+  );
+
+  return categories.find((category) => category.slug === DEFAULT_FOOD_CATEGORY_SLUG) ?? categories[0];
 }
 
 async function ensureCloudKitchenDefaults() {
@@ -200,6 +206,10 @@ function mapFoodItem(item: {
   imageUrl: string;
   price: { toString(): string };
   compareAtPrice: { toString(): string } | null;
+  itemType: "SINGLE" | "COMBO";
+  offerTitle: string | null;
+  offerDescription: string | null;
+  includedItemsSummary: string | null;
   isAvailable: boolean;
   isFeatured: boolean;
   sortOrder: number;
@@ -289,6 +299,7 @@ function mapDeliveryAddress(address: {
 function mapFoodOrder(order: {
   id: string;
   orderNumber: string;
+  fulfillmentType: "DELIVERY" | "PICKUP";
   status: string;
   customerName: string;
   customerEmail: string;
@@ -349,7 +360,7 @@ export async function getFoodLandingData() {
   noStore();
   await ensureCloudKitchenDefaults();
 
-  const [kitchens, categories, featuredItems] = await Promise.all([
+  const [kitchens, categories, featuredItems, comboPacks] = await Promise.all([
     prisma.kitchen.findMany({
       where: {
         isActive: true,
@@ -386,12 +397,44 @@ export async function getFoodLandingData() {
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
     getHomepageFoodItems(),
+    prisma.foodItem.findMany({
+      where: {
+        itemType: "COMBO",
+        isAvailable: true,
+        kitchen: {
+          isActive: true,
+          acceptsOrders: true,
+        },
+        foodCategory: {
+          isActive: true,
+        },
+      },
+      include: {
+        kitchen: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        foodCategory: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+      orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
+      take: 4,
+    }),
   ]);
 
   return {
     kitchens: kitchens.map(mapKitchen),
     categories,
     featuredItems: featuredItems.map(mapFoodItem),
+    comboPacks: comboPacks.map(mapFoodItem),
   };
 }
 
@@ -432,12 +475,17 @@ export async function getKitchenMenuById(kitchenId: string) {
     orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
   });
 
+  const mappedCategories = categories.map((category) => ({
+    ...category,
+    foodItems: category.foodItems.map(mapFoodItem),
+  }));
+
   return {
     kitchen: mapKitchen(kitchen),
-    categories: categories.map((category) => ({
-      ...category,
-      foodItems: category.foodItems.map(mapFoodItem),
-    })),
+    categories: mappedCategories,
+    comboPacks: mappedCategories.flatMap((category) =>
+      category.foodItems.filter((item) => item.itemType === "COMBO"),
+    ),
   };
 }
 
@@ -722,6 +770,7 @@ export async function getAdminFoodItems(filters?: {
   query?: string;
   kitchenId?: string;
   categoryId?: string;
+  itemType?: "SINGLE" | "COMBO";
 }) {
   noStore();
 
@@ -732,11 +781,13 @@ export async function getAdminFoodItems(filters?: {
             OR: [
               { name: { contains: filters.query } },
               { description: { contains: filters.query } },
+              { offerTitle: { contains: filters.query } },
             ],
           }
         : {}),
       ...(filters?.kitchenId ? { kitchenId: filters.kitchenId } : {}),
       ...(filters?.categoryId ? { foodCategoryId: filters.categoryId } : {}),
+      ...(filters?.itemType ? { itemType: filters.itemType } : {}),
     },
     include: {
       kitchen: {
@@ -754,7 +805,7 @@ export async function getAdminFoodItems(filters?: {
         },
       },
     },
-    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+    orderBy: [{ itemType: "desc" }, { sortOrder: "asc" }, { name: "asc" }],
   });
 
   return items.map(mapFoodItem);
@@ -917,6 +968,11 @@ export async function getAdminFoodOrderById(id: string) {
     deliveryAddress: mapDeliveryAddress(order.deliveryAddress),
   });
 }
+
+
+
+
+
 
 
 

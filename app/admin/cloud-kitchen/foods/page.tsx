@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { DeleteButton } from "@/components/forms/delete-button";
@@ -25,8 +25,10 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
   const query = toValue(params.q);
   const kitchenId = toValue(params.kitchenId);
   const categoryId = toValue(params.categoryId);
+  const itemTypeParam = toValue(params.itemType);
+  const itemType = itemTypeParam === "COMBO" || itemTypeParam === "SINGLE" ? itemTypeParam : undefined;
   const [items, kitchens, categories] = await Promise.all([
-    getAdminFoodItems({ query, kitchenId, categoryId }),
+    getAdminFoodItems({ query, kitchenId, categoryId, itemType }),
     getKitchenOptions(),
     getFoodCategoryOptions(),
   ]);
@@ -37,7 +39,7 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
       <AdminPageHeader
         eyebrow="Cloud Kitchen"
         title="Meal items and availability"
-        description="A default kitchen and meals category are created automatically, so you can focus on adding and updating dishes."
+        description="Manage regular menu items, combo packs, and homepage offers from one place."
         actions={
           <Link href="/admin/cloud-kitchen/foods/new" className={getButtonClassName({})}>
             <span className="text-white">Add meal item</span>
@@ -46,8 +48,10 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
       />
 
       <form className="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-4" method="get">
-        <div className={`grid gap-3 ${showKitchenFilter ? "lg:grid-cols-[minmax(0,1fr)_220px_220px_auto]" : "lg:grid-cols-[minmax(0,1fr)_220px_auto]"}`}>
-          <Input name="q" defaultValue={query} placeholder="Search meal item or description" />
+        <div
+          className={`grid gap-3 ${showKitchenFilter ? "xl:grid-cols-[minmax(0,1fr)_220px_220px_180px_auto]" : "xl:grid-cols-[minmax(0,1fr)_220px_180px_auto]"}`}
+        >
+          <Input name="q" defaultValue={query} placeholder="Search meal item, offer, or description" />
           {showKitchenFilter ? (
             <Select name="kitchenId" defaultValue={kitchenId}>
               <option value="">All kitchens</option>
@@ -66,6 +70,11 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
               </option>
             ))}
           </Select>
+          <Select name="itemType" defaultValue={itemType}>
+            <option value="">All item types</option>
+            <option value="SINGLE">Standard items</option>
+            <option value="COMBO">Combo packs</option>
+          </Select>
           <button className="inline-flex h-9 items-center justify-center rounded-lg bg-[var(--brand)] px-4 text-[0.82rem] font-medium text-white">
             Filter
           </button>
@@ -81,10 +90,28 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
                   <p className="admin-kicker">
                     {showKitchenFilter ? `${item.kitchen?.name} • ${item.foodCategory?.name}` : item.foodCategory?.name}
                   </p>
-                  <h2 className="mt-2 text-lg font-semibold text-[var(--admin-foreground)]">{item.name}</h2>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <h2 className="text-lg font-semibold text-[var(--admin-foreground)]">{item.name}</h2>
+                    <span className="inline-flex rounded-full bg-[var(--admin-surface-muted)] px-3 py-1 text-[0.7rem] font-semibold text-[var(--admin-muted-foreground)]">
+                      {item.itemType === "COMBO" ? "Combo pack" : "Standard item"}
+                    </span>
+                  </div>
                   <p className="mt-2 text-[0.82rem] leading-6 text-[var(--admin-muted-foreground)]">
                     {item.shortDescription ?? item.description}
                   </p>
+                  {item.itemType === "COMBO" ? (
+                    <div className="mt-3 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-3 text-[0.78rem] text-[var(--admin-muted-foreground)]">
+                      <p className="font-semibold text-[var(--admin-foreground)]">
+                        {item.offerTitle ?? "Combo offer"}
+                      </p>
+                      {item.includedItemsSummary ? (
+                        <p className="mt-1">Includes: {item.includedItemsSummary}</p>
+                      ) : null}
+                      {item.offerDescription ? (
+                        <p className="mt-1">{item.offerDescription}</p>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
                 <span className={`inline-flex rounded-full px-3 py-1 text-[0.72rem] font-semibold ${item.isAvailable ? "bg-[rgba(85,99,71,0.14)] text-[var(--admin-success)]" : "bg-[rgba(179,86,72,0.12)] text-[var(--admin-danger)]"}`}>
                   {item.isAvailable ? "Available" : "Unavailable"}
@@ -113,7 +140,7 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
       ) : (
         <EmptyState
           title="No meal items found"
-          description="Add your first meal item or broaden the current filters."
+          description="Add your first dish or combo pack, or broaden the current filters."
           actionLabel="Add meal item"
           actionHref="/admin/cloud-kitchen/foods/new"
         />
@@ -121,4 +148,3 @@ export default async function AdminCloudKitchenFoodsPage({ searchParams }: { sea
     </div>
   );
 }
-

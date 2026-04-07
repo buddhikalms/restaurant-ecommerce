@@ -145,6 +145,7 @@ export async function validateDeliveryEligibilityAction(input: unknown): Promise
     kitchenId: string;
     kitchenName: string;
     kitchenSlug: string;
+    fulfillmentType: "DELIVERY";
     deliveryZoneId: string | null;
     deliveryZoneName: string | null;
     distanceKm: number | null;
@@ -182,6 +183,7 @@ export async function validateDeliveryEligibilityAction(input: unknown): Promise
   await setFoodLocationSession({
     kitchenId: eligibility.kitchen.id,
     kitchenName: eligibility.kitchen.name,
+    fulfillmentType: "DELIVERY",
     deliveryZoneId: eligibility.deliveryZone?.id ?? null,
     deliveryZoneName: eligibility.deliveryZone?.name ?? null,
     distanceKm: eligibility.distanceKm,
@@ -208,6 +210,7 @@ export async function validateDeliveryEligibilityAction(input: unknown): Promise
       kitchenId: eligibility.kitchen.id,
       kitchenName: eligibility.kitchen.name,
       kitchenSlug: eligibility.kitchen.slug,
+      fulfillmentType: "DELIVERY",
       deliveryZoneId: eligibility.deliveryZone?.id ?? null,
       deliveryZoneName: eligibility.deliveryZone?.name ?? null,
       distanceKm: eligibility.distanceKm,
@@ -220,6 +223,75 @@ export async function validateDeliveryEligibilityAction(input: unknown): Promise
   };
 }
 
+export async function selectPickupKitchenAction(): Promise<
+  ActionResponse<{
+    kitchenId: string;
+    kitchenName: string;
+    fulfillmentType: "PICKUP";
+    message: string;
+  }>
+> {
+  const kitchen = await prisma.kitchen.findFirst({
+    where: {
+      isActive: true,
+      acceptsOrders: true,
+    },
+    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+  });
+
+  if (!kitchen) {
+    return {
+      success: false,
+      error: "No cloud kitchen is accepting pickup orders right now.",
+    };
+  }
+
+  const formattedAddress = [
+    kitchen.addressLine1,
+    kitchen.addressLine2,
+    kitchen.city,
+    kitchen.state,
+    kitchen.postalCode,
+    kitchen.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  await setFoodLocationSession({
+    kitchenId: kitchen.id,
+    kitchenName: kitchen.name,
+    fulfillmentType: "PICKUP",
+    deliveryZoneId: null,
+    deliveryZoneName: null,
+    distanceKm: null,
+    checkedAt: new Date().toISOString(),
+    address: {
+      label: "Pickup",
+      line1: kitchen.addressLine1,
+      line2: normalizeOptionalText(kitchen.addressLine2),
+      city: kitchen.city,
+      state: kitchen.state,
+      postalCode: kitchen.postalCode,
+      country: kitchen.country,
+      formattedAddress,
+      placeId: null,
+      latitude: Number(kitchen.latitude),
+      longitude: Number(kitchen.longitude),
+      deliveryInstructions: null,
+    },
+  });
+
+  return {
+    success: true,
+    data: {
+      kitchenId: kitchen.id,
+      kitchenName: kitchen.name,
+      fulfillmentType: "PICKUP",
+      message: "Pickup selected from " + kitchen.name + ".",
+    },
+    message: "Pickup selected from " + kitchen.name + ".",
+  };
+}
 export async function clearDeliveryEligibilityAction(): Promise<ActionResponse> {
   await clearFoodLocationSession();
 
@@ -447,41 +519,42 @@ export async function upsertFoodItemAction(
   }
 
   try {
+    const foodItemData = {
+      kitchenId: parsed.data.kitchenId,
+      foodCategoryId: parsed.data.foodCategoryId,
+      name: parsed.data.name,
+      slug: parsed.data.slug || slugify(parsed.data.name),
+      shortDescription: normalizeOptionalText(parsed.data.shortDescription),
+      description: parsed.data.description,
+      imageUrl: parsed.data.imageUrl,
+      price: parsed.data.price,
+      compareAtPrice: parsed.data.compareAtPrice ?? null,
+      itemType: parsed.data.itemType,
+      offerTitle:
+        parsed.data.itemType === "COMBO"
+          ? normalizeOptionalText(parsed.data.offerTitle)
+          : null,
+      offerDescription:
+        parsed.data.itemType === "COMBO"
+          ? normalizeOptionalText(parsed.data.offerDescription)
+          : null,
+      includedItemsSummary:
+        parsed.data.itemType === "COMBO"
+          ? normalizeOptionalText(parsed.data.includedItemsSummary)
+          : null,
+      isAvailable: parsed.data.isAvailable,
+      isFeatured: parsed.data.isFeatured,
+      sortOrder: parsed.data.sortOrder,
+      preparationTimeMins: parsed.data.preparationTimeMins ?? null,
+    };
+
     const item = parsed.data.id
       ? await prisma.foodItem.update({
           where: { id: parsed.data.id },
-          data: {
-            kitchenId: parsed.data.kitchenId,
-            foodCategoryId: parsed.data.foodCategoryId,
-            name: parsed.data.name,
-            slug: parsed.data.slug || slugify(parsed.data.name),
-            shortDescription: normalizeOptionalText(parsed.data.shortDescription),
-            description: parsed.data.description,
-            imageUrl: parsed.data.imageUrl,
-            price: parsed.data.price,
-            compareAtPrice: parsed.data.compareAtPrice ?? null,
-            isAvailable: parsed.data.isAvailable,
-            isFeatured: parsed.data.isFeatured,
-            sortOrder: parsed.data.sortOrder,
-            preparationTimeMins: parsed.data.preparationTimeMins ?? null,
-          },
+          data: foodItemData,
         })
       : await prisma.foodItem.create({
-          data: {
-            kitchenId: parsed.data.kitchenId,
-            foodCategoryId: parsed.data.foodCategoryId,
-            name: parsed.data.name,
-            slug: parsed.data.slug || slugify(parsed.data.name),
-            shortDescription: normalizeOptionalText(parsed.data.shortDescription),
-            description: parsed.data.description,
-            imageUrl: parsed.data.imageUrl,
-            price: parsed.data.price,
-            compareAtPrice: parsed.data.compareAtPrice ?? null,
-            isAvailable: parsed.data.isAvailable,
-            isFeatured: parsed.data.isFeatured,
-            sortOrder: parsed.data.sortOrder,
-            preparationTimeMins: parsed.data.preparationTimeMins ?? null,
-          },
+          data: foodItemData,
         });
 
     revalidateCloudKitchenPaths();
@@ -654,67 +727,128 @@ export async function placeFoodOrderAction(
       return sum + Number(item.price) * quantity;
     }, 0);
 
-    const eligibility = await resolveDeliveryEligibility({
-      location: {
-        latitude: parsed.data.deliveryAddress.latitude,
-        longitude: parsed.data.deliveryAddress.longitude,
+    const kitchen = await prisma.kitchen.findFirst({
+      where: {
+        id: parsed.data.kitchenId,
+        isActive: true,
+        acceptsOrders: true,
       },
-      subtotal,
     });
 
-    if (!eligibility.eligible) {
+    if (!kitchen) {
       return {
         success: false,
-        error: eligibility.message,
+        error: "The selected kitchen is not accepting orders right now.",
       };
     }
 
-    if (eligibility.kitchen.id !== parsed.data.kitchenId) {
-      return {
-        success: false,
-        error: `Your selected address is served by ${eligibility.kitchen.name}. Please refresh the menu for that kitchen.`,
-      };
-    }
+    let address;
+    let deliveryZoneId: string | null = null;
+    let deliveryZoneName: string | null = null;
+    let distanceKm: number | null = null;
+    let deliveryFee = 0;
 
-    if (subtotal < eligibility.minimumOrderAmount) {
-      return {
-        success: false,
-        error: `The minimum order for this delivery area is ${eligibility.minimumOrderAmount.toFixed(2)}.`,
-      };
-    }
+    if (parsed.data.fulfillmentType === "DELIVERY") {
+      const eligibility = await resolveDeliveryEligibility({
+        location: {
+          latitude: parsed.data.deliveryAddress.latitude,
+          longitude: parsed.data.deliveryAddress.longitude,
+        },
+        subtotal,
+      });
 
-    const address = await persistDeliveryAddress(
-      user.id,
-      {
-        ...parsed.data.deliveryAddress,
-        recipientName: parsed.data.deliveryAddress.recipientName,
-        phone: parsed.data.deliveryAddress.phone,
-        isDefault: false,
-      },
-      parsed.data.saveAddressForLater,
-    );
+      if (!eligibility.eligible) {
+        return {
+          success: false,
+          error: eligibility.message,
+        };
+      }
+
+      if (eligibility.kitchen.id !== parsed.data.kitchenId) {
+        return {
+          success: false,
+          error: `Your selected address is served by ${eligibility.kitchen.name}. Please refresh the menu for that kitchen.`,
+        };
+      }
+
+      if (subtotal < eligibility.minimumOrderAmount) {
+        return {
+          success: false,
+          error: `The minimum order for this delivery area is ${eligibility.minimumOrderAmount.toFixed(2)}.`,
+        };
+      }
+
+      address = await persistDeliveryAddress(
+        user.id,
+        {
+          ...parsed.data.deliveryAddress,
+          recipientName: parsed.data.deliveryAddress.recipientName,
+          phone: parsed.data.deliveryAddress.phone,
+          isDefault: false,
+        },
+        parsed.data.saveAddressForLater,
+      );
+
+      deliveryZoneId = eligibility.deliveryZone?.id ?? null;
+      deliveryZoneName = eligibility.deliveryZone?.name ?? null;
+      distanceKm = eligibility.distanceKm;
+      deliveryFee = eligibility.deliveryFee;
+    } else {
+      const formattedAddress = [
+        kitchen.addressLine1,
+        kitchen.addressLine2,
+        kitchen.city,
+        kitchen.state,
+        kitchen.postalCode,
+        kitchen.country,
+      ]
+        .filter(Boolean)
+        .join(", ");
+
+      address = await prisma.deliveryAddress.create({
+        data: {
+          userId: null,
+          label: "Pickup",
+          recipientName: parsed.data.deliveryAddress.recipientName,
+          phone: parsed.data.deliveryAddress.phone,
+          line1: kitchen.addressLine1,
+          line2: normalizeOptionalText(kitchen.addressLine2),
+          city: kitchen.city,
+          state: kitchen.state,
+          postalCode: kitchen.postalCode,
+          country: kitchen.country,
+          formattedAddress,
+          placeId: null,
+          latitude: Number(kitchen.latitude),
+          longitude: Number(kitchen.longitude),
+          deliveryInstructions: normalizeOptionalText(parsed.data.deliveryAddress.deliveryInstructions),
+          isDefault: false,
+        },
+      });
+    }
 
     const orderNumber = generateOrderNumber("food");
     const itemCount = parsed.data.items.reduce((sum, item) => sum + item.quantity, 0);
-    const total = subtotal + eligibility.deliveryFee;
+    const total = subtotal + deliveryFee;
 
     const order = await prisma.foodOrder.create({
       data: {
         orderNumber,
         userId: user.id,
         kitchenId: parsed.data.kitchenId,
+        fulfillmentType: parsed.data.fulfillmentType,
         deliveryAddressId: address.id,
-        deliveryZoneId: eligibility.deliveryZone?.id ?? null,
+        deliveryZoneId,
         status: "PENDING",
         customerName: user.name ?? parsed.data.deliveryAddress.recipientName,
         customerEmail: user.email ?? "",
         customerPhone: address.phone,
         notes: normalizeOptionalText(parsed.data.notes),
         subtotal,
-        deliveryFee: eligibility.deliveryFee,
+        deliveryFee,
         total,
         itemCount,
-        distanceKm: eligibility.distanceKm,
+        distanceKm,
         items: {
           create: items.map((item) => ({
             foodItemId: item.id,
@@ -731,27 +865,29 @@ export async function placeFoodOrderAction(
     });
 
     await setFoodLocationSession({
-      kitchenId: eligibility.kitchen.id,
-      kitchenName: eligibility.kitchen.name,
-      deliveryZoneId: eligibility.deliveryZone?.id ?? null,
-      deliveryZoneName: eligibility.deliveryZone?.name ?? null,
-      distanceKm: eligibility.distanceKm,
+      kitchenId: kitchen.id,
+      kitchenName: kitchen.name,
+      fulfillmentType: parsed.data.fulfillmentType,
+      deliveryZoneId,
+      deliveryZoneName,
+      distanceKm,
       checkedAt: new Date().toISOString(),
       address: {
-        label: normalizeOptionalText(parsed.data.deliveryAddress.label),
-        line1: parsed.data.deliveryAddress.line1,
-        line2: normalizeOptionalText(parsed.data.deliveryAddress.line2),
-        city: parsed.data.deliveryAddress.city,
-        state: parsed.data.deliveryAddress.state,
-        postalCode: parsed.data.deliveryAddress.postalCode,
-        country: parsed.data.deliveryAddress.country,
-        formattedAddress: parsed.data.deliveryAddress.formattedAddress,
-        placeId: normalizeOptionalText(parsed.data.deliveryAddress.placeId),
-        latitude: parsed.data.deliveryAddress.latitude,
-        longitude: parsed.data.deliveryAddress.longitude,
-        deliveryInstructions: normalizeOptionalText(
-          parsed.data.deliveryAddress.deliveryInstructions,
-        ),
+        label:
+          parsed.data.fulfillmentType === "PICKUP"
+            ? "Pickup"
+            : normalizeOptionalText(parsed.data.deliveryAddress.label),
+        line1: address.line1,
+        line2: normalizeOptionalText(address.line2),
+        city: address.city,
+        state: address.state,
+        postalCode: address.postalCode,
+        country: address.country,
+        formattedAddress: address.formattedAddress,
+        placeId: normalizeOptionalText(address.placeId),
+        latitude: Number(address.latitude),
+        longitude: Number(address.longitude),
+        deliveryInstructions: normalizeOptionalText(address.deliveryInstructions),
       },
     });
 
@@ -764,7 +900,10 @@ export async function placeFoodOrderAction(
         orderId: order.id,
         orderNumber: order.orderNumber,
       },
-      message: "Food order placed successfully.",
+      message:
+        parsed.data.fulfillmentType === "PICKUP"
+          ? "Pickup order placed successfully."
+          : "Food order placed successfully.",
     };
   } catch (error) {
     return buildCloudKitchenError(error, "Unable to place the food order right now.");
@@ -801,4 +940,13 @@ export async function updateFoodOrderStatusAction(input: {
     message: "Food order status updated.",
   };
 }
+
+
+
+
+
+
+
+
+
 

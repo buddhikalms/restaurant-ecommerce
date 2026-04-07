@@ -1,6 +1,13 @@
-import { PrismaClient, Role, OrderStatus, ProductType, VatMode, PaymentGateway, PaymentStatus, ShippingMethodType, GatewayMode } from "../generated/prisma";
+import { PrismaClient, Role, OrderStatus, ProductType, VatMode, PaymentGateway, PaymentStatus, ShippingMethodType, GatewayMode, FoodItemType } from "../generated/prisma";
 import { hash } from "bcryptjs";
 
+import {
+  CLOUD_KITCHEN_SERVICE_DEFAULTS,
+  DEFAULT_CLOUD_KITCHEN_LOCATION,
+  DEFAULT_CLOUD_KITCHEN_NAME,
+  DEFAULT_CLOUD_KITCHEN_SLUG,
+  DEFAULT_FOOD_CATEGORIES,
+} from "../lib/cloud-kitchen/defaults";
 import { summarizeActiveProductVariants } from "../lib/product-variants";
 
 const prisma = new PrismaClient();
@@ -30,6 +37,24 @@ type SeedProduct = {
   stockQuantity?: number;
   minOrderQuantity?: number;
   variants?: SeedVariant[];
+};
+
+type SeedFoodItem = {
+  name: string;
+  slug: string;
+  categorySlug: string;
+  shortDescription: string;
+  description: string;
+  imageUrl: string;
+  price: number;
+  compareAtPrice?: number | null;
+  itemType?: FoodItemType;
+  offerTitle?: string | null;
+  offerDescription?: string | null;
+  includedItemsSummary?: string | null;
+  isFeatured?: boolean;
+  sortOrder?: number;
+  preparationTimeMins?: number | null;
 };
 
 function summarizeSeedProduct(product: SeedProduct) {
@@ -1037,6 +1062,258 @@ async function main() {
       allowedZoneIds: [seattleZone.id]
     }
   });
+  const defaultKitchen = await prisma.kitchen.upsert({
+    where: { slug: DEFAULT_CLOUD_KITCHEN_SLUG },
+    update: {
+      name: DEFAULT_CLOUD_KITCHEN_NAME,
+      description: "Fresh Sri Lankan meals, snacks, and drinks prepared for fast local delivery.",
+      phone: "+44 20 7946 0123",
+      email: "orders@ceylontaste.example",
+      addressLine1: DEFAULT_CLOUD_KITCHEN_LOCATION.addressLine1,
+      addressLine2: null,
+      city: DEFAULT_CLOUD_KITCHEN_LOCATION.city,
+      state: DEFAULT_CLOUD_KITCHEN_LOCATION.state,
+      postalCode: DEFAULT_CLOUD_KITCHEN_LOCATION.postalCode,
+      country: DEFAULT_CLOUD_KITCHEN_LOCATION.country,
+      latitude: DEFAULT_CLOUD_KITCHEN_LOCATION.latitude,
+      longitude: DEFAULT_CLOUD_KITCHEN_LOCATION.longitude,
+      maxDeliveryDistanceKm: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusKm,
+      minimumOrderAmount: 12,
+      deliveryFee: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee,
+      freeDeliveryMinimum: 45,
+      preparationTimeMins: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins,
+      isActive: true,
+      acceptsOrders: true,
+      sortOrder: 0
+    },
+    create: {
+      slug: DEFAULT_CLOUD_KITCHEN_SLUG,
+      name: DEFAULT_CLOUD_KITCHEN_NAME,
+      description: "Fresh Sri Lankan meals, snacks, and drinks prepared for fast local delivery.",
+      phone: "+44 20 7946 0123",
+      email: "orders@ceylontaste.example",
+      addressLine1: DEFAULT_CLOUD_KITCHEN_LOCATION.addressLine1,
+      addressLine2: null,
+      city: DEFAULT_CLOUD_KITCHEN_LOCATION.city,
+      state: DEFAULT_CLOUD_KITCHEN_LOCATION.state,
+      postalCode: DEFAULT_CLOUD_KITCHEN_LOCATION.postalCode,
+      country: DEFAULT_CLOUD_KITCHEN_LOCATION.country,
+      latitude: DEFAULT_CLOUD_KITCHEN_LOCATION.latitude,
+      longitude: DEFAULT_CLOUD_KITCHEN_LOCATION.longitude,
+      maxDeliveryDistanceKm: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryRadiusKm,
+      minimumOrderAmount: 12,
+      deliveryFee: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryFee,
+      freeDeliveryMinimum: 45,
+      preparationTimeMins: CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins,
+      isActive: true,
+      acceptsOrders: true,
+      sortOrder: 0
+    }
+  });
+
+  const foodCategoryRecords = await Promise.all(
+    DEFAULT_FOOD_CATEGORIES.map((category) =>
+      prisma.foodCategory.upsert({
+        where: { slug: category.slug },
+        update: {
+          name: category.name,
+          description: category.description,
+          sortOrder: category.sortOrder,
+          isActive: true
+        },
+        create: {
+          name: category.name,
+          slug: category.slug,
+          description: category.description,
+          sortOrder: category.sortOrder,
+          isActive: true
+        }
+      })
+    )
+  );
+
+  const foodsData: SeedFoodItem[] = [
+    {
+      name: "Chicken Kottu",
+      slug: "chicken-kottu",
+      categorySlug: "meals",
+      shortDescription: "Shredded roti stir-fried with chicken, vegetables, and house spices.",
+      description: "A classic Sri Lankan street-food favorite made with chopped godamba roti, tender chicken, egg, leeks, carrots, curry gravy, and a smoky wok finish.",
+      imageUrl: "https://images.unsplash.com/photo-1512058564366-c9e3e0467b79?auto=format&fit=crop&w=1200&q=80",
+      price: 11.99,
+      compareAtPrice: 13.5,
+      isFeatured: true,
+      sortOrder: 0,
+      preparationTimeMins: 20
+    },
+    {
+      name: "Cheese Kottu",
+      slug: "cheese-kottu",
+      categorySlug: "meals",
+      shortDescription: "Creamy, spicy kottu folded with mozzarella-style cheese.",
+      description: "A rich, crowd-pleasing kottu packed with chopped roti, vegetables, egg, curry seasoning, and melted cheese for extra comfort.",
+      imageUrl: "https://images.unsplash.com/photo-1512058564366-c9e3e0467b79?auto=format&fit=crop&w=1200&q=80&sat=-5",
+      price: 12.5,
+      compareAtPrice: 14,
+      sortOrder: 1,
+      preparationTimeMins: 20
+    },
+    {
+      name: "Lamprais Meal",
+      slug: "lamprais-meal",
+      categorySlug: "meals",
+      shortDescription: "Banana-leaf-inspired rice meal with mixed meat curry and sambols.",
+      description: "A hearty lamprais-style meal with rice, chicken curry, frikkadel, brinjal moju, seeni sambol, and a slow-cooked gravy profile inspired by Colombo lunch packets.",
+      imageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+      price: 14.99,
+      compareAtPrice: 16.5,
+      isFeatured: true,
+      sortOrder: 2,
+      preparationTimeMins: 25
+    },
+    {
+      name: "Chicken Roll",
+      slug: "chicken-roll",
+      categorySlug: "foods",
+      shortDescription: "Crispy breadcrumb-coated roll with curried chicken filling.",
+      description: "Golden-fried Sri Lankan roll filled with spiced potato, shredded chicken, onions, and herbs. Ideal as a tea-time snack or side.",
+      imageUrl: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=80",
+      price: 2.5,
+      compareAtPrice: 3,
+      sortOrder: 0,
+      preparationTimeMins: 10
+    },
+    {
+      name: "Fish Roll",
+      slug: "fish-roll",
+      categorySlug: "foods",
+      shortDescription: "Crisp roll packed with tuna, potato, spices, and fresh herbs.",
+      description: "A classic bakery-style fish roll with spiced tuna filling, soft potato center, and a crunchy breadcrumb shell.",
+      imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      price: 2.75,
+      compareAtPrice: 3.25,
+      sortOrder: 1,
+      preparationTimeMins: 10
+    },
+    {
+      name: "Vegetable Roll",
+      slug: "vegetable-roll",
+      categorySlug: "foods",
+      shortDescription: "Crispy snack roll with seasoned potato and vegetable filling.",
+      description: "A vegetarian Sri Lankan roll with mashed potato, leeks, carrots, curry leaves, and green chili wrapped and crumb-fried until crisp.",
+      imageUrl: "https://images.unsplash.com/photo-1608039755401-742074f0548d?auto=format&fit=crop&w=1200&q=80",
+      price: 2.25,
+      sortOrder: 2,
+      preparationTimeMins: 10
+    },
+    {
+      name: "Cream Soda",
+      slug: "cream-soda",
+      categorySlug: "beverages",
+      shortDescription: "Chilled bright-green cream soda, a Sri Lankan favorite.",
+      description: "Served ice cold for the classic pairing with kottu, rolls, and spicy lunch meals.",
+      imageUrl: "https://images.unsplash.com/photo-1543253687-c931c8e01820?auto=format&fit=crop&w=1200&q=80",
+      price: 2.5,
+      sortOrder: 0,
+      preparationTimeMins: 5
+    },
+    {
+      name: "Iced Milo",
+      slug: "iced-milo",
+      categorySlug: "beverages",
+      shortDescription: "Cold chocolate malt drink blended smooth and creamy.",
+      description: "A sweet chilled Milo drink that works well with both spicy meals and evening snack orders.",
+      imageUrl: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=1200&q=80",
+      price: 3.75,
+      sortOrder: 1,
+      preparationTimeMins: 5
+    },
+    {
+      name: "Kottu Night Combo",
+      slug: "kottu-night-combo",
+      categorySlug: "combo-packs",
+      shortDescription: "A value combo built for two kottu lovers.",
+      description: "A ready-to-share bundle designed for dinner service with mains, snacks, and drinks at a better bundled price.",
+      imageUrl: "https://images.unsplash.com/photo-1512058564366-c9e3e0467b79?auto=format&fit=crop&w=1200&q=80&blend=000000&bm=softlight",
+      price: 26.99,
+      compareAtPrice: 31.5,
+      itemType: FoodItemType.COMBO,
+      offerTitle: "Dinner combo offer",
+      offerDescription: "Best for two people and one of the easiest starter offers to feature on the menu.",
+      includedItemsSummary: "1 Chicken Kottu, 1 Cheese Kottu, 2 Chicken Rolls, and 2 Cream Sodas.",
+      isFeatured: true,
+      sortOrder: 0,
+      preparationTimeMins: 25
+    },
+    {
+      name: "Lamprais Lunch Combo",
+      slug: "lamprais-lunch-combo",
+      categorySlug: "combo-packs",
+      shortDescription: "Lunch-ready lamprais set with snacks and drinks included.",
+      description: "A fuller lunchtime bundle built around the lamprais meal for office orders and weekend family lunches.",
+      imageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80&sat=-10",
+      price: 33.99,
+      compareAtPrice: 39,
+      itemType: FoodItemType.COMBO,
+      offerTitle: "Family lunch combo",
+      offerDescription: "A strong featured offer for lunch traffic with enough variety to make the menu feel complete.",
+      includedItemsSummary: "2 Lamprais Meals, 2 Fish Rolls, and 2 Iced Milo drinks.",
+      isFeatured: true,
+      sortOrder: 1,
+      preparationTimeMins: 30
+    }
+  ];
+
+  const foodItems: Array<Awaited<ReturnType<typeof prisma.foodItem.upsert>>> = [];
+
+  for (const food of foodsData) {
+    const category = foodCategoryRecords.find((item) => item.slug === food.categorySlug);
+    if (!category) continue;
+
+    const record = await prisma.foodItem.upsert({
+      where: { slug: food.slug },
+      update: {
+        kitchenId: defaultKitchen.id,
+        foodCategoryId: category.id,
+        name: food.name,
+        shortDescription: food.shortDescription,
+        description: food.description,
+        imageUrl: food.imageUrl,
+        price: food.price,
+        compareAtPrice: food.compareAtPrice ?? null,
+        itemType: food.itemType ?? FoodItemType.SINGLE,
+        offerTitle: food.offerTitle ?? null,
+        offerDescription: food.offerDescription ?? null,
+        includedItemsSummary: food.includedItemsSummary ?? null,
+        isAvailable: true,
+        isFeatured: food.isFeatured ?? false,
+        sortOrder: food.sortOrder ?? 0,
+        preparationTimeMins: food.preparationTimeMins ?? null
+      },
+      create: {
+        kitchenId: defaultKitchen.id,
+        foodCategoryId: category.id,
+        name: food.name,
+        slug: food.slug,
+        shortDescription: food.shortDescription,
+        description: food.description,
+        imageUrl: food.imageUrl,
+        price: food.price,
+        compareAtPrice: food.compareAtPrice ?? null,
+        itemType: food.itemType ?? FoodItemType.SINGLE,
+        offerTitle: food.offerTitle ?? null,
+        offerDescription: food.offerDescription ?? null,
+        includedItemsSummary: food.includedItemsSummary ?? null,
+        isAvailable: true,
+        isFeatured: food.isFeatured ?? false,
+        sortOrder: food.sortOrder ?? 0,
+        preparationTimeMins: food.preparationTimeMins ?? null
+      }
+    });
+
+    foodItems.push(record);
+  }
+
   const sampleOrderNumber = `WS-${new Date().getFullYear()}-0001`;
   const sampleItems = products.slice(0, 3).map(({ record, seed }, index) => {
     const quantity = index === 0 ? 4 : 2;
@@ -1100,6 +1377,7 @@ async function main() {
   console.log("Wholesale login: buyer@sunsetbistro.com / Wholesale@12345");
   console.log("Retail login: sophia@harvesthome.com / Customer@12345");
   console.log(`Seeded ${categoryRecords.length} categories and ${products.length} products`);
+  console.log(`Seeded ${foodCategoryRecords.length} food categories and ${foodItems.length} food items`);
   console.log(`Admin user: ${admin.email}`);
 }
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -32,6 +32,7 @@ type DeliveryAddressOption = {
 };
 
 type DeliveryPreview = {
+  fulfillmentType: "DELIVERY" | "PICKUP";
   kitchenId: string;
   kitchenName: string;
   deliveryZoneName: string | null;
@@ -65,6 +66,7 @@ export function FoodCheckoutForm({
   const { items, subtotal, clearCart } = useFoodCart();
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const isPickup = preview.fulfillmentType === "PICKUP";
   const {
     register,
     handleSubmit,
@@ -73,10 +75,10 @@ export function FoodCheckoutForm({
     defaultValues: {
       recipientName: address.recipientName,
       phone: address.phone,
-      label: address.label ?? "Home",
+      label: address.label ?? (isPickup ? "Pickup" : "Home"),
       deliveryInstructions: address.deliveryInstructions ?? "",
       notes: "",
-      saveAddressForLater: true,
+      saveAddressForLater: !isPickup,
     },
   });
 
@@ -94,14 +96,15 @@ export function FoodCheckoutForm({
           startTransition(async () => {
             const result = await placeFoodOrderAction({
               kitchenId,
+              fulfillmentType: preview.fulfillmentType,
               items: items.map((item) => ({
                 foodItemId: item.foodItemId,
                 quantity: item.quantity,
               })),
               notes: values.notes,
-              saveAddressForLater: values.saveAddressForLater,
+              saveAddressForLater: isPickup ? false : values.saveAddressForLater,
               deliveryAddress: {
-                label: values.label,
+                label: isPickup ? "Pickup" : values.label,
                 recipientName: values.recipientName,
                 phone: values.phone,
                 line1: address.line1,
@@ -133,20 +136,28 @@ export function FoodCheckoutForm({
         <div className="space-y-4">
           <div>
             <p className="section-label">Checkout</p>
-            <h2 className="section-subtitle mt-2">Confirm your delivery details</h2>
+            <h2 className="section-subtitle mt-2">
+              {isPickup ? "Confirm your pickup details" : "Confirm your delivery details"}
+            </h2>
             <p className="section-copy mt-2">
-              Your order will be prepared by {kitchenName} once the server confirms the mapped address and delivery rules. Expected delivery is {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes for nearby orders.
+              {isPickup
+                ? `Your order will be prepared by ${kitchenName} for collection from the kitchen.`
+                : `Your order will be prepared by ${kitchenName} once the server confirms the mapped address and delivery rules. Expected delivery is ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes for nearby orders.`}
             </p>
           </div>
 
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4 text-[0.82rem] text-[var(--muted-foreground)]">
-            <p className="font-medium text-[var(--foreground)]">Mapped delivery address</p>
+            <p className="font-medium text-[var(--foreground)]">{isPickup ? "Pickup location" : "Mapped delivery address"}</p>
             <p className="mt-2">{address.formattedAddress}</p>
+            {!isPickup ? (
+              <p className="mt-2 text-[0.74rem]">
+                Coordinates: {address.latitude.toFixed(6)}, {address.longitude.toFixed(6)}
+              </p>
+            ) : null}
             <p className="mt-2 text-[0.74rem]">
-              Coordinates: {address.latitude.toFixed(6)}, {address.longitude.toFixed(6)}
-            </p>
-            <p className="mt-2 text-[0.74rem]">
-              Need a different address? Go back to the location step and validate it first.
+              {isPickup
+                ? "We will prepare your order for collection at this kitchen."
+                : "Need a different address? Go back to the location step and validate it first."}
             </p>
           </div>
 
@@ -163,13 +174,15 @@ export function FoodCheckoutForm({
             </div>
           </div>
 
-          <div>
-            <label className="field-label">Address label</label>
-            <Input {...register("label")} />
-          </div>
+          {!isPickup ? (
+            <div>
+              <label className="field-label">Address label</label>
+              <Input {...register("label")} />
+            </div>
+          ) : null}
 
           <div>
-            <label className="field-label">Delivery instructions</label>
+            <label className="field-label">{isPickup ? "Pickup instructions" : "Delivery instructions"}</label>
             <Textarea {...register("deliveryInstructions")} />
           </div>
 
@@ -178,10 +191,12 @@ export function FoodCheckoutForm({
             <Textarea {...register("notes")} placeholder="Optional kitchen notes" />
           </div>
 
-          <label className="flex items-center gap-3 text-[0.8rem] font-medium text-[var(--foreground)]">
-            <input type="checkbox" {...register("saveAddressForLater")} className="h-4 w-4 rounded border-[var(--border)]" />
-            Save this delivery address to my account
-          </label>
+          {!isPickup ? (
+            <label className="flex items-center gap-3 text-[0.8rem] font-medium text-[var(--foreground)]">
+              <input type="checkbox" {...register("saveAddressForLater")} className="h-4 w-4 rounded border-[var(--border)]" />
+              Save this delivery address to my account
+            </label>
+          ) : null}
 
           {message ? (
             <p className="rounded-xl bg-[var(--surface-muted)] px-4 py-3 text-[0.8rem] text-[var(--danger)]">
@@ -190,7 +205,7 @@ export function FoodCheckoutForm({
           ) : null}
 
           <Button type="submit" className="w-full" disabled={isPending || !items.length}>
-            {isPending ? "Placing order..." : "Place food order"}
+            {isPending ? "Placing order..." : isPickup ? "Place pickup order" : "Place food order"}
           </Button>
         </div>
       </form>
@@ -211,21 +226,29 @@ export function FoodCheckoutForm({
             <span>{kitchenName}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>Delivery zone</span>
-            <span>{preview.deliveryZoneName ?? "Kitchen radius"}</span>
+            <span>Method</span>
+            <span>{isPickup ? "Pickup" : "Delivery"}</span>
           </div>
-          {preview.distanceKm !== null ? (
-            <div className="flex items-center justify-between">
-              <span>Distance</span>
-              <span>{formatDistanceKm(preview.distanceKm)}</span>
-            </div>
+          {!isPickup ? (
+            <>
+              <div className="flex items-center justify-between">
+                <span>Delivery zone</span>
+                <span>{preview.deliveryZoneName ?? "Kitchen radius"}</span>
+              </div>
+              {preview.distanceKm !== null ? (
+                <div className="flex items-center justify-between">
+                  <span>Distance</span>
+                  <span>{formatDistanceKm(preview.distanceKm)}</span>
+                </div>
+              ) : null}
+            </>
           ) : null}
           <div className="flex items-center justify-between">
             <span>Subtotal</span>
             <span>{formatCurrency(subtotal)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>Delivery fee</span>
+            <span>{isPickup ? "Pickup fee" : "Delivery fee"}</span>
             <span>{formatCurrency(preview.deliveryFee)}</span>
           </div>
           <div className="flex items-center justify-between border-t border-[var(--border)] pt-2 text-sm font-semibold text-[var(--foreground)]">
@@ -233,9 +256,11 @@ export function FoodCheckoutForm({
             <span>{formatCurrency(subtotal + preview.deliveryFee)}</span>
           </div>
           <p className="pt-2 text-[0.72rem] leading-5">
-            Minimum order for this area: {formatCurrency(preview.minimumOrderAmount)}. Typical delivery time is {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to {CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes.
+            {isPickup
+              ? `Pickup orders are prepared by ${kitchenName} and usually ready in ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes.`
+              : `Minimum order for this area: ${formatCurrency(preview.minimumOrderAmount)}. Typical delivery time is ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMinMins} to ${CLOUD_KITCHEN_SERVICE_DEFAULTS.deliveryTimeMaxMins} minutes.`}
           </p>
-          {preview.freeDeliveryMinimum !== null ? (
+          {!isPickup && preview.freeDeliveryMinimum !== null ? (
             <p className="text-[0.72rem] leading-5">
               Free delivery above {formatCurrency(preview.freeDeliveryMinimum)}.
             </p>
@@ -245,7 +270,3 @@ export function FoodCheckoutForm({
     </div>
   );
 }
-
-
-
-

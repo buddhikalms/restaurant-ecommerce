@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { FoodItemCard } from "@/components/cloud-kitchen/food-item-card";
 import { FoodCartProvider } from "@/components/providers/food-cart-provider";
@@ -144,6 +144,10 @@ export default async function HomePage() {
                     imageUrl: item.imageUrl,
                     price: item.price,
                     compareAtPrice: item.compareAtPrice,
+                    itemType: item.itemType,
+                    offerTitle: item.offerTitle,
+                    offerDescription: item.offerDescription,
+                    includedItemsSummary: item.includedItemsSummary,
                     preparationTimeMins: item.preparationTimeMins,
                     foodCategory: {
                       name: item.foodCategory?.name ?? "Cloud kitchen",
@@ -231,4 +235,3 @@ export default async function HomePage() {
     </div>
   );
 }
-

@@ -286,6 +286,10 @@ exports.Prisma.FoodItemScalarFieldEnum = {
   imageUrl: 'imageUrl',
   price: 'price',
   compareAtPrice: 'compareAtPrice',
+  itemType: 'itemType',
+  offerTitle: 'offerTitle',
+  offerDescription: 'offerDescription',
+  includedItemsSummary: 'includedItemsSummary',
   isAvailable: 'isAvailable',
   isFeatured: 'isFeatured',
   sortOrder: 'sortOrder',
@@ -372,6 +376,7 @@ exports.Prisma.FoodOrderScalarFieldEnum = {
   orderNumber: 'orderNumber',
   userId: 'userId',
   kitchenId: 'kitchenId',
+  fulfillmentType: 'fulfillmentType',
   deliveryAddressId: 'deliveryAddressId',
   deliveryZoneId: 'deliveryZoneId',
   status: 'status',
@@ -669,7 +674,10 @@ exports.Prisma.FoodItemOrderByRelevanceFieldEnum = {
   slug: 'slug',
   shortDescription: 'shortDescription',
   description: 'description',
-  imageUrl: 'imageUrl'
+  imageUrl: 'imageUrl',
+  offerTitle: 'offerTitle',
+  offerDescription: 'offerDescription',
+  includedItemsSummary: 'includedItemsSummary'
 };
 
 exports.Prisma.DeliveryZoneOrderByRelevanceFieldEnum = {
@@ -814,6 +822,11 @@ exports.VatMode = exports.$Enums.VatMode = {
   EXCLUDED: 'EXCLUDED'
 };
 
+exports.FoodItemType = exports.$Enums.FoodItemType = {
+  SINGLE: 'SINGLE',
+  COMBO: 'COMBO'
+};
+
 exports.DeliveryZoneType = exports.$Enums.DeliveryZoneType = {
   RADIUS: 'RADIUS',
   POLYGON: 'POLYGON'
@@ -850,6 +863,11 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   FAILED: 'FAILED',
   REFUNDED: 'REFUNDED',
   CANCELLED: 'CANCELLED'
+};
+
+exports.FoodFulfillmentType = exports.$Enums.FoodFulfillmentType = {
+  DELIVERY: 'DELIVERY',
+  PICKUP: 'PICKUP'
 };
 
 exports.FoodOrderStatus = exports.$Enums.FoodOrderStatus = {
