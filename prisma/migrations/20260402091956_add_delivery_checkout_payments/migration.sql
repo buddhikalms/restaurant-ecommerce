@@ -1,10 +1,10 @@
 -- AlterTable
-ALTER TABLE `address` ADD COLUMN `latitude` DECIMAL(10, 7) NULL,
+ALTER TABLE `Address` ADD COLUMN `latitude` DECIMAL(10, 7) NULL,
     ADD COLUMN `longitude` DECIMAL(10, 7) NULL,
     ADD COLUMN `placeId` VARCHAR(191) NULL;
 
 -- AlterTable
-ALTER TABLE `order` ADD COLUMN `codFee` DECIMAL(10, 2) NOT NULL DEFAULT 0,
+ALTER TABLE `Order` ADD COLUMN `codFee` DECIMAL(10, 2) NOT NULL DEFAULT 0,
     ADD COLUMN `deliveryInstructions` TEXT NULL,
     ADD COLUMN `deliveryMethodDescription` TEXT NULL,
     ADD COLUMN `estimatedDeliveryMaxDays` INTEGER NULL,
@@ -24,7 +24,7 @@ ALTER TABLE `order` ADD COLUMN `codFee` DECIMAL(10, 2) NOT NULL DEFAULT 0,
     ADD COLUMN `transactionId` VARCHAR(191) NULL;
 
 -- AlterTable
-ALTER TABLE `product` ADD COLUMN `allowLocalDelivery` BOOLEAN NOT NULL DEFAULT true,
+ALTER TABLE `Product` ADD COLUMN `allowLocalDelivery` BOOLEAN NOT NULL DEFAULT true,
     ADD COLUMN `allowStorePickup` BOOLEAN NOT NULL DEFAULT true,
     ADD COLUMN `requiresShipping` BOOLEAN NOT NULL DEFAULT true,
     ADD COLUMN `weight` DECIMAL(10, 2) NOT NULL DEFAULT 0;
