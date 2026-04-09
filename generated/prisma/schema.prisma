@@ -89,6 +89,11 @@ enum FoodItemType {
   COMBO
 }
 
+enum FoodFulfillmentType {
+  DELIVERY
+  PICKUP
+}
+
 model User {
   id                String            @id @default(cuid())
   name              String
@@ -398,28 +403,29 @@ model Order {
 }
 
 model FoodOrder {
-  id                String          @id @default(cuid())
-  orderNumber       String          @unique
+  id                String              @id @default(cuid())
+  orderNumber       String              @unique
   userId            String
-  user              User            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user              User                @relation(fields: [userId], references: [id], onDelete: Restrict)
   kitchenId         String
-  kitchen           Kitchen         @relation(fields: [kitchenId], references: [id], onDelete: Restrict)
+  kitchen           Kitchen             @relation(fields: [kitchenId], references: [id], onDelete: Restrict)
+  fulfillmentType   FoodFulfillmentType @default(DELIVERY)
   deliveryAddressId String
-  deliveryAddress   DeliveryAddress @relation(fields: [deliveryAddressId], references: [id], onDelete: Restrict)
+  deliveryAddress   DeliveryAddress     @relation(fields: [deliveryAddressId], references: [id], onDelete: Restrict)
   deliveryZoneId    String?
-  deliveryZone      DeliveryZone?   @relation(fields: [deliveryZoneId], references: [id], onDelete: SetNull)
-  status            FoodOrderStatus @default(PENDING)
+  deliveryZone      DeliveryZone?       @relation(fields: [deliveryZoneId], references: [id], onDelete: SetNull)
+  status            FoodOrderStatus     @default(PENDING)
   customerName      String
   customerEmail     String
   customerPhone     String
-  notes             String?         @db.Text
-  subtotal          Decimal         @db.Decimal(10, 2)
-  deliveryFee       Decimal         @default(0) @db.Decimal(10, 2)
-  total             Decimal         @db.Decimal(10, 2)
+  notes             String?             @db.Text
+  subtotal          Decimal             @db.Decimal(10, 2)
+  deliveryFee       Decimal             @default(0) @db.Decimal(10, 2)
+  total             Decimal             @db.Decimal(10, 2)
   itemCount         Int
-  distanceKm        Decimal?        @db.Decimal(10, 2)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  distanceKm        Decimal?            @db.Decimal(10, 2)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
   items             FoodOrderItem[]
 
   @@index([userId, createdAt])

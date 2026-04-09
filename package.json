@@ -4,15 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:seed": "prisma db seed",
     "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:setup": "prisma generate && prisma migrate deploy && prisma db seed"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -24,11 +28,13 @@
     "next": "16.2.2",
     "next-auth": "5.0.0-beta.30",
     "nodemailer": "^7.0.13",
+    "prisma": "^6.19.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hook-form": "^7.72.1",
     "resend": "^4.8.0",
     "tailwind-merge": "^3.5.0",
+    "tsx": "^4.21.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -41,9 +47,7 @@
     "eslint": "^9.39.4",
     "eslint-config-next": "16.2.2",
     "postcss": "^8.5.8",
-    "prisma": "^6.19.3",
     "tailwindcss": "^4.2.2",
-    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

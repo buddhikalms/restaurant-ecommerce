@@ -1,6 +1,6 @@
 ﻿# CeylonTaste
 
-A full-stack restaurant wholesale e-commerce platform built with Next.js 16.2.0, the App Router, TypeScript, Tailwind CSS, Prisma ORM, PostgreSQL, NextAuth/Auth.js, Zod, React Hook Form, and server actions.
+A full-stack restaurant wholesale e-commerce platform built with Next.js 16.2.0, the App Router, TypeScript, Tailwind CSS, Prisma ORM, MySQL, NextAuth/Auth.js, Zod, React Hook Form, and server actions.
 
 ## 1. Project Architecture Overview
 
@@ -102,7 +102,7 @@ Key implementation areas:
 ### Requirements
 
 - Node.js 24+
-- PostgreSQL
+- MySQL
 - npm
 
 ### Environment
@@ -128,13 +128,31 @@ Email options:
 
 ```bash
 npm install
-npx prisma generate
-npx prisma db push
-npm run db:seed
+npm run db:setup
 npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+### Production / Server Deploy
+
+For a server deployment, do not rely on `db push` for the live schema. This app includes Prisma migrations, and the newer admin/settings and cloud-kitchen pages expect those tables to exist.
+
+Use this order on the server:
+
+```bash
+npm install
+npm run build
+npm run db:deploy
+npm run db:seed
+npm start
+```
+
+Notes:
+
+- `npm run db:seed` is optional if the database already contains production data, but it is required if you expect the demo admin account and seeded records to exist.
+- The app now runs `prisma generate` during `postinstall` and `build` so the Prisma client is regenerated for the server OS instead of reusing a Windows-generated client binary.
+- If the admin panel fails only on the server, first confirm `npm run db:deploy` finished successfully against the same `DATABASE_URL` used by the app at runtime.
 
 ### Demo Seed Credentials
 
@@ -143,9 +161,14 @@ Admin:
 - Email: `admin@harvestwholesale.com`
 - Password: `Admin@12345`
 
-Customer:
+Wholesale customer:
 
 - Email: `buyer@sunsetbistro.com`
+- Password: `Wholesale@12345`
+
+Retail customer:
+
+- Email: `sophia@harvesthome.com`
 - Password: `Customer@12345`
 
 ### Validation Commands
