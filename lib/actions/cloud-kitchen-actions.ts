@@ -693,10 +693,12 @@ export async function placeFoodOrderAction(
   }
 
   try {
+    const requestedFoodItemIds = [...new Set(parsed.data.items.map((item) => item.foodItemId))];
+
     const items = await prisma.foodItem.findMany({
       where: {
         id: {
-          in: parsed.data.items.map((item) => item.foodItemId),
+          in: requestedFoodItemIds,
         },
         kitchenId: parsed.data.kitchenId,
         isAvailable: true,
@@ -714,17 +716,17 @@ export async function placeFoodOrderAction(
       },
     });
 
-    if (items.length !== parsed.data.items.length) {
+    if (items.length !== requestedFoodItemIds.length) {
       return {
         success: false,
         error: "One or more food items are no longer available.",
       };
     }
 
-    const quantities = new Map(parsed.data.items.map((item) => [item.foodItemId, item.quantity]));
-    const subtotal = items.reduce((sum, item) => {
-      const quantity = quantities.get(item.id) ?? 0;
-      return sum + Number(item.price) * quantity;
+    const itemsById = new Map(items.map((item) => [item.id, item]));
+    const subtotal = parsed.data.items.reduce((sum, item) => {
+      const foodItem = itemsById.get(item.foodItemId);
+      return foodItem ? sum + Number(foodItem.price) * item.quantity : sum;
     }, 0);
 
     const kitchen = await prisma.kitchen.findFirst({
@@ -850,16 +852,24 @@ export async function placeFoodOrderAction(
         itemCount,
         distanceKm,
         items: {
-          create: items.map((item) => ({
-            foodItemId: item.id,
-            foodItemName: item.name,
-            foodItemSlug: item.slug,
-            foodCategoryName: item.foodCategory.name,
-            quantity: quantities.get(item.id) ?? 1,
-            unitPrice: item.price,
-            lineTotal: Number(item.price) * (quantities.get(item.id) ?? 1),
-            selectedOptions: [],
-          })),
+          create: parsed.data.items.map((entry) => {
+            const item = itemsById.get(entry.foodItemId);
+
+            if (!item) {
+              throw new Error("A selected food item is no longer available.");
+            }
+
+            return {
+              foodItemId: item.id,
+              foodItemName: item.name,
+              foodItemSlug: item.slug,
+              foodCategoryName: item.foodCategory.name,
+              quantity: entry.quantity,
+              unitPrice: item.price,
+              lineTotal: Number(item.price) * entry.quantity,
+              selectedOptions: entry.selectedOptions,
+            };
+          }),
         },
       },
     });

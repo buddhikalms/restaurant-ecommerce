@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -85,7 +86,7 @@ export function FoodCheckoutForm({
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
       <form
-        className="surface-card rounded-2xl p-5"
+        className="surface-card rounded-[1.9rem] p-5 shadow-[0_18px_50px_rgba(15,23,42,0.06)] sm:p-6"
         onSubmit={handleSubmit((values) => {
           if (!items.length) {
             setMessage("Your food cart is empty.");
@@ -100,6 +101,11 @@ export function FoodCheckoutForm({
               items: items.map((item) => ({
                 foodItemId: item.foodItemId,
                 quantity: item.quantity,
+                selectedOptions: [
+                  ...(item.variantLabel ? [item.variantLabel] : []),
+                  ...item.customizations,
+                  ...(item.instructions ? [`Note: ${item.instructions}`] : []),
+                ],
               })),
               notes: values.notes,
               saveAddressForLater: isPickup ? false : values.saveAddressForLater,
@@ -159,6 +165,11 @@ export function FoodCheckoutForm({
                 ? "We will prepare your order for collection at this kitchen."
                 : "Need a different address? Go back to the location step and validate it first."}
             </p>
+            {!isPickup ? (
+              <Link href="/food/location" className="mt-3 inline-flex text-[0.78rem] font-medium text-[var(--brand-dark)]">
+                Change delivery location
+              </Link>
+            ) : null}
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -204,19 +215,39 @@ export function FoodCheckoutForm({
             </p>
           ) : null}
 
-          <Button type="submit" className="w-full" disabled={isPending || !items.length}>
+          <Button type="submit" className="h-11 w-full rounded-xl" disabled={isPending || !items.length}>
             {isPending ? "Placing order..." : isPickup ? "Place pickup order" : "Place food order"}
           </Button>
         </div>
       </form>
 
-      <aside className="surface-card rounded-2xl p-4">
+      <aside className="surface-card sticky top-6 rounded-[1.9rem] p-4 shadow-[0_18px_50px_rgba(15,23,42,0.06)] sm:p-5">
         <p className="section-label">Order summary</p>
+        <h3 className="section-subtitle mt-2">Kitchen receipt preview</h3>
         <div className="mt-3 space-y-2 text-[0.82rem] text-[var(--muted-foreground)]">
           {items.map((item) => (
-            <div key={item.itemId} className="flex items-center justify-between gap-2">
-              <span className="line-clamp-1">{item.name} x {item.quantity}</span>
-              <span>{formatCurrency(item.price * item.quantity)}</span>
+            <div key={item.itemId} className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="line-clamp-1 font-medium text-[var(--foreground)]">
+                    {item.name} x {item.quantity}
+                  </p>
+                  {item.variantLabel ? (
+                    <p className="mt-1 text-[0.74rem]">{item.variantLabel}</p>
+                  ) : null}
+                  {item.customizations.length ? (
+                    <p className="mt-1 text-[0.74rem] leading-5">
+                      {item.customizations.join(" | ")}
+                    </p>
+                  ) : null}
+                  {item.instructions ? (
+                    <p className="mt-1 text-[0.74rem] italic">{item.instructions}</p>
+                  ) : null}
+                </div>
+                <span className="font-medium text-[var(--foreground)]">
+                  {formatCurrency(item.price * item.quantity)}
+                </span>
+              </div>
             </div>
           ))}
         </div>

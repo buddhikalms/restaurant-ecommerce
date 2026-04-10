@@ -62,6 +62,21 @@ export function FoodCartTable({ kitchenName }: { kitchenName: string | null }) {
                       <p className="mt-1 text-[0.72rem] text-[var(--muted-foreground)]">
                         {item.categoryName}
                       </p>
+                      {item.variantLabel ? (
+                        <p className="mt-1 text-[0.72rem] text-[var(--foreground)]">
+                          {item.variantLabel}
+                        </p>
+                      ) : null}
+                      {item.customizations.length ? (
+                        <p className="mt-1 text-[0.72rem] text-[var(--muted-foreground)]">
+                          {item.customizations.join(" · ")}
+                        </p>
+                      ) : null}
+                      {item.instructions ? (
+                        <p className="mt-1 text-[0.72rem] italic text-[var(--muted-foreground)]">
+                          &quot;{item.instructions}&quot;
+                        </p>
+                      ) : null}
                       {item.itemType === "COMBO" && item.offerTitle ? (
                         <p className="mt-1 text-[0.72rem] text-[var(--muted-foreground)]">
                           {item.offerTitle}
@@ -131,6 +146,12 @@ export function FoodCartTable({ kitchenName }: { kitchenName: string | null }) {
                 <span className="line-clamp-1">
                   {item.name} x {item.quantity}
                 </span>
+                {item.variantLabel ? (
+                  <p className="mt-1 text-[0.7rem]">{item.variantLabel}</p>
+                ) : null}
+                {item.customizations.length ? (
+                  <p className="mt-1 text-[0.7rem]">{item.customizations.join(" · ")}</p>
+                ) : null}
                 {item.itemType === "COMBO" && item.offerTitle ? (
                   <p className="mt-1 text-[0.7rem]">{item.offerTitle}</p>
                 ) : null}

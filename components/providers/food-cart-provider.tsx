@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-type FoodCartItem = {
+export type FoodCartItem = {
   itemId: string;
   foodItemId: string;
   kitchenId: string;
@@ -14,10 +14,22 @@ type FoodCartItem = {
   categoryName: string;
   itemType: "SINGLE" | "COMBO";
   offerTitle: string | null;
+  variantLabel: string | null;
+  customizations: string[];
+  instructions: string | null;
+  brandName: string | null;
 };
 
-type FoodCartInput = Omit<FoodCartItem, "itemId" | "quantity"> & {
+export type FoodCartInput = Omit<
+  FoodCartItem,
+  "itemId" | "quantity" | "variantLabel" | "customizations" | "instructions" | "brandName"
+> & {
+  itemId?: string;
   quantity?: number;
+  variantLabel?: string | null;
+  customizations?: string[];
+  instructions?: string | null;
+  brandName?: string | null;
 };
 
 type FoodCartContextValue = {
@@ -67,7 +79,8 @@ function normalizeStoredItems(raw: string | null): FoodCartItem[] {
 
       return [
         {
-          itemId: typeof item.itemId === "string" ? item.itemId : item.foodItemId,
+          itemId:
+            typeof item.itemId === "string" ? item.itemId : item.foodItemId,
           foodItemId: item.foodItemId,
           kitchenId: item.kitchenId,
           slug: item.slug,
@@ -80,7 +93,18 @@ function normalizeStoredItems(raw: string | null): FoodCartItem[] {
               : 1,
           categoryName: item.categoryName,
           itemType: item.itemType === "COMBO" ? "COMBO" : "SINGLE",
-          offerTitle: typeof item.offerTitle === "string" ? item.offerTitle : null,
+          offerTitle:
+            typeof item.offerTitle === "string" ? item.offerTitle : null,
+          variantLabel:
+            typeof item.variantLabel === "string" ? item.variantLabel : null,
+          customizations: Array.isArray(item.customizations)
+            ? item.customizations.filter(
+                (entry): entry is string => typeof entry === "string",
+              )
+            : [],
+          instructions:
+            typeof item.instructions === "string" ? item.instructions : null,
+          brandName: typeof item.brandName === "string" ? item.brandName : null,
         },
       ];
     });
@@ -149,11 +173,12 @@ export function FoodCartProvider({
         }
 
         setItems((current) => {
-          const existing = current.find((entry) => entry.foodItemId === item.foodItemId);
+          const entryId = item.itemId ?? item.foodItemId;
+          const existing = current.find((entry) => entry.itemId === entryId);
 
           if (existing) {
             return current.map((entry) =>
-              entry.foodItemId === item.foodItemId
+              entry.itemId === entryId
                 ? {
                     ...entry,
                     quantity: entry.quantity + (item.quantity ?? 1),
@@ -166,8 +191,12 @@ export function FoodCartProvider({
             ...current,
             {
               ...item,
-              itemId: item.foodItemId,
+              itemId: entryId,
               quantity: item.quantity ?? 1,
+              variantLabel: item.variantLabel ?? null,
+              customizations: item.customizations ?? [],
+              instructions: item.instructions ?? null,
+              brandName: item.brandName ?? null,
             },
           ];
         });

@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { FoodCartIndicator } from "@/components/cloud-kitchen/food-cart-indicator";
 import { FoodCartProvider } from "@/components/providers/food-cart-provider";
@@ -10,40 +10,44 @@ export default async function FoodLayout({ children }: { children: React.ReactNo
 
   return (
     <FoodCartProvider activeKitchenId={activeKitchenId}>
-      <div className="page-shell py-6 sm:py-8">
-        <div className="mb-6 rounded-[2rem] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(121,56,31,0.08),rgba(39,63,49,0.1))] p-5 sm:p-6">
+      <div className="border-b border-[var(--border)] bg-[rgba(255,255,255,0.82)] backdrop-blur">
+        <div className="page-shell py-4">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="section-label">Cloud kitchen</p>
-              <h1 className="section-title mt-2">Fresh meals, separate from the wholesale flow</h1>
-              <p className="section-copy mt-2 max-w-3xl">
-                Select a delivery address, unlock the eligible kitchen, then order ready-to-eat food without touching the wholesale cart or order tables.
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[var(--brand-dark)]">
+                Cloud kitchen
+              </p>
+              <h1 className="mt-2 text-[1.25rem] font-semibold text-[var(--foreground)]">
+                Delivery-first ordering
+              </h1>
+              <p className="mt-1 text-[0.82rem] text-[var(--muted-foreground)]">
+                Menu browsing, basket flow, and checkout now live under the food storefront.
               </p>
             </div>
-            <FoodCartIndicator />
-          </div>
 
-          <div className="mt-5 flex flex-wrap gap-2 text-[0.82rem]">
-            {[
-              { href: "/food", label: "Overview" },
-              { href: "/food/location", label: "Select location" },
-              { href: "/food/menu", label: "Menu" },
-              { href: "/food/cart", label: "Cart" },
-              { href: "/food/checkout", label: "Checkout" },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="inline-flex h-10 items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
-              >
-                {item.label}
-              </Link>
-            ))}
+            <div className="flex flex-wrap items-center gap-2">
+              {[
+                { href: "/food", label: "Overview" },
+                { href: "/food/location", label: "Location" },
+                { href: "/food/menu", label: "Menu" },
+                { href: "/food/cart", label: "Cart" },
+                { href: "/food/checkout", label: "Checkout" },
+              ].map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="inline-flex h-10 items-center rounded-full border border-[var(--border)] bg-white px-4 text-[0.8rem] font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <FoodCartIndicator />
+            </div>
           </div>
         </div>
-        {children}
       </div>
+
+      <div className="page-shell py-6 sm:py-8">{children}</div>
     </FoodCartProvider>
   );
 }
-

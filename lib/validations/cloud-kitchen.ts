@@ -205,6 +205,10 @@ export const saveDeliveryAddressSchema = foodLocationSchema.extend({
 export const foodOrderItemSchema = z.object({
   foodItemId: z.string().min(1, "Food item is required"),
   quantity: z.coerce.number().int().min(1, "Quantity must be at least 1").max(99),
+  selectedOptions: z
+    .array(z.string().trim().min(1, "Selected option is required"))
+    .max(12, "Too many selected options")
+    .default([]),
 });
 
 export const foodOrderSchema = z.object({

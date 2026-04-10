@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { FoodOrderReceiptDownloadLink } from "@/components/cloud-kitchen/food-order-receipt-download-link";
 import { AccountNav } from "@/components/layout/account-nav";
 import { OrderStatusBadge } from "@/components/store/status-badge";
 import { requireRetailUser } from "@/lib/auth-helpers";
@@ -24,7 +25,7 @@ export default async function AccountFoodOrderDetailPage({
 
   return (
     <div className="page-shell py-6 sm:py-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="section-label">Food order</p>
           <h1 className="section-title mt-2">{order.orderNumber}</h1>
@@ -32,7 +33,10 @@ export default async function AccountFoodOrderDetailPage({
             Placed {formatDate(order.createdAt)} from {order.kitchen?.name}.
           </p>
         </div>
-        <AccountNav mode="customer" />
+        <div className="flex flex-wrap items-center gap-3">
+          <FoodOrderReceiptDownloadLink orderId={order.id} />
+          <AccountNav mode="customer" />
+        </div>
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
@@ -47,18 +51,33 @@ export default async function AccountFoodOrderDetailPage({
 
           <div className="mt-5 space-y-4">
             {order.items?.map((item) => (
-              <div key={item.id} className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4">
+              <div
+                key={item.id}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-medium text-[var(--foreground)]">{item.foodItemName}</p>
                     <p className="mt-1 text-[0.76rem] text-[var(--muted-foreground)]">
-                      {item.foodCategoryName} • {item.quantity} x {formatCurrency(item.unitPrice)}
+                      {item.foodCategoryName} | {item.quantity} x {formatCurrency(item.unitPrice)}
                     </p>
                   </div>
-                  <p className="font-semibold text-[var(--foreground)]">{formatCurrency(item.lineTotal)}</p>
+                  <p className="font-semibold text-[var(--foreground)]">
+                    {formatCurrency(item.lineTotal)}
+                  </p>
                 </div>
+                {Array.isArray(item.selectedOptions) && item.selectedOptions.length ? (
+                  <ul className="mt-3 space-y-1 text-[0.76rem] text-[var(--muted-foreground)]">
+                    {item.selectedOptions.map((entry, index) => (
+                      <li key={`${item.id}-${index}`}>{String(entry)}</li>
+                    ))}
+                  </ul>
+                ) : null}
                 {item.foodItem ? (
-                  <Link href={`/food/menu/${item.foodItemSlug}`} className="mt-3 inline-flex text-[0.76rem] font-medium text-[var(--brand-dark)]">
+                  <Link
+                    href={`/food/menu/${item.foodItemSlug}`}
+                    className="mt-3 inline-flex text-[0.76rem] font-medium text-[var(--brand-dark)]"
+                  >
                     View menu item
                   </Link>
                 ) : null}
@@ -70,7 +89,9 @@ export default async function AccountFoodOrderDetailPage({
         <aside className="space-y-4">
           <section className="surface-card rounded-2xl p-5">
             <p className="section-label">{isPickup ? "Pickup" : "Delivery"}</p>
-            <h2 className="section-subtitle mt-2">{isPickup ? "Collection details" : "Address and progress"}</h2>
+            <h2 className="section-subtitle mt-2">
+              {isPickup ? "Collection details" : "Address and progress"}
+            </h2>
             <dl className="mt-4 space-y-3 text-[0.82rem] text-[var(--muted-foreground)]">
               <div>
                 <dt className="font-medium text-[var(--foreground)]">Kitchen</dt>
@@ -81,7 +102,9 @@ export default async function AccountFoodOrderDetailPage({
                 <dd className="mt-1">{isPickup ? "Pickup" : "Delivery"}</dd>
               </div>
               <div>
-                <dt className="font-medium text-[var(--foreground)]">{isPickup ? "Pickup location" : "Address"}</dt>
+                <dt className="font-medium text-[var(--foreground)]">
+                  {isPickup ? "Pickup location" : "Address"}
+                </dt>
                 <dd className="mt-1">{order.deliveryAddress?.formattedAddress}</dd>
               </div>
               {!isPickup ? (
@@ -98,7 +121,9 @@ export default async function AccountFoodOrderDetailPage({
               ) : null}
               {order.deliveryAddress?.deliveryInstructions ? (
                 <div>
-                  <dt className="font-medium text-[var(--foreground)]">{isPickup ? "Pickup instructions" : "Instructions"}</dt>
+                  <dt className="font-medium text-[var(--foreground)]">
+                    {isPickup ? "Pickup instructions" : "Instructions"}
+                  </dt>
                   <dd className="mt-1">{order.deliveryAddress.deliveryInstructions}</dd>
                 </div>
               ) : null}
