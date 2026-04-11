@@ -63,15 +63,33 @@ export function MenuItemCard({
               <h3 className="mt-2 text-base font-semibold text-[var(--foreground)]">
                 {product.name}
               </h3>
+              {product.offerTitle ? (
+                <p className="mt-1 text-[0.78rem] font-medium text-[var(--brand-dark)]">
+                  {product.offerTitle}
+                </p>
+              ) : null}
             </div>
-            <div className="rounded-full bg-[var(--surface-muted)] px-3 py-1 text-sm font-semibold text-[var(--foreground)]">
-              {formatCurrency(product.basePrice)}
+            <div className="rounded-2xl bg-[var(--surface-muted)] px-3 py-2 text-right">
+              {product.compareAtPrice ? (
+                <p className="text-[0.72rem] text-[var(--muted-foreground)] line-through">
+                  {formatCurrency(product.compareAtPrice)}
+                </p>
+              ) : null}
+              <p className="text-sm font-semibold text-[var(--foreground)]">
+                {formatCurrency(product.basePrice)}
+              </p>
             </div>
           </div>
 
           <p className="mt-3 line-clamp-2 text-[0.84rem] leading-6 text-[var(--muted-foreground)]">
             {product.shortDescription}
           </p>
+
+          {product.includedItemsSummary ? (
+            <p className="mt-3 rounded-2xl bg-[rgba(184,107,87,0.08)] px-3 py-2 text-[0.76rem] font-medium text-[var(--brand-dark)]">
+              {product.includedItemsSummary}
+            </p>
+          ) : null}
 
           <div className="mt-3 flex flex-wrap gap-2">
             {product.labels.map((label) => (
@@ -82,6 +100,25 @@ export function MenuItemCard({
               {product.prepTime}
             </span>
           </div>
+
+          {product.optionGroups.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {product.optionGroups.slice(0, 2).map((group) => (
+                <span
+                  key={group.id}
+                  className="inline-flex rounded-full border border-[var(--border)] bg-white px-3 py-1 text-[0.72rem] font-medium text-[var(--foreground)]"
+                >
+                  {group.name}
+                  {group.required ? " required" : ""}
+                </span>
+              ))}
+              {product.optionGroups.length > 2 ? (
+                <span className="inline-flex rounded-full border border-[var(--border)] bg-white px-3 py-1 text-[0.72rem] font-medium text-[var(--muted-foreground)]">
+                  +{product.optionGroups.length - 2} more
+                </span>
+              ) : null}
+            </div>
+          ) : null}
 
           <div className="mt-4 flex items-center justify-between">
             <p className="text-[0.76rem] text-[var(--muted-foreground)]">

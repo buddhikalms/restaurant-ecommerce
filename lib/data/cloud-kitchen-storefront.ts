@@ -56,10 +56,14 @@ export type StorefrontProduct = {
   description: string;
   imageUrl: string;
   basePrice: number;
+  compareAtPrice: number | null;
   badges: string[];
   labels: string[];
   prepTime: string;
   isAvailable: boolean;
+  itemType: "SINGLE" | "COMBO";
+  offerTitle: string | null;
+  includedItemsSummary: string | null;
   optionGroups: StorefrontOptionGroup[];
 };
 
@@ -156,12 +160,16 @@ function buildCloudKitchenStorefrontData(menu: KitchenMenuData): CloudKitchenSto
       description: item.description,
       imageUrl: item.imageUrl,
       basePrice: item.price,
+      compareAtPrice: item.compareAtPrice,
       badges: getBadges(item),
       labels: inferLabels(item),
       prepTime: formatPreparationTime(
         item.preparationTimeMins ?? menu.kitchen.preparationTimeMins,
       ),
       isAvailable: true,
+      itemType: item.itemType,
+      offerTitle: item.offerTitle,
+      includedItemsSummary: item.includedItemsSummary,
       optionGroups: buildOptionGroups(category.name),
     })),
   );

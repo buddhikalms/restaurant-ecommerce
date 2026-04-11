@@ -2,10 +2,10 @@
 import { LogIn, UserRound } from "lucide-react";
 
 import { auth } from "@/auth";
+import { SiteHeaderCartSlot } from "@/components/layout/site-header-cart-slot";
 import { LogoutButton } from "@/components/layout/logout-button";
 import { SiteHeaderMobileMenu } from "@/components/layout/site-header-mobile-menu";
 import { StoreSearchForm } from "@/components/layout/store-search-form";
-import { CartIndicator } from "@/components/store/cart-indicator";
 import { getDashboardPathForRole } from "@/lib/user-roles";
 
 export async function SiteHeader() {
@@ -67,7 +67,7 @@ export async function SiteHeader() {
           </div>
 
           <div className="hidden items-center gap-2 md:flex">
-            <CartIndicator />
+            <SiteHeaderCartSlot />
             {session?.user ? (
               <>
                 <Link
@@ -91,7 +91,7 @@ export async function SiteHeader() {
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
-            <CartIndicator compact />
+            <SiteHeaderCartSlot compact />
             <SiteHeaderMobileMenu
               dashboardPath={dashboardPath}
               user={session?.user ?? null}

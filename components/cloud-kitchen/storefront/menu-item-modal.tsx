@@ -10,6 +10,24 @@ import { Textarea } from "@/components/ui/textarea";
 import type { StorefrontProduct } from "@/lib/data/cloud-kitchen-storefront";
 import { cn, formatCurrency } from "@/lib/utils";
 
+function getSelectionHint(group: StorefrontProduct["optionGroups"][number]) {
+  if (group.selection === "single") {
+    return group.required ? "Choose 1" : "Optional";
+  }
+
+  if (typeof group.max === "number" && group.max > 0) {
+    return group.required
+      ? `Choose ${group.min ?? 1}-${group.max}`
+      : `Pick up to ${group.max}`;
+  }
+
+  if (group.required) {
+    return `Choose at least ${group.min ?? 1}`;
+  }
+
+  return "Optional";
+}
+
 export function MenuItemModal({
   kitchenId,
   product,
@@ -191,6 +209,20 @@ function MenuItemModalContent({
                 <p id={descriptionId} className="text-sm leading-7 text-[var(--muted-foreground)]">
                   {product.description}
                 </p>
+                {product.offerTitle || product.includedItemsSummary ? (
+                  <div className="mt-4 rounded-[1.5rem] border border-[rgba(184,107,87,0.16)] bg-[rgba(184,107,87,0.08)] p-4">
+                    {product.offerTitle ? (
+                      <p className="text-sm font-semibold text-[var(--foreground)]">
+                        {product.offerTitle}
+                      </p>
+                    ) : null}
+                    {product.includedItemsSummary ? (
+                      <p className="mt-1 text-[0.82rem] text-[var(--muted-foreground)]">
+                        {product.includedItemsSummary}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {product.labels.map((label) => (
                     <span
@@ -210,9 +242,21 @@ function MenuItemModalContent({
                   key={group.id}
                   className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface-muted)] p-4"
                 >
-                  <legend className="px-1 text-sm font-semibold text-[var(--foreground)]">
-                    {group.name}
+                  <legend className="px-1">
+                    <span className="text-sm font-semibold text-[var(--foreground)]">
+                      {group.name}
+                    </span>
                   </legend>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <span className="inline-flex rounded-full bg-white px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-[var(--brand-dark)]">
+                      {getSelectionHint(group)}
+                    </span>
+                    {group.required ? (
+                      <span className="inline-flex rounded-full bg-[rgba(184,107,87,0.1)] px-3 py-1 text-[0.7rem] font-medium text-[var(--brand-dark)]">
+                        Required
+                      </span>
+                    ) : null}
+                  </div>
                   {group.description ? (
                     <p className="mt-2 text-[0.78rem] text-[var(--muted-foreground)]">
                       {group.description}
@@ -297,9 +341,16 @@ function MenuItemModalContent({
               <div className="rounded-[1.5rem] border border-[var(--border)] bg-white p-4 shadow-[0_12px_24px_rgba(15,23,42,0.04)]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-[var(--foreground)]">
-                      {formatCurrency(unitPrice)} each
-                    </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {product.compareAtPrice ? (
+                        <span className="text-[0.8rem] text-[var(--muted-foreground)] line-through">
+                          {formatCurrency(product.compareAtPrice)}
+                        </span>
+                      ) : null}
+                      <p className="text-sm font-semibold text-[var(--foreground)]">
+                        {formatCurrency(unitPrice)} each
+                      </p>
+                    </div>
                     <p className="mt-1 text-[0.76rem] text-[var(--muted-foreground)]">
                       {categoryName}
                     </p>

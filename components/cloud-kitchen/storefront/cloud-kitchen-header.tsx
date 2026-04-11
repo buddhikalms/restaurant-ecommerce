@@ -1,5 +1,6 @@
 import { Bike, Clock3, MapPin, Search, Star, Wallet } from "lucide-react";
 
+import { FoodCartIndicator } from "@/components/cloud-kitchen/food-cart-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { RemoteImage } from "@/components/ui/remote-image";
@@ -80,20 +81,28 @@ export function CloudKitchenHeader({
               </div>
             </div>
 
-            <div className="grid gap-3 text-[0.8rem] text-[var(--muted-foreground)] sm:grid-cols-2 lg:min-w-[20rem]">
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-3">
-                <div className="flex items-center gap-2 font-medium text-[var(--foreground)]">
-                  <Star className="h-4 w-4 text-amber-500" />
-                  {kitchen.rating.toFixed(1)} rating
-                </div>
-                <p className="mt-1">{kitchen.reviewCount.toLocaleString()} verified orders</p>
+            <div className="space-y-3 lg:min-w-[20rem]">
+              <div className="flex justify-start lg:justify-end">
+                <FoodCartIndicator
+                  showSubtotal
+                  className="h-11 rounded-2xl px-4 text-[0.82rem] shadow-[0_12px_28px_rgba(15,23,42,0.08)]"
+                />
               </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-3">
-                <div className="flex items-center gap-2 font-medium text-[var(--foreground)]">
-                  <Clock3 className="h-4 w-4 text-[var(--brand-dark)]" />
-                  {branch.eta}
+              <div className="grid gap-3 text-[0.8rem] text-[var(--muted-foreground)] sm:grid-cols-2">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-3">
+                  <div className="flex items-center gap-2 font-medium text-[var(--foreground)]">
+                    <Star className="h-4 w-4 text-amber-500" />
+                    {kitchen.rating.toFixed(1)} rating
+                  </div>
+                  <p className="mt-1">{kitchen.reviewCount.toLocaleString()} verified orders</p>
                 </div>
-                <p className="mt-1">{kitchen.nextStatusNote}</p>
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-3">
+                  <div className="flex items-center gap-2 font-medium text-[var(--foreground)]">
+                    <Clock3 className="h-4 w-4 text-[var(--brand-dark)]" />
+                    {branch.eta}
+                  </div>
+                  <p className="mt-1">{kitchen.nextStatusNote}</p>
+                </div>
               </div>
             </div>
           </div>
